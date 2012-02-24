@@ -1,0 +1,42 @@
+# Framework Explanation
+
+## Controller
+
+* should define no constructor
+* instead should override <initialize()> method and perform all configuration there
+* single parameter setting method, 'configure':
+    * configure(BaseController::$DEFAULT_FORMAT, HttpResponseFormat::$HTML) - set the response format to any available defined format
+    * configure(BaseController::$BEFORE_FILTER, 'methodName') - add a before filter of given method name
+    * configure(BaseController::$AFTER_FILTER, 'methodName') - add an after filter
+    * configure(BaseController::$AROUND_FILTER, 'methodName') - add an around filter
+    * all of the above, if called using only one parameter, return the currently set value(s). 
+* single control-flow instance method, 'render', which should generally be called as <return $this->render(...)> to immediately return the response. options:
+    * render() - use the currently active reponse format (the default, if not overridden from the URL routing) to render the controller/action-named template file using the controller instance variables as input data.
+    * render('actionName') - same as above, but use a different action's template file instead of the currently called action.
+    * render(HttpResponseFormat::$JSON, $data) - render using the specified format. if a second parameter is supplied, that will be the data used. if only one parameter is given, the controller's instance variables will be passed as input data
+    * render(HttpResponseFormat::$ERROR, $message) - special case where an error is returned. will be handled by the application's default error controller
+    * render(HttpResponseFormat::$REDIRECT, $url) - special case where a redirect to the given url will be returned
+
+
+## Response Formats
+
+* can be defined in config/formats.php using <HttpHandler.defineFormat('JSON', application/json', 'json', 'UTF8', array())> where the params are the HTTP header MIME type, the file extension, output encoding, and optional parameters as an associative array.
+* can be used to define special varieties of standard file types. for example one could define a 'CELLPHONE_HTML' type that could be made the default response type for controllers responding to requests from japanese cell phones. then add middleware that did output-rewriting to ensure the correct charset.
+
+
+## Views/Renderers
+
+* a class that can render data (and optional template) into a specific response format (eg a SmartyRenderer for HttpResponseFormat::$HTML format).
+* defined in config/renderers.php file using <HttpHandler.addRenderer(HttpResponseFormat::$HTML, 'SmartyRenderer')> where the class is passed by name.
+* renderer classes must implement a specific interface for getting passed data and template and returning the output.
+* JSON example - for HttpResponseFormat::$JSON, take the given data object, and return the result of <json_encode($data)>. optionally check to see if the data is an object that has a <toJSON()> method that can be called, and call that instead.
+
+
+## Middleware
+
+* defined in a config/middleware.php file using <HttpHandler.addMiddlware(new MiddlewareClass())>
+* before controller is processed, middleware objects are executed in-order (order added) calling a <before($request, $response)> method. 
+* after controller is processed, middlware objects are executed in reverse order calling an <after($request, $response)> method.
+* can manipulate the $response variable freely, for example to convert the encoding based on the response type and request headers.
+* closing the <$response> will cause all further processing to be aborted and the response returned immediately. eg, redirecting immediately (before getting to a controller) if the URL matches a string and the user is not logged in.
+* default middleware should include a logger, particularly one that logs details for any <$response>s that represent errors (by checking response format).
