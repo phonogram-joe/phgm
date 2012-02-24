@@ -9,6 +9,8 @@ class BaseController
 	private static $RESULT_RENDER = 1;
 	private static $RESULT_ERROR = 2;
 
+	private $_phgmDefaultActionName;
+	private $_phgmDefaultRenderFormat;
 	private $_phgmActionName;
 	private $_phgmRenderActionName;
 	private $_phgmRedirectUrl;
@@ -35,6 +37,8 @@ class BaseController
 		$this->_phgmRenderFormat = $format;
 		$this->_phgmRenderData = null;
 		$this->_phgmResultState = null;
+		$this->_phgmDefaultActionName = null;
+		$this->_phgmDefaultRenderFormat = null;
 
 		$this->_beforeFilters = array();
 		$this->_afterFilters = array();
@@ -75,6 +79,13 @@ class BaseController
 	public function execute($params)
 	{
 		$this->initialize();
+		//	アクション名や応答データ刑がナルの場合はデフォルトに設定する
+		if (is_null($this->_phgmRenderFormat)) {
+			$this->_phgmRenderFormat = $this->_phgmDefaultRenderFormat;
+		}
+		if (is_null($this->_phgmActionName)) {
+			$this->_phgmActionName = $this->_phgmDefaultActionName;
+		}
 
 		$this->doFilters(self::$BEFORE_FILTER);
 		$this->doFilters(self::$AROUND_FILTER, self::$AROUND_FILTER_BEFORE);

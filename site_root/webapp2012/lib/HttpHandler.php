@@ -63,6 +63,7 @@ class HttpHandler
 		} else {
 			$this->controllerClass = $route->getController();
 			$this->actionName = $route->getAction();
+			//TODO: $this->requestFormat = $route->getFormat();
 			$this->requestParams = array_merge($_GET, $route->getParams());
 		}
 	}
@@ -73,7 +74,7 @@ class HttpHandler
 		$controllerClass = $this->controllerClass;
 		ClassLoader::load(CONTROLLER, $controllerClass);
 
-		$this->controller = new $controllerClass($actionName, HttpResponse::$FORMAT_HTML);
+		$this->controller = new $controllerClass($actionName, $this->requestFormat);
 		$this->controller->execute($this->requestParams);
 	}
 

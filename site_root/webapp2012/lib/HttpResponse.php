@@ -6,21 +6,12 @@
 
 class HttpResponse
 {
-	//	HTTP応答内容のデータ刑
-	public static $FORMAT_HTTP_STATUS_ONLY = 'http';
-	public static $FORMAT_HTML = 'html';
-	public static $FORMAT_JSON = 'json';
-	public static $FORMAT_XML = 'xml';
-	public static $FORMAT_CSV = 'csv';
-	public static $FORMAT_TEXT = 'text';
-
 	public static $STATE_OPEN = 0;
 	public static $STATE_HEADERS = 1;
 	public static $STATE_RESPONSE = 2;
 	public static $STATE_CLOSED = 3;
 
 	private $state;
-	private $format;
 	private $headers;
 	private $responseBody;
 
@@ -33,7 +24,6 @@ class HttpResponse
 	public function reset()
 	{
 		if ($this->isEditable()) {
-			$this->format = self::$FORMAT_HTML;
 			$this->headers = array();
 			$this->responseBody = null;
 			return true;
@@ -41,16 +31,21 @@ class HttpResponse
 		return false;
 	}
 
+	public function isClosed()
+	{
+		return $this->state === self::$STATE_CLOSED;
+	}
+
 	public function isEditable()
 	{
-		return $this->state === self::$STATE_OPEN;
+		return $this->state === self::$STATE_OPEN || $this->state === self::$STATE_HEADERS;
 	}
 
 	public function redirect($url)
 	{
 		if ($this->isEditable()) {
-			$this->format = self::$FORMAT_HTTP_STATUS_ONLY;
-			$this->headers[] = 'Location: ' . $url; //TODO: redirect the browser
+			header('Location: ' . $url);
+			$this->state = self::$STATE_CLOSED;
 		} else {
 			throw new Exception('HttpResponse:redirect -- HTTP応答は返し中なので、リダイレクトはできません。');
 		}
@@ -62,12 +57,12 @@ class HttpResponse
 		$this->state = self::$STATE_CLOSED;
 	}
 
-	public function setFormat($format)
+	public function setContentTypeCharset($format, $charset = null)
 	{
 		if ($this->isEditable()) {
-			$this->format = $format;
+			$this->headers[] = 'Content-type: ' . HttpResponseFormat::mimeFor($format) . '; charset=' . HttpResponseFormat::charset($charset);
 		} else {
-			throw new Exception('HttpResponse:redirect -- HTTP応答は返し中なので、リダイレクトはできません。');
+			throw new Exception('HttpResponse:redirect -- HTTP応答は返し中なので、応答のデータ刑を変更することはできません。');
 		}
 	}
 
@@ -86,8 +81,7 @@ class HttpResponse
 			throw new Exception('HttpResponse::writeHeaders -- HTTPヘッダーは既に返しています。');
 		}
 		$this->state = self::$STATE_HEADERS;
-		//TODO: write headers & then clear them (so they won't be written again)
-		foreach ($this->head as $header) {
+		foreach ($this->headers as $header) {
 			header($header);
 		}
 		$this->headers = array();
@@ -99,14 +93,11 @@ class HttpResponse
 			throw new Exception('HttpResponse::writeResponse -- HTTP応答内容を返せません。ヘッダーはまだ返してないまたは応答はすでに閉じています。');
 		}
 		$this->state = self::$STATE_RESPONSE;
-		if ($this->format === self::$FORMAT_HTTP_STATUS_ONLY) {
-			return;
-		}
 		print $this->responseBody;
 		$this->responseBody = null;
 	}
 
-	public function finishResponse()
+	public function close()
 	{
 		$this->state = self::$STATE_CLOSED;
 	}
