@@ -3,7 +3,7 @@
 /*
  *	Copyright (C) Phonogram Inc 2012
  *	Licensed Under the MIT license http://www.opensource.org/licenses/mit-license.php
- */
+ *
  *	bootstrap.php
  *		フレームワークの必要なファイルをrequireして、初期化する
  */
@@ -55,6 +55,7 @@ if (ENVIRONMENT === ENVIRONMENT_PRODUCTION) {
 
 //	ライブラリーのクラス
 require_once(LIB_DIR . DS . 'Logger.php');
+require_once(LIB_DIR . DS . 'StringUtils.php');
 require_once(LIB_DIR . DS . 'BaseView.php');
 require_once(LIB_DIR . DS . 'BaseModel.php');
 require_once(LIB_DIR . DS . 'BaseViewModel.php');

@@ -9,59 +9,88 @@ class HttpHandler
 	private $request;
 	private $response;
 	private $controller;
-	private $action;
+	private $view;
+
+	private $controllerClass;
+	private $actionName;
+	private $requestFormat;
+	private $requestParams;
 
 	public function HttpHandler()
 	{
-		$router = null;
-		$route = null;
-		$controllerClass = null;
-		$action = null;
-		$params = null;
-
-		try {
-			$router = Router::getInstance();
-			defineRoutes($router); // URLの設定 webapp/config/routes.php
-			$route = $router->matchRoute();
-			if ($route == null) {
-				$controllerClass = $router->get404Controller();
-				$action = $router->getDefaultAction();
-			} else {
-				$controllerClass = $route->getController();
-				$action = $route->getAction();
-			}
-			ClassLoader::load(CONTROLLER, $controllerClass);
-
-			if (!class_exists($controllerClass)) {
-				throw new Exception();//'クラス　'　. $controllerClass . 'は存在しません。');
-			}
-			$this->controller = new $controllerClass();
-			if (!method_exists($this->controller, $action)) {
-				throw new Exception();//'クラス　' . $controllerClass . 'には' . $action . 'というメソッドがありません。');
-			}
-			$params = is_null($route) ? array() : $route->getParams();
-
-			$this->action = $action;
-			$this->request = new HttpRequest($params);
-			$this->response = new HttpResponse();
-
-		} catch (Exception $e) {
-			print $e->getMessage();
-			return;
-		}
+		$this->request = new HttpRequest();
+		$this->response = new HttpResponse();
+		$this->controller = null;
+		$this->view = null;
+	
+		$this->controllerClass = null;
+		$this->actionName = null;
+		$this->requestFormat = null;
+		$this->requestParams = null;
 	}
 
 	public function handleRequest()
 	{
-		$controller = $this->controller;
-		$action = $this->action;
-		$request = $this->request;
-		$response = $this->response;
-
-		if (is_null($this->controller)) {
-			print('エラーが発生しました。');
-			return;
+		try {
+			try {
+				$this->determineControllerActionFromRoute();
+				$this->executeController();
+				if ($this->controller->isError()) {
+					throw new Exception($this->controller->getErrorMessage());
+				}
+				if ($this->controller->isRedirect()) {
+					$this->response->redirect($this->controller->getRedirectUrl());
+					return;
+				}
+			} catch (Exception $e) {
+				$this->executeErrorController($e->getMessage());
+			}
+			$this->renderView();
+		} catch (Exception $e) {
+			$this->response->error($e->getMessage());
 		}
-		$controller->$action($request, $response);
+	}
+
+	private function determineControllerActionFromRoute()
+	{
+		$router = Router::getInstance();
+		defineRoutes($router);
+		$route = $router->matchRoute();
+		if ($route == null) {
+			$this->controllerClass = $router->getDefaultController();
+			$this->actionName = $router->getDefaultAction();
+			$this->requestParams = array_merge($_GET);
+		} else {
+			$this->controllerClass = $route->getController();
+			$this->actionName = $route->getAction();
+			$this->requestParams = array_merge($_GET, $route->getParams());
+		}
+	}
+
+	private function executeController()
+	{
+		$actionName = $this->actionName;
+		$controllerClass = $this->controllerClass;
+		ClassLoader::load(CONTROLLER, $controllerClass);
+
+		$this->controller = new $controllerClass($actionName, HttpResponse::$FORMAT_HTML);
+		$this->controller->execute($this->requestParams);
+	}
+
+	private function executeErrorController($errorMessage)
+	{
+		$controllerClass = Router::getInstance()->get404Controller();
+		ClassLoader::load(CONTROLLER, $controllerClass);
+
+		$this->controller = new $controllerClass();
+		$this->controller->execute($errorMessage);
+	}
+
+	private function renderView()
+	{
+		//should alternate view based on render format
+		$view = new BaseView($this->controllerClass, $this->controller->getRenderAction());
+		$view->render($this->controller->getRenderData());
+		print $view->getOutput();
 	}
 }

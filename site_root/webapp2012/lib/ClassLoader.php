@@ -10,6 +10,28 @@ define('MODEL', MODELS_DIR); //DBやフォームのモデルクラス
 define('VIEW_MODEL', VIEW_MODELS_DIR); //モデルを表示する際に使うクラス
 define('VIEW', VIEWS_DIR); //共通のレイアウト・ガジェットと、コントローラのアクションごとのテンプレート
 
+/*
+//TODO: use PHP 5's __autoload($name) feature to autoload classes using naming conventions
+function __autoload($name)
+{
+	if (preg_match('/Controller/', $name)) {
+		ClassLoader::load(CONTROLLER, $name);
+	}
+	if (preg_match('/Model/', $name)) {
+		ClassLoader::load(MODEL, $name);
+	}
+	if (preg_match('/ViewModel/', $name)) {
+		ClassLoader::load(VIEW_MODEL, $name);
+	}
+	if (preg_match('/View/', $name)) {
+		ClassLoader::load(VIEW, $name);
+	}
+	if (preg_match('/Helper/', $name)) {
+		ClassLoader::load(APP_LIB, $name);
+	}
+}
+*/
+
 class ClassLoader
 {
 	public static function load($type, $filename)
@@ -23,6 +45,6 @@ class ClassLoader
 
 	private static function path($type, $filename)
 	{
-		return $type . DS . preg_replace('/\./', DS, $filename) . 'php';
+		return $type . DS . preg_replace('/\./', DS, $filename) . '.php';
 	}
 }

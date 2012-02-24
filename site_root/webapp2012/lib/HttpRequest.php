@@ -6,5 +6,19 @@
 
 class HttpRequest
 {
-	
+	private $params;
+
+	public function HttpRequest()
+	{
+		$this->params = array();
+	}
+
+	public function setParams($params)
+	{
+		$this->params = $params;
+	}
+	public function getParams($params)
+	{
+		return $this->params;
+	}
 }

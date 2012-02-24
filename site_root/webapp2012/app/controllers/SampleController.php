@@ -6,12 +6,12 @@
 
 class SampleController extends BaseController
 {
-	public function index($request, $response)
+	public function index($params)
 	{
 		
 	}
 
-	public function show($request, $response)
+	public function show($params)
 	{
 		
 	}
