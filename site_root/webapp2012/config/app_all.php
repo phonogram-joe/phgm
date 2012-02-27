@@ -34,6 +34,10 @@ define('ENVIRONMENT_PRODUCTION', 'prod');
 //	有効の環境。設定がこれによって変わる
 define('ENVIRONMENT', ENVIRONMENT_DEVELOPMENT);
 
+//	Smarty3の設定
+define('SMARTY_LEFT_DELIMITER', '{{');
+define('SMARTY_RIGHT_DELIMITER', '}}');
+
 //	HTTP応答のデータ刑とそれに合わせてのMIMEタイプ・エンコードなど
 HttpResponseFormat::registerFormat(HttpResponseFormat::$HTML, 'text/html', 'utf-8', 'UTF8');
 HttpResponseFormat::registerFormat(HttpResponseFormat::$TEXT, 'text/txt', 'utf-8', 'UTF8');
@@ -50,7 +54,7 @@ HttpResponseFormat::setDefaultFormat(HttpResponseFormat::$HTML);
 
 
 //	HTTP応答のデータ刑に合わせて、コントローラの変数をそのデータ刑に変換するクラスを設定する
-BaseRenderer::registerRenderer(HttpResponseFormat::$HTML, 'BaseRenderer');
+BaseRenderer::registerRenderer(HttpResponseFormat::$HTML, 'SmartyRenderer');
 
 
 

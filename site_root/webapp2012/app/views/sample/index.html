@@ -1,4 +1,10 @@
 {{extends file="layouts/index.html"}}
 {{block name="main"}}
 <h1>Sample - Index</h1>
+<p>{{$fmt|escape}}</p>
+<p>{{$message|escape}}</p>
+<p>{{HttpResponseFormat::mimeType($fmt)|escape}}</p>
+<p>{{mb_internal_encoding()|escape}}</p>
+<p>{{mb_http_output()|escape}}</p>
+<p>{{debug}}</p>
 {{/block}}

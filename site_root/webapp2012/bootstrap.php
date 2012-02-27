@@ -29,7 +29,8 @@ define('TMP_DIR', ROOT_DIR . DS . 'tmp');
 define('DB_CACHE_DIR', TMP_DIR . DS . 'db_cache'); //
 define('DATA_CACHE_DIR', TMP_DIR . DS . 'data_cache'); //
 define('SESSION_DIR', TMP_DIR . DS . 'session'); //
-define('TEMPLATES_CACHE_DIR', TMP_DIR . DS . 'templates_c'); //
+define('TEMPLATES_COMPILE_DIR', TMP_DIR . DS . 'templates_compile'); //
+define('TEMPLATES_CACHE_DIR', TMP_DIR . DS . 'templates_cache'); //
 
 //	ログレベルのオプション
 define('LOG_TRACE', 1);
@@ -64,6 +65,7 @@ require_once(LIB_DIR . DS . 'HttpHandler.php');
 
 //	vendorのクラス
 require_once(VENDOR_DIR . DS . 'router' . DS . 'class.Router.php');
+require_once(LIB_DIR . DS . 'renderers' . DS . 'SmartyRenderer.php');
 
 //	サイトの動きに関する設定
 require_once(CONFIG_DIR . DS . 'app_all.php'); //appの設定

@@ -14,6 +14,7 @@ class HttpResponse
 	private $state;
 	private $headers;
 	private $responseBody;
+	private $encoding;
 
 	public function HttpResponse()
 	{
@@ -26,6 +27,7 @@ class HttpResponse
 		if ($this->isEditable()) {
 			$this->headers = array();
 			$this->responseBody = null;
+			$this->setEncoding(null); //reset encoding
 			return true;
 		}
 		return false;
@@ -81,11 +83,25 @@ class HttpResponse
 	public function setResponse($responseBody)
 	{
 		if ($this->isEditable()) {
+			if ($this->encoding != mb_internal_encoding()) {
+				$responseBody = mb_convert_encoding($responseBody, $this->encoding);
+			}
 			$this->headers[] = 'Content-length: ' . strlen($responseBody);
 			$this->responseBody = $responseBody;
 		} else {
 			throw new Exception('HttpResponse:redirect -- HTTP応答は返し中なので、リダイレクトはできません。');
 		}
+	}
+
+	public function setEncoding($encoding)
+	{
+		if (is_null($encoding)) {
+			$encoding = mb_http_output();
+			if ($encoding === 'pass') {
+				$encoding = mb_internal_encoding();
+			}
+		}
+		$this->encoding = $encoding;
 	}
 
 	public function writeHeaders()

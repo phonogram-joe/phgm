@@ -23,6 +23,9 @@ class HttpResponseFormat
 
 	public static function initialize()
 	{
+		if (self::$IS_INITIALIZED) {
+			return;
+		}
 		self::$IS_INITIALIZED = true;
 
 		self::$MIME_TYPES = array();

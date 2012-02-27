@@ -49,8 +49,7 @@ class HttpHandler
 				$this->executeController();
 				if ($this->controller->isError()) {
 					throw new Exception($this->controller->getErrorMessage());
-				}
-				if ($this->controller->isRedirect()) {
+				} else if ($this->controller->isRedirect()) {
 					$this->response->redirect($this->controller->getRedirectUrl());
 					$this->response->respondAndClose();
 					return;

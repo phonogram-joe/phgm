@@ -6,13 +6,17 @@
 
 class SampleController extends BaseController
 {
+	public $message = 'Hello There! 宜しくお願いします！';
+	public $fmt;
+
 	public function index($params)
 	{
-		
+		$this->fmt = $this->getRenderFormat();
+		$this->doRender();
 	}
 
 	public function show($params)
 	{
-		
+		$this->doRender();
 	}
 }

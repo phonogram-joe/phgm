@@ -38,6 +38,13 @@ class BaseRenderer
 
 	public function render($data, $httpResponse)
 	{
+		$httpResponse->setContentTypeCharset(HttpResponseFormat::mimeType($this->format), HttpResponseFormat::charset($this->format));
+		$httpResponse->setEncoding(HttpResponseFormat::encoding($this->format));
+		$this->customRender($data, $httpResponse);
+	}
+
+	public function customRender($data, $httpResponse)
+	{
 		$this->templatePath .= '.html';
 		if (file_exists($this->templatePath)) {
 			$contents = file_get_contents($this->templatePath);

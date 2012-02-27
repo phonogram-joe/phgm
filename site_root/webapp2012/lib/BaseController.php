@@ -111,6 +111,9 @@ class BaseController
 		}
 	}
 
+	/*--------------------------------------------------------------
+	 *	リダイレクトの場合
+	 */
 	public function doRedirect($url, $action = null, $params = null)
 	{
 		$this->_phgmRedirectUrl = $url; //TODO: if action given, the $url is a controller name and we need to determine URL from router
@@ -124,11 +127,19 @@ class BaseController
 		return $this->_phgmRedirectUrl;
 	}
 
-	public function doRender($format, $data = null)
+	/*--------------------------------------------------------------
+	 *	普段の場合（データを返す）
+	 */
+	public function doRender($format = null, $data = null, $actionName = null)
 	{
-		$this->_phgmRenderFormat = $format;
+		if (!is_null($format)) {
+			$this->_phgmRenderFormat = $format;
+		}
 		if (!is_null($data)) {
 			$this->_phgmRenderData = $data;
+		}
+		if (!is_null($actionName)) {
+			$this->_phgmRenderActionName = $actionName;
 		}
 	}
 	public function getRenderFormat()
@@ -143,16 +154,14 @@ class BaseController
 			return BaseController::asArray($this);
 		}
 	}
-
-	public function doRenderAction($actionName)
-	{
-		$this->_phgmRenderActionName = $actionName;
-	}
 	public function getRenderAction()
 	{
 		return $this->_phgmRenderActionName;
 	}
 
+	/*--------------------------------------------------------------
+	 *	エラーの場合
+	 */
 	public function doError($message)
 	{
 		$this->_phgmErrorMessage = $message;
