@@ -9,7 +9,6 @@ class HttpHandler
 	private $request;
 	private $response;
 	private $controller;
-	private $view;
 
 	private $controllerClass;
 	private $actionName;
@@ -21,7 +20,6 @@ class HttpHandler
 		$this->request = new HttpRequest();
 		$this->response = new HttpResponse();
 		$this->controller = null;
-		$this->view = null;
 	
 		$this->controllerClass = null;
 		$this->actionName = null;
@@ -29,11 +27,25 @@ class HttpHandler
 		$this->requestParams = null;
 	}
 
-	public function handleRequest()
+	/*
+	 *	handleRequest([...params...])
+	 *		HTTPリクエストを処理して応答を返す。
+	 *
+	 *	params:
+	 *		$controllerClass (optional, String) - URLルートを使わない場合に、クラス名を設定する
+	 *		$actionName (optional, String) - URLルートを使わない場合に、コントローラクラスのメソッド名を設定する
+	 *		$requestFormat (optional, String) - URLルートを使わない場合に、応答のデータ刑を設定する
+	 *		$requestParams (optional, Array) - URLルートを使わない場合に、$_GETに加えるパラムを設定する
+	 */
+	public function handleRequest($controllerClass = null, $actionName = null, $requestFormat = null, $requestParams = null)
 	{
 		try {
 			try {
-				$this->determineControllerActionFromRoute();
+				if (issnull($controllerClass)) {
+					$this->determineControllerActionFromRoute();
+				else {
+					$this->useFixedControllerAction($controllerClass, $actionName, $requestFormat, $requestParams);
+				}
 				$this->executeController();
 				if ($this->controller->isError()) {
 					throw new Exception($this->controller->getErrorMessage());
@@ -45,10 +57,23 @@ class HttpHandler
 			} catch (Exception $e) {
 				$this->executeErrorController($e->getMessage());
 			}
-			$this->renderView();
+			$this->renderReponse();
 		} catch (Exception $e) {
-			$this->response->error($e->getMessage());
+			try {
+				$this->response->error($e->getMessage());
+				$this->response->respondAndClose();
+			} catch (Exception $e) {
+				Logger::getLogger->logException(LOG_FATAL, $e);
+			}
 		}
+	}
+
+	private function useFixedControllerAction($controllerClass = null, $actionName = null, $requestFormat = null, $requestParams = null)
+	{
+		$this->controllerClass = $controllerClass;
+		$this->actionName = $actionName;
+		$this->requestFormat = isnull($requestFormat) ? HttpResponseFormat::getDefaultFormat() : $requestFormat;
+		$this->requestParams = isnull($requestParams) ? array_merge($_GET) : array_merge($_GET, $requestParams);
 	}
 
 	private function determineControllerActionFromRoute()
@@ -59,11 +84,15 @@ class HttpHandler
 		if ($route == null) {
 			$this->controllerClass = $router->getDefaultController();
 			$this->actionName = $router->getDefaultAction();
+			$this->requestFormat = HttpResponseFormat::getDefaultFormat();
 			$this->requestParams = array_merge($_GET);
 		} else {
 			$this->controllerClass = $route->getController();
 			$this->actionName = $route->getAction();
-			//TODO: $this->requestFormat = $route->getFormat();
+			$this->requestFormat = $route->getFormat();
+			if (isnull($this->requestFormat)) {
+				$this->requestFormat = HttpResponseFormat::getDefaultFormat();
+			}
 			$this->requestParams = array_merge($_GET, $route->getParams());
 		}
 	}
@@ -83,15 +112,19 @@ class HttpHandler
 		$controllerClass = Router::getInstance()->get404Controller();
 		ClassLoader::load(CONTROLLER, $controllerClass);
 
-		$this->controller = new $controllerClass();
+		$this->controller = new $controllerClass($this->requestFormat);
 		$this->controller->execute($errorMessage);
 	}
 
-	private function renderView()
+	private function renderReponse()
 	{
-		//should alternate view based on render format
-		$view = new BaseView($this->controllerClass, $this->controller->getRenderAction());
-		$view->render($this->controller->getRenderData());
-		print $view->getOutput();
+		//	コントローラ・メソッドに基づいてビューファイルのパスを計算
+		$templateController = StringUtils::camelToUnderscores(preg_replace('/Controller/', '', $this->controllerName));
+		$this->templatePath = VIEWS_DIR . DS . $templateControllerPart . DS . $this->controller->getRenderAction();
+
+		//	コントローラのデータを最終的なデータ刑に変換する。Smartyなどにより。
+		$renderer = BaseRenderer::getRenderer($this->controller->getRenderFormat(), $this->templatePath);
+		$renderer->render($this->controller->getRenderData(), $this->response);
+		$this->response->respondAndClose();
 	}
 }

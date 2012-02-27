@@ -38,14 +38,13 @@ class HttpResponse
 
 	public function isEditable()
 	{
-		return $this->state === self::$STATE_OPEN || $this->state === self::$STATE_HEADERS;
+		return $this->state === self::$STATE_HEADERS || $this->state === self::$STATE_OPEN;
 	}
 
 	public function redirect($url)
 	{
 		if ($this->isEditable()) {
-			header('Location: ' . $url);
-			$this->state = self::$STATE_CLOSED;
+			$this->headers = array('Location: ' . $url);
 		} else {
 			throw new Exception('HttpResponse:redirect -- HTTP応答は返し中なので、リダイレクトはできません。');
 		}
@@ -53,14 +52,27 @@ class HttpResponse
 
 	public function error($message)
 	{
-		header('HTTP/1.0 404 Not Found');
-		$this->state = self::$STATE_CLOSED;
+		if ($this->isEditable()) {
+			$this->headers = array('HTTP/1.0 404 Not Found');
+			$this->responseBody = $message;
+		} else {
+			throw new Exception('HttpResponse:redirect -- HTTP応答は返し中なので、ヘッダーを設定することは');
+		}
 	}
 
-	public function setContentTypeCharset($format, $charset = null)
+	public function setContentTypeCharset($mimeType, $charset)
 	{
 		if ($this->isEditable()) {
-			$this->headers[] = 'Content-type: ' . HttpResponseFormat::mimeFor($format) . '; charset=' . HttpResponseFormat::charset($charset);
+			$this->headers[] = 'Content-type: ' . $mimeType . '; charset=' . $charset;
+		} else {
+			throw new Exception('HttpResponse:redirect -- HTTP応答は返し中なので、応答のデータ刑を変更することはできません。');
+		}
+	}
+
+	public function setHeader($header)
+	{
+		if ($this->isEditable()) {
+			$this->headers[] = $header;
 		} else {
 			throw new Exception('HttpResponse:redirect -- HTTP応答は返し中なので、応答のデータ刑を変更することはできません。');
 		}
@@ -69,6 +81,7 @@ class HttpResponse
 	public function setResponse($responseBody)
 	{
 		if ($this->isEditable()) {
+			$this->headers[] = 'Content-length: ' . strlen($responseBody);
 			$this->responseBody = $responseBody;
 		} else {
 			throw new Exception('HttpResponse:redirect -- HTTP応答は返し中なので、リダイレクトはできません。');
@@ -99,6 +112,15 @@ class HttpResponse
 
 	public function close()
 	{
+		$this->headers = null;
+		$this->responseBody = null;
 		$this->state = self::$STATE_CLOSED;
+	}
+
+	public function respondAndClose()
+	{
+		$this->writeHeaders();
+		$this->writeResponse();
+		$this->close();
 	}
 }
