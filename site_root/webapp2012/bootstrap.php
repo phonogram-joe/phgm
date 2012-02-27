@@ -38,11 +38,6 @@ define('MODELS_DIR', APP_DIR . DS . 'models'); //DBやフォームのモデル�
 define('VIEW_MODELS_DIR', APP_DIR . DS . 'view_models'); //モデルを表示する際に使うクラス
 define('VIEWS_DIR', APP_DIR . DS . 'views'); //共通のレイアウト・ガジェットと、コントローラのアクションごとのテンプレート
 
-//	基本の設定ファイル
-require_once(CONFIG_DIR . DS . 'locale.php');
-require_once(CONFIG_DIR . DS . 'logs.php');
-require_once(CONFIG_DIR . DS . 'environment.php');
-
 //	サイトの動きに関する設定
 require_once(CONFIG_DIR . DS . 'app_all.php'); //appの設定
 if (ENVIRONMENT === ENVIRONMENT_PRODUCTION) {
