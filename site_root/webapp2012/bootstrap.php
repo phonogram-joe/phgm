@@ -31,12 +31,40 @@ define('DATA_CACHE_DIR', TMP_DIR . DS . 'data_cache'); //
 define('SESSION_DIR', TMP_DIR . DS . 'session'); //
 define('TEMPLATES_CACHE_DIR', TMP_DIR . DS . 'templates_c'); //
 
+//	ログレベルのオプション
+define('LOG_TRACE', 1);
+define('LOG_DEBUG', 2);
+define('LOG_INFO', 3);
+define('LOG_WARN', 4);
+define('LOG_ERROR', 5);
+define('LOG_FATAL', 6);
+
 //	このapp専用のファイル
 define('CONTROLLERS_DIR', APP_DIR . DS . 'controllers'); //コントローラクラス
 define('APP_LIB_DIR', APP_DIR . DS . 'lib'); //共通のクラスやビュープラグイン
 define('MODELS_DIR', APP_DIR . DS . 'models'); //DBやフォームのモデルクラス
 define('VIEW_MODELS_DIR', APP_DIR . DS . 'view_models'); //モデルを表示する際に使うクラス
 define('VIEWS_DIR', APP_DIR . DS . 'views'); //共通のレイアウト・ガジェットと、コントローラのアクションごとのテンプレート
+
+//	ライブラリーのクラス
+require_once(LIB_DIR . DS . 'Logger.php');
+require_once(LIB_DIR . DS . 'StringUtils.php');
+require_once(LIB_DIR . DS . 'BaseView.php');
+require_once(LIB_DIR . DS . 'BaseModel.php');
+require_once(LIB_DIR . DS . 'BaseViewModel.php');
+require_once(LIB_DIR . DS . 'BaseController.php');
+require_once(LIB_DIR . DS . 'BaseRenderer.php');
+BaseRenderer::initialize();
+//TODO: reimplement router: require_once(LIB_DIR . DS . 'Router.php');
+require_once(LIB_DIR . DS . 'ClassLoader.php');
+require_once(LIB_DIR . DS . 'HttpRequest.php');
+require_once(LIB_DIR . DS . 'HttpResponse.php');
+require_once(LIB_DIR . DS . 'HttpResponseFormat.php');
+HttpResponseFormat::initialize();
+require_once(LIB_DIR . DS . 'HttpHandler.php');
+
+//	vendorのクラス
+require_once(VENDOR_DIR . DS . 'router' . DS . 'class.Router.php');
 
 //	サイトの動きに関する設定
 require_once(CONFIG_DIR . DS . 'app_all.php'); //appの設定
@@ -47,22 +75,5 @@ if (ENVIRONMENT === ENVIRONMENT_PRODUCTION) {
 } else if (ENVIRONMENT === ENVIRONMENT_TEST) {
 	require_once(CONFIG_DIR . DS . 'app_' . ENVIRONMENT_TEST . '.php'); //開発環境のみの設定
 }
-
-//	ライブラリーのクラス
-require_once(LIB_DIR . DS . 'Logger.php');
-require_once(LIB_DIR . DS . 'StringUtils.php');
-require_once(LIB_DIR . DS . 'BaseView.php');
-require_once(LIB_DIR . DS . 'BaseModel.php');
-require_once(LIB_DIR . DS . 'BaseViewModel.php');
-require_once(LIB_DIR . DS . 'BaseController.php');
-//TODO: reimplement router: require_once(LIB_DIR . DS . 'Router.php');
-require_once(LIB_DIR . DS . 'ClassLoader.php');
-require_once(LIB_DIR . DS . 'HttpRequest.php');
-require_once(LIB_DIR . DS . 'HttpResponse.php');
-require_once(LIB_DIR . DS . 'HttpHandler.php');
-
-//	vendorのクラス
-require_once(VENDOR_DIR . DS . 'router' . DS . 'class.Router.php');
-
 //	サイトのURLー＞コントローラ・アクション設定
 require_once(CONFIG_DIR . DS . 'routes.php');

@@ -19,14 +19,6 @@ ini_set('mbstring.internal_encoding', 'UTF-8');
 ini_set('mbstring.encoding_translation', 'On');
 ini_set('mbstring.substitute_character', 'none');
 
-//	ログレベルのオプション
-define('LOG_TRACE', 1);
-define('LOG_DEBUG', 2);
-define('LOG_INFO', 3);
-define('LOG_WARN', 4);
-define('LOG_ERROR', 5);
-define('LOG_FATAL', 6);
-
 //	有効のログレベル
 define('LOGGER_LEVEL', LOG_WARN);
 define('LOGGER_FILE', LOG_DIR . DS . 'system.log');
@@ -38,3 +30,9 @@ define('ENVIRONMENT_PRODUCTION', 'prod');
 
 //	有効の環境。設定がこれによって変わる
 define('ENVIRONMENT', ENVIRONMENT_DEVELOPMENT);
+
+//	HTTP応答のデータ刑とそれに合わせてのMIMEタイプ・エンコードなど
+HttpResponseFormat::registerFormat(HttpResponseFormat::$HTML, 'text/html', 'utf-8', 'UTF8');
+HttpResponseFormat::registerFormat(HttpResponseFormat::$TEXT, 'text/txt', 'utf-8', 'UTF8');
+HttpResponseFormat::registerFormat(HttpResponseFormat::$JSON, 'application/json', 'utf-8', 'UTF8');
+HttpResponseFormat::registerFormat(HttpResponseFormat::$CSV, 'text/csv', 'Shift_JIS', 'SJIS');
