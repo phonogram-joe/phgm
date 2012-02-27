@@ -90,7 +90,7 @@ class HttpResponse
 
 	public function writeHeaders()
 	{
-		if ($this->state != self::$STATE_OPEN || $this->state != self::$STATE_HEADERS) {
+		if ($this->state != self::$STATE_OPEN && $this->state != self::$STATE_HEADERS) {
 			throw new Exception('HttpResponse::writeHeaders -- HTTPヘッダーは既に返しています。');
 		}
 		$this->state = self::$STATE_HEADERS;
@@ -102,11 +102,13 @@ class HttpResponse
 
 	public function writeResponse()
 	{
-		if ($this->state != self::$STATE_HEADERS || $this->state != self::$STATE_RESPONSE) {
+		if ($this->state != self::$STATE_HEADERS && $this->state != self::$STATE_RESPONSE) {
 			throw new Exception('HttpResponse::writeResponse -- HTTP応答内容を返せません。ヘッダーはまだ返してないまたは応答はすでに閉じています。');
 		}
 		$this->state = self::$STATE_RESPONSE;
-		print $this->responseBody;
+		if (!is_null($this->responseBody)) {
+			print $this->responseBody;
+		}
 		$this->responseBody = null;
 	}
 

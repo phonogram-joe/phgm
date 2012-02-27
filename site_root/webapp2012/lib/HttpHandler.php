@@ -41,9 +41,9 @@ class HttpHandler
 	{
 		try {
 			try {
-				if (issnull($controllerClass)) {
+				if (is_null($controllerClass)) {
 					$this->determineControllerActionFromRoute();
-				else {
+				} else {
 					$this->useFixedControllerAction($controllerClass, $actionName, $requestFormat, $requestParams);
 				}
 				$this->executeController();
@@ -52,18 +52,21 @@ class HttpHandler
 				}
 				if ($this->controller->isRedirect()) {
 					$this->response->redirect($this->controller->getRedirectUrl());
+					$this->response->respondAndClose();
 					return;
 				}
 			} catch (Exception $e) {
-				$this->executeErrorController($e->getMessage());
+				Logger::error($e);
+				$this->executeErrorController($e);
 			}
-			$this->renderReponse();
+			$this->renderResponse();
 		} catch (Exception $e) {
 			try {
-				$this->response->error($e->getMessage());
+				Logger::fatal($e);
+				$this->response->error(FATAL_ERROR_MESSAGE);
 				$this->response->respondAndClose();
 			} catch (Exception $e) {
-				Logger::getLogger->logException(LOG_FATAL, $e);
+				Logger::fatal($e);
 			}
 		}
 	}
@@ -72,8 +75,8 @@ class HttpHandler
 	{
 		$this->controllerClass = $controllerClass;
 		$this->actionName = $actionName;
-		$this->requestFormat = isnull($requestFormat) ? HttpResponseFormat::getDefaultFormat() : $requestFormat;
-		$this->requestParams = isnull($requestParams) ? array_merge($_GET) : array_merge($_GET, $requestParams);
+		$this->requestFormat = is_null($requestFormat) ? HttpResponseFormat::getDefaultFormat() : $requestFormat;
+		$this->requestParams = is_null($requestParams) ? array_merge($_GET) : array_merge($_GET, $requestParams);
 	}
 
 	private function determineControllerActionFromRoute()
@@ -90,7 +93,7 @@ class HttpHandler
 			$this->controllerClass = $route->getController();
 			$this->actionName = $route->getAction();
 			$this->requestFormat = $route->getFormat();
-			if (isnull($this->requestFormat)) {
+			if (is_null($this->requestFormat)) {
 				$this->requestFormat = HttpResponseFormat::getDefaultFormat();
 			}
 			$this->requestParams = array_merge($_GET, $route->getParams());
@@ -107,20 +110,20 @@ class HttpHandler
 		$this->controller->execute($this->requestParams);
 	}
 
-	private function executeErrorController($errorMessage)
+	private function executeErrorController($error)
 	{
 		$controllerClass = Router::getInstance()->get404Controller();
 		ClassLoader::load(CONTROLLER, $controllerClass);
 
 		$this->controller = new $controllerClass($this->requestFormat);
-		$this->controller->execute($errorMessage);
+		$this->controller->execute($error);
 	}
 
-	private function renderReponse()
+	private function renderResponse()
 	{
 		//	コントローラ・メソッドに基づいてビューファイルのパスを計算
-		$templateController = StringUtils::camelToUnderscores(preg_replace('/Controller/', '', $this->controllerName));
-		$this->templatePath = VIEWS_DIR . DS . $templateControllerPart . DS . $this->controller->getRenderAction();
+		$templateControllerName = StringUtils::camelToUnderscores(preg_replace('/Controller/', '', $this->controllerClass));
+		$this->templatePath = VIEWS_DIR . DS . $templateControllerName . DS . $this->controller->getRenderAction();
 
 		//	コントローラのデータを最終的なデータ刑に変換する。Smartyなどにより。
 		$renderer = BaseRenderer::getRenderer($this->controller->getRenderFormat(), $this->templatePath);

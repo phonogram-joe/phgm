@@ -45,6 +45,6 @@ class ClassLoader
 
 	private static function path($type, $filename)
 	{
-		return $type . DS . preg_replace('/\./', DS, $filename) . '.php';
+		return $type . DS . preg_replace('/\.+/', DS, $filename) . '.php';
 	}
 }

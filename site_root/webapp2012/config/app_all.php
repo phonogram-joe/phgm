@@ -23,6 +23,9 @@ ini_set('mbstring.substitute_character', 'none');
 define('LOGGER_LEVEL', LOG_WARN);
 define('LOGGER_FILE', LOG_DIR . DS . 'system.log');
 
+//	処理できないエラーの場合に返すメッセージ
+define('FATAL_ERROR_MESSAGE', 'エラーが発生しました。');
+
 //	環境のオプション
 define('ENVIRONMENT_TEST', 'test');
 define('ENVIRONMENT_DEVELOPMENT', 'dev');
@@ -36,3 +39,19 @@ HttpResponseFormat::registerFormat(HttpResponseFormat::$HTML, 'text/html', 'utf-
 HttpResponseFormat::registerFormat(HttpResponseFormat::$TEXT, 'text/txt', 'utf-8', 'UTF8');
 HttpResponseFormat::registerFormat(HttpResponseFormat::$JSON, 'application/json', 'utf-8', 'UTF8');
 HttpResponseFormat::registerFormat(HttpResponseFormat::$CSV, 'text/csv', 'Shift_JIS', 'SJIS');
+
+//	デフォルトとして使うデータ刑を設定する
+//	フレームワークのタイプを使う場合は：
+HttpResponseFormat::setDefaultFormat(HttpResponseFormat::$HTML);
+//	例：カスタムなタイプ
+//		define('HTTP_FORMAT_KEITAI_HTML', 'keitai');
+//		HttpResponseFormat::registerFormat(HTTP_FORMAT_KEITAI_HTML, 'text/html', 'shift_jis', 'SJIS');
+//		HttpResponseFormat::setDefaultFormat(HTTP_FORMAT_KEITAI_HTML);
+
+
+//	HTTP応答のデータ刑に合わせて、コントローラの変数をそのデータ刑に変換するクラスを設定する
+BaseRenderer::registerRenderer(HttpResponseFormat::$HTML, 'BaseRenderer');
+
+
+
+
