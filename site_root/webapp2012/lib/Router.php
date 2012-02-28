@@ -8,29 +8,23 @@ require_once(LIB_DIR . DS . 'Route.php');
 
 class Router
 {
-	private $default_controller;
-	private $error_controller;
-	private $format_parameter;
-	private $url_prefix;
+	public static $DEFAULT_HTTP_METHOD_PARAMETER = '__http_method';
+
+	private $defaultController;
+	private $errorController;
+	private $urlPrefix;
 
 	private $routes;
-
-	private $request_uri;
-	private $request_route;
 
 	private static $ROUTER;
 
 	private function __construct()
 	{
-		$this->url_prefix = '';
-		$this->default_controller = null;
-		$this->error_controller = null;
-		$this->format_parameter = 'format';
+		$this->urlPrefix = '';
+		$this->defaultController = null;
+		$this->errorController = null;
 
 		$this->routes = array();
-
-		$this->request_uri = $this->uriToRoutable();
-		$this->request_route = $this->routeFor($this->request_uri);
 	}
 
 	public static function getRouter()
@@ -41,11 +35,44 @@ class Router
 		return self::$ROUTER;
 	}
 
-	public function routeFor($routable)
+	public function setUrlPrefix($prefix)
+	{
+		$this->urlPrefix = $prefix;
+	}	
+	public function getUrlPrefix()
+	{
+		return $this->urlPrefix;
+	}
+
+	public function setDefaultController($controller)
+	{
+		$this->defaultController = $controller;
+	}	
+	public function getDefaultController()
+	{
+		return $this->defaultController;
+	}
+
+	public function setErrorController($controller)
+	{
+		$this->errorController = $controller;
+	}	
+	public function getErrorController()
+	{
+		return $this->errorController;
+	}
+
+	public function routeCurrent($httpRequest)
+	{
+		$routable = $this->uriToRoutable();
+		return $this->routeFor($routable, $httpRequest);
+	}
+
+	public function routeFor($routable, $httpRequest = null)
 	{
 		$match = null;
 		foreach($this->routes as $route) {
-			$match = $route->attemptMatchRoute($routable);
+			$match = $route->attemptMatchRoute($routable, $httpRequest);
 			if (!is_null($match)) {
 				return $match;
 			}
@@ -53,16 +80,34 @@ class Router
 		return null;
 	}
 
-	public function urlFor($controller, $action = null, $params = null, $format = null)
+	public function urlForName($name, $params = array())
+	{
+		$url = $this->routes[$name]->attemptCreateUrl(null, $action, $params);
+		return $this->routableToUri($url);
+	}
+
+	public function urlForRoute($controller, $action, $params = null)
 	{
 		$url = null;
 		foreach ($this->routes as $route) {
-			$url = $route->attemptCreateUrl($controller, $action, $params, $format)) {
+			$url = $route->attemptCreateUrl($controller, $action, $params);
 			if (!is_null($url)) {
-				return $url;
+				return $this->routableToUri($url);
 			}
 		}
 		return null;
+	}
+
+	public function map($name, $verbUrl, $controller, $action, $params = array(), $conditions = array())
+	{
+		$newRoute = new Route($name, $verbUrl, $controller, $action, $params, $conditions);
+
+		foreach ($this->routes as $route) {
+			if ($route->isConflict($newRoute)) {
+				throw new Exception('Router:map -- 新ルート' . $name . 'は登録されてるルート' . $route->getName() . 'とぶつかります。');
+			}
+		}
+		$this->routes[$name] = $newRoute;
 	}
 
 	/*
@@ -74,10 +119,11 @@ class Router
 		if (is_null($uri)) {
 			$uri = $_SERVER['REQUEST_URI'];
 		}
-		if (($pos = strpos($uri, '?'))) {
+		$pos = strpos($uri, '?');
+		if ($pos) {
 			$uri = substr($uri, 0, $pos);
 		}
-		$uri = str_replace($this->url_prefix, '', $uri);
+		$uri = str_replace($this->urlPrefix, '', $uri);
 		if (strpos($uri, '/') !== 0) {
 			$uri = '/' . $uri;
 		}
@@ -94,11 +140,11 @@ class Router
 		if (strpos($routable, '/') === 0) {
 			$routable = substr($rou, 1);
 		}
-		if (strlen($this->url_prefix) > 0)
+		if (strlen($this->urlPrefix) > 0) {
 			if (!preg_match('#/$#', $routable)) {
-				$prefix = $this->url_prefix . '/';
+				$prefix = $this->urlPrefix . '/';
 			} else {
-				$prefix = $this->url_prefix;
+				$prefix = $this->urlPrefix;
 			}
 		}
 		return $prefix . $routable;

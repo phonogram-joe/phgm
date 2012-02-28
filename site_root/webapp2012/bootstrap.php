@@ -54,7 +54,10 @@ require_once(LIB_DIR . DS . 'BaseModel.php');
 require_once(LIB_DIR . DS . 'BaseViewModel.php');
 require_once(LIB_DIR . DS . 'BaseController.php');
 require_once(LIB_DIR . DS . 'BaseRenderer.php');
-//TODO: reimplement router: require_once(LIB_DIR . DS . 'Router.php');
+
+//TODO: reimplement router: 
+require_once(LIB_DIR . DS . 'Router.php');
+
 require_once(LIB_DIR . DS . 'ClassLoader.php');
 require_once(LIB_DIR . DS . 'HttpRequest.php');
 require_once(LIB_DIR . DS . 'HttpResponse.php');
@@ -66,7 +69,7 @@ BaseRenderer::classInitialize();
 HttpResponseFormat::classInitialize();
 
 //	vendorのクラス
-require_once(VENDOR_DIR . DS . 'router' . DS . 'class.Router.php');
+//require_once(VENDOR_DIR . DS . 'router' . DS . 'class.Router.php');
 require_once(LIB_DIR . DS . 'renderers' . DS . 'SmartyRenderer.php');
 
 //	サイトの動きに関する設定

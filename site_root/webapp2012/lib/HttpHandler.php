@@ -12,7 +12,6 @@ class HttpHandler
 
 	private $controllerClass;
 	private $actionName;
-	private $requestFormat;
 	private $requestParams;
 
 	public function HttpHandler()
@@ -23,7 +22,6 @@ class HttpHandler
 	
 		$this->controllerClass = null;
 		$this->actionName = null;
-		$this->requestFormat = null;
 		$this->requestParams = null;
 	}
 
@@ -34,17 +32,16 @@ class HttpHandler
 	 *	params:
 	 *		$controllerClass (optional, String) - URLルートを使わない場合に、クラス名を設定する
 	 *		$actionName (optional, String) - URLルートを使わない場合に、コントローラクラスのメソッド名を設定する
-	 *		$requestFormat (optional, String) - URLルートを使わない場合に、応答のデータ刑を設定する
 	 *		$requestParams (optional, Array) - URLルートを使わない場合に、$_GETに加えるパラムを設定する
 	 */
-	public function handleRequest($controllerClass = null, $actionName = null, $requestFormat = null, $requestParams = null)
+	public function handleRequest($controllerClass = null, $actionName = null, $requestParams = null)
 	{
 		try {
 			try {
 				if (is_null($controllerClass)) {
 					$this->determineControllerActionFromRoute();
 				} else {
-					$this->useFixedControllerAction($controllerClass, $actionName, $requestFormat, $requestParams);
+					$this->useFixedControllerAction($controllerClass, $actionName, $requestParams);
 				}
 				$this->executeController();
 				if ($this->controller->isError()) {
@@ -70,33 +67,26 @@ class HttpHandler
 		}
 	}
 
-	private function useFixedControllerAction($controllerClass = null, $actionName = null, $requestFormat = null, $requestParams = null)
+	private function useFixedControllerAction($controllerClass, $actionName, $requestParams = null)
 	{
 		$this->controllerClass = $controllerClass;
 		$this->actionName = $actionName;
-		$this->requestFormat = is_null($requestFormat) ? HttpResponseFormat::getDefaultFormat() : $requestFormat;
-		$this->requestParams = is_null($requestParams) ? array_merge($_GET) : array_merge($_GET, $requestParams);
+		if (!is_null($requestParams)) {
+			$this->request->addParams($requestParams);
+		}
 	}
 
 	private function determineControllerActionFromRoute()
 	{
-		$router = Router::getInstance();
+		$router = Router::getRouter();
 		defineRoutes($router);
-		$route = $router->matchRoute();
+		$route = $router->routeCurrent($this->request);
 		if ($route == null) {
-			$this->controllerClass = $router->getDefaultController();
-			$this->actionName = $router->getDefaultAction();
-			$this->requestFormat = HttpResponseFormat::getDefaultFormat();
-			$this->requestParams = array_merge($_GET);
-		} else {
-			$this->controllerClass = $route->getController();
-			$this->actionName = $route->getAction();
-			$this->requestFormat = $route->getFormat();
-			if (is_null($this->requestFormat)) {
-				$this->requestFormat = HttpResponseFormat::getDefaultFormat();
-			}
-			$this->requestParams = array_merge($_GET, $route->getParams());
+			throw new Exception('HttpHandler -- このURLに一致するルートはありません。');
 		}
+		$this->controllerClass = $route->getController();
+		$this->actionName = $route->getAction();
+		$this->request->addParams($route->getParams());
 	}
 
 	private function executeController()
@@ -105,16 +95,16 @@ class HttpHandler
 		$controllerClass = $this->controllerClass;
 		ClassLoader::load(CONTROLLER, $controllerClass);
 
-		$this->controller = new $controllerClass($actionName, $this->requestFormat);
-		$this->controller->execute($this->requestParams);
+		$this->controller = new $controllerClass($actionName);
+		$this->controller->execute($this->request->getParams());
 	}
 
 	private function executeErrorController($error)
 	{
-		$controllerClass = Router::getInstance()->get404Controller();
+		$controllerClass = Router::getRouter()->getErrorController();
 		ClassLoader::load(CONTROLLER, $controllerClass);
 
-		$this->controller = new $controllerClass($this->requestFormat);
+		$this->controller = new $controllerClass();
 		$this->controller->execute($error);
 	}
 

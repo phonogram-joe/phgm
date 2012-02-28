@@ -38,6 +38,9 @@ define('ENVIRONMENT', ENVIRONMENT_DEVELOPMENT);
 define('SMARTY_LEFT_DELIMITER', '{{');
 define('SMARTY_RIGHT_DELIMITER', '}}');
 
+//	ブラウザが使えないEDIT・DELETEというHTTPメソッドを再現するように、パラムでメソッドを上書きできる。そのパラム名を設定できる
+define('HTTP_METHOD_PARAM', '__http_method');
+
 //	HTTP応答のデータ刑とそれに合わせてのMIMEタイプ・エンコードなど
 HttpResponseFormat::registerFormat(HttpResponseFormat::$HTML, 'text/html', 'utf-8', 'UTF8');
 //	HTMLをShift-JISとして返す場合：　

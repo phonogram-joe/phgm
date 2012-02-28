@@ -29,17 +29,17 @@ class BaseController
 	public static $AROUND_FILTER_BEFORE = 0;
 	public static $AROUND_FILTER_AFTER = 1;
 
-	public function BaseController($actionName, $format)
+	public function BaseController($actionName)
 	{
 		$this->_phgmActionName = $actionName;
 		$this->_phgmRenderActionName = $actionName;
 		$this->_phgmRedirectUrl = null;
 		$this->_phgmErrorMessage = null;
-		$this->_phgmRenderFormat = $format;
+		$this->_phgmRenderFormat = null;
 		$this->_phgmRenderData = null;
 		$this->_phgmResultState = null;
 		$this->_phgmDefaultActionName = null;
-		$this->_phgmDefaultRenderFormat = null;
+		$this->_phgmDefaultRenderFormat = HttpResponseFormat::getDefaultFormat();
 		$this->_phgmIsReturned = false;
 
 		$this->_beforeFilters = array();

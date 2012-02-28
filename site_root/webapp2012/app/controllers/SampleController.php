@@ -8,6 +8,7 @@ class SampleController extends BaseController
 {
 	public $message = 'Hello There! 宜しくお願いします！';
 	public $fmt;
+	public $id;
 
 	public function index($params)
 	{
@@ -17,6 +18,7 @@ class SampleController extends BaseController
 
 	public function show($params)
 	{
+		$this->id = $params['id'];
 		$this->doRender();
 	}
 }
