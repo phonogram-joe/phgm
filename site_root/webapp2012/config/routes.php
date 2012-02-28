@@ -14,6 +14,8 @@ function defineRoutes($router)
 	$router->map('sample_edit_save',	'POST /sample/#id/edit', 	'SampleController', 'editSave');
 	$router->map('sample_delete_form',	'GET /sample/#id/delete', 	'SampleController', 'deleteForm');
 	$router->map('sample_delete_save',	'POST /sample/#id/delete', 	'SampleController', 'deleteSave');
+
+	$router->mapRest('restSample', '/restSample', 'SampleController');
 }
 
 /*

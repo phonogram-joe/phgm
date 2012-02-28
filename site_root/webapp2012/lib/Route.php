@@ -136,19 +136,23 @@ class Route
 		return $urlPath . '?' . http_build_query($queryParams);
 	}
 
-	public function attemptMatchRoute($url, $httpRequest)
+	public function attemptMatchRoute($url, $httpVerb)
 	{
 		$paramValues = array();
-		if (!is_null($httpRequest) && !is_null($this->http_verb) && $this->http_verb !== $httpRequest->getVerb()) {
+		if (!is_null($httpVerb) && !is_null($this->http_verb) && $this->http_verb !== $httpVerb) {
 			return null;
 		}
 		if (preg_match($this->matcher, $url, $paramValues)) {
 			array_shift($paramValues);
-			$params = array_combine($this->url_param_names, $paramValues);
-			foreach ($params as $key => $value) {
-				$params[$key] = urldecode($value);
+			if (count($this->url_param_names) > 0) {
+				$params = array_combine($this->url_param_names, $paramValues);
+				foreach ($params as $key => $value) {
+					$params[$key] = urldecode($value);
+				}
+				$params = array_merge($this->params, $params);
+			} else {
+				$params = array();
 			}
-			$params = array_merge($this->params, $params);
 			$match = new RouteMatch($this->controller, $this->action, $params);
 			return $match;
 		}

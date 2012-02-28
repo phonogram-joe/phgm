@@ -62,17 +62,17 @@ class Router
 		return $this->errorController;
 	}
 
-	public function routeCurrent($httpRequest)
+	public function routeCurrent($httpVerb)
 	{
 		$routable = $this->uriToRoutable();
-		return $this->routeFor($routable, $httpRequest);
+		return $this->routeFor($routable, $httpVerb);
 	}
 
-	public function routeFor($routable, $httpRequest = null)
+	public function routeFor($routable, $httpVerb = null)
 	{
 		$match = null;
 		foreach($this->routes as $route) {
-			$match = $route->attemptMatchRoute($routable, $httpRequest);
+			$match = $route->attemptMatchRoute($routable, $httpVerb);
 			if (!is_null($match)) {
 				return $match;
 			}
@@ -108,6 +108,22 @@ class Router
 			}
 		}
 		$this->routes[$name] = $newRoute;
+	}
+
+	/*
+	 *	mapRest($namePrefix, $urlPrefix, $controller)
+	 *		shortcut for mapping a RESTful controller
+	 */
+	public function mapRest($namePrefix, $urlPrefix, $controller)
+	{
+		$this->map($namePrefix . '_index', 'GET ' . $urlPrefix . '', $controller, 'index');
+		$this->map($namePrefix . '_new_form', 'GET ' . $urlPrefix . '/new', $controller, 'newForm');
+		$this->map($namePrefix . '_new_save', 'POST ' . $urlPrefix . '/new', $controller, 'newSave');
+		$this->map($namePrefix . '_show', 'GET ' . $urlPrefix . '/#id', $controller, 'show');
+		$this->map($namePrefix . '_edit_form', 'GET ' . $urlPrefix . '/#id/edit', $controller, 'editForm');
+		$this->map($namePrefix . '_edit_save', 'POST ' . $urlPrefix . '/#id/edit', $controller, 'editSave');
+		$this->map($namePrefix . '_delete_form', 'GET ' . $urlPrefix . '/#id/delete', $controller, 'deleteForm');
+		$this->map($namePrefix . '_delete_save', 'POST ' . $urlPrefix . '/#id/delete', $controller, 'deleteSave');
 	}
 
 	/*

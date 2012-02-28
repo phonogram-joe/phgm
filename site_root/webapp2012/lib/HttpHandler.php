@@ -79,8 +79,8 @@ class HttpHandler
 	private function determineControllerActionFromRoute()
 	{
 		$router = Router::getRouter();
-		defineRoutes($router);
-		$route = $router->routeCurrent($this->request);
+		defineRoutes($router); //このメソッドは/webapp/config/routes.phpで設定される
+		$route = $router->routeCurrent($this->request->getVerb());
 		if ($route == null) {
 			throw new Exception('HttpHandler -- このURLに一致するルートはありません。');
 		}

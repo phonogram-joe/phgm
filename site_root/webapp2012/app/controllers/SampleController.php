@@ -13,12 +13,18 @@ class SampleController extends BaseController
 	public function index($params)
 	{
 		$this->fmt = $this->getRenderFormat();
-		$this->doRender();
+		return $this->doRender();
 	}
 
 	public function show($params)
 	{
 		$this->id = $params['id'];
-		$this->doRender();
+		return $this->doRender();
+	}
+
+	public function editForm($params)
+	{
+		$this->id = $params['id'];
+		return $this->doRender(null, null, 'show');
 	}
 }
