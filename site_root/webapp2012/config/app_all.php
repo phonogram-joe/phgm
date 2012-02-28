@@ -40,6 +40,8 @@ define('SMARTY_RIGHT_DELIMITER', '}}');
 
 //	HTTP応答のデータ刑とそれに合わせてのMIMEタイプ・エンコードなど
 HttpResponseFormat::registerFormat(HttpResponseFormat::$HTML, 'text/html', 'utf-8', 'UTF8');
+//	HTMLをShift-JISとして返す場合：　
+//		HttpResponseFormat::registerFormat(HttpResponseFormat::$HTML, 'text/html', 'shift_jis', 'SJIS');
 HttpResponseFormat::registerFormat(HttpResponseFormat::$TEXT, 'text/txt', 'utf-8', 'UTF8');
 HttpResponseFormat::registerFormat(HttpResponseFormat::$JSON, 'application/json', 'utf-8', 'UTF8');
 HttpResponseFormat::registerFormat(HttpResponseFormat::$CSV, 'text/csv', 'Shift_JIS', 'SJIS');

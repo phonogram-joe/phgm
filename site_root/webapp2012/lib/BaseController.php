@@ -18,6 +18,7 @@ class BaseController
 	private $_phgmRenderFormat;
 	private $_phgmRenderData;
 	private $_phgmResultState;
+	private $_phgmIsReturned;
 
 	public static $BEFORE_FILTER = 'before';
 	private $_beforeFilters;
@@ -39,6 +40,7 @@ class BaseController
 		$this->_phgmResultState = null;
 		$this->_phgmDefaultActionName = null;
 		$this->_phgmDefaultRenderFormat = null;
+		$this->_phgmIsReturned = false;
 
 		$this->_beforeFilters = array();
 		$this->_afterFilters = array();
@@ -58,23 +60,6 @@ class BaseController
 		return $array;
 	}
 
-	private function doFilters($type, $beforeAfter = null)
-	{
-		if ($type === self::$BEFORE_FILTER) {
-			foreach ($this->_beforeFilters as $name) {
-				call_user_func(array($this, $name));
-			}
-		} else if ($type === self::$AFTER_FILTER) {
-			foreach ($this->_afterFilters as $name) {
-				call_user_func(array($this, $name));
-			}
-		} else if ($type === self::$BEFORE_FILTER) {
-			foreach ($this->_aroundFilters as $name) {
-				call_user_func(array($this, $name), $beforeAfter);
-			}
-		}
-	}
-
 	//do not override
 	public function execute($params)
 	{
@@ -88,10 +73,36 @@ class BaseController
 		}
 
 		$this->doFilters(self::$BEFORE_FILTER);
+		if ($this->_phgmIsReturned) { return; }
+
 		$this->doFilters(self::$AROUND_FILTER, self::$AROUND_FILTER_BEFORE);
+		if ($this->_phgmIsReturned) { return; }
+
 		call_user_func(array($this, $this->_phgmActionName), $params);
+		
 		$this->doFilters(self::$AROUND_FILTER, self::$AROUND_FILTER_AFTER);
 		$this->doFilters(self::$AFTER_FILTER);
+	}
+
+	private function doFilters($type, $beforeAfter = null)
+	{
+		if ($type === self::$BEFORE_FILTER) {
+			foreach ($this->_beforeFilters as $name) {
+				//	アラウンドフィルターの前にこーるする場合、レスポンスが決まったら中止する
+				if ($this->_phgmIsReturned) { return; }
+				call_user_func(array($this, $name));
+			}
+		} else if ($type === self::$AFTER_FILTER) {
+			foreach ($this->_afterFilters as $name) {
+				call_user_func(array($this, $name));
+			}
+		} else if ($type === self::$BEFORE_FILTER) {
+			foreach ($this->_aroundFilters as $name) {
+				//	アラウンドフィルターの前にこーるする場合、レスポンスが決まったら中止する
+				if ($this->_phgmIsReturned && $beforeAfter === self::$AROUND_FILTER_BEFORE) { return; }
+				call_user_func(array($this, $name), $beforeAfter);
+			}
+		}
 	}
 
 	//override to put common initialization code for all actions
@@ -111,12 +122,30 @@ class BaseController
 		}
 	}
 
+	/*
+	 *	doIsReturned()　－－　応答が決まったってことを設定する
+	 *		二度コールするとエラーを発生する
+	 */
+	private function doIsReturned()
+	{
+		if ($this->_phgmIsReturned) {
+			throw new Exception('BaseController::doIsReturned -- レンダー・エラー・リダイレクトは既に設定されてます。');
+		}
+		$this->_phgmIsReturned = true;
+	}
+
 	/*--------------------------------------------------------------
 	 *	リダイレクトの場合
 	 */
-	public function doRedirect($url, $action = null, $params = null)
+	public function doRedirect($url, $actionName = null, $params = null)
 	{
-		$this->_phgmRedirectUrl = $url; //TODO: if action given, the $url is a controller name and we need to determine URL from router
+		$this->doIsReturned();
+		if (!is_null($actionName)) {
+			$controllerName = $url;
+			$this->_phgmRedirectUrl = Router::urlFor($controllerName, $actionName, $params);
+		} else {
+			$this->_phgmRedirectUrl = $url; //TODO: if action given, the $url is a controller name and we need to determine URL from router
+		}
 	}
 	public function isRedirect()
 	{
@@ -132,6 +161,7 @@ class BaseController
 	 */
 	public function doRender($format = null, $data = null, $actionName = null)
 	{
+		$this->doIsReturned();
 		if (!is_null($format)) {
 			$this->_phgmRenderFormat = $format;
 		}
@@ -164,6 +194,7 @@ class BaseController
 	 */
 	public function doError($message)
 	{
+		$this->doIsReturned();
 		$this->_phgmErrorMessage = $message;
 	}
 	public function isError()

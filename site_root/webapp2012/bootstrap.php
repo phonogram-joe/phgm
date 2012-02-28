@@ -54,14 +54,16 @@ require_once(LIB_DIR . DS . 'BaseModel.php');
 require_once(LIB_DIR . DS . 'BaseViewModel.php');
 require_once(LIB_DIR . DS . 'BaseController.php');
 require_once(LIB_DIR . DS . 'BaseRenderer.php');
-BaseRenderer::initialize();
 //TODO: reimplement router: require_once(LIB_DIR . DS . 'Router.php');
 require_once(LIB_DIR . DS . 'ClassLoader.php');
 require_once(LIB_DIR . DS . 'HttpRequest.php');
 require_once(LIB_DIR . DS . 'HttpResponse.php');
 require_once(LIB_DIR . DS . 'HttpResponseFormat.php');
-HttpResponseFormat::initialize();
 require_once(LIB_DIR . DS . 'HttpHandler.php');
+
+//	ライブラリーの初期化
+BaseRenderer::initialize();
+HttpResponseFormat::initialize();
 
 //	vendorのクラス
 require_once(VENDOR_DIR . DS . 'router' . DS . 'class.Router.php');

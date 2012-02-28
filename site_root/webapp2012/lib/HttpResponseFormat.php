@@ -37,9 +37,9 @@ class HttpResponseFormat
 
 	public static function registerFormat($typeName, $mimeType, $charset, $encoding)
 	{
-		self::$MIME_TYPES[$name] = $mimeType;
-		self::$CHARSETS[$name] = $charset;
-		self::$ENCODINGS[$name] = $encoding;
+		self::$MIME_TYPES[$typeName] = $mimeType;
+		self::$CHARSETS[$typeName] = $charset;
+		self::$ENCODINGS[$typeName] = $encoding;
 	}
 
 	public static function setDefaultFormat($typeName)
@@ -54,7 +54,7 @@ class HttpResponseFormat
 
 	/*
 	 *	mimeType($type)
-	 *		HTTPヘッダーで使えるエンコードの略を返す。ナルの場合はmb_http_output()のエンコードを使う。
+	 *		HTTPヘッダーで使えるエンコードの略を返す。データ刑のMIMEタイプです。
 	 */
 	public static function mimeType($typeName)
 	{
@@ -63,7 +63,7 @@ class HttpResponseFormat
 
 	/*
 	 *	charset($charset)
-	 *		HTTPヘッダーで使えるエンコードの略を返す。ナルの場合はmb_http_output()のエンコードを使う。
+	 *		HTTPヘッダーで使えるエンコードの略を返す応答自体のも文字コードです。
 	 */
 	public static function encoding($typeName)
 	{
@@ -72,13 +72,10 @@ class HttpResponseFormat
 
 	/*
 	 *	charset($charset)
-	 *		HTTPヘッダーで使えるエンコードの略を返す。ナルの場合はmb_http_output()のエンコードを使う。
+	 *		HTTPヘッダーで使えるエンコードの略を返す。Content-type: text/html; charset=UTF-8のメタタグようのcharsetです。
 	 */
 	public static function charset($typeName)
 	{
-		if (is_null($charset)) {
-			$charset = mb_http_output();
-		}
 		return self::$CHARSETS[$typeName];
 	}
 }

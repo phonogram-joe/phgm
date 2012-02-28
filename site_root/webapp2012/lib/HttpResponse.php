@@ -95,7 +95,7 @@ class HttpResponse
 
 	public function setEncoding($encoding)
 	{
-		if (is_null($encoding)) {
+		if (is_null($encoding) || strlen(trim($encoding)) === 0) {
 			$encoding = mb_http_output();
 			if ($encoding === 'pass') {
 				$encoding = mb_internal_encoding();
