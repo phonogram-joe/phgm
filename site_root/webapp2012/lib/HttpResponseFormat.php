@@ -21,7 +21,7 @@ class HttpResponseFormat
 	private static $DEFAULT_FORMAT;
 	private static $IS_INITIALIZED = false;
 
-	public static function initialize()
+	public static function classInitialize()
 	{
 		if (self::$IS_INITIALIZED) {
 			return;

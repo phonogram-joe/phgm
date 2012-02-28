@@ -56,7 +56,7 @@ HttpResponseFormat::setDefaultFormat(HttpResponseFormat::$HTML);
 
 
 //	HTTP応答のデータ刑に合わせて、コントローラの変数をそのデータ刑に変換するクラスを設定する
-BaseRenderer::registerRenderer(HttpResponseFormat::$HTML, 'SmartyRenderer');
+BaseRenderer::registerRenderer(HttpResponseFormat::$HTML, 'SmartyRenderer', '.html');
 
 
 

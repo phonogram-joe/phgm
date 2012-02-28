@@ -62,8 +62,8 @@ require_once(LIB_DIR . DS . 'HttpResponseFormat.php');
 require_once(LIB_DIR . DS . 'HttpHandler.php');
 
 //	ライブラリーの初期化
-BaseRenderer::initialize();
-HttpResponseFormat::initialize();
+BaseRenderer::classInitialize();
+HttpResponseFormat::classInitialize();
 
 //	vendorのクラス
 require_once(VENDOR_DIR . DS . 'router' . DS . 'class.Router.php');

@@ -10,14 +10,26 @@ class SmartyRenderer extends BaseRenderer
 {
 	private $smarty;
 
-	public function customRender($data, $httpResponse)
+	public function customRender($data)
 	{
-		$this->templatePath .= '.html';
+		foreach ($data as $key => $value) {
+			if (is_object($value)) {
+				$this->smarty->assignByRef($key, $value);
+			} else {
+				$this->smarty->assign($key, $value);
+			}
+		}
+		return $this->smarty->fetch($this->templatePath);
+	}
 
+	public function customHttpResponse()
+	{
+		
+	}
+
+	public function initialize()
+	{
 		$this->setup();
-		$this->assignVars($data);
-    	
-		$httpResponse->setResponse($this->smarty->fetch($this->templatePath));
 	}
 
 	public function setup()
@@ -32,16 +44,5 @@ class SmartyRenderer extends BaseRenderer
 
 		$this->smarty->left_delimiter = SMARTY_LEFT_DELIMITER;
 		$this->smarty->right_delimiter = SMARTY_RIGHT_DELIMITER;
-	}
-
-	public function assignVars($data)
-	{
-		foreach ($data as $key => $value) {
-			if (is_object($value)) {
-				$this->smarty->assignByRef($key, $value);
-			} else {
-				$this->smarty->assign($key, $value);
-			}
-		}
 	}
 }

@@ -126,7 +126,7 @@ class HttpHandler
 
 		//	コントローラのデータを最終的なデータ刑に変換する。Smartyなどにより。
 		$renderer = BaseRenderer::getRenderer($this->controller->getRenderFormat(), $this->templatePath);
-		$renderer->render($this->controller->getRenderData(), $this->response);
+		$renderer->renderHttpResponse($this->controller->getRenderData(), $this->response);
 		$this->response->respondAndClose();
 	}
 }

@@ -7,26 +7,35 @@
 class BaseRenderer
 {
 	private static $RENDERERS;
+	private static $RENDERER_EXTENSIONS;
 	private static $IS_INITIALIZED = false;
 
 	public $templatePath;
 	public $format;
 
-	public static function initialize()
+	public static function classInitialize()
 	{
 		self::$IS_INITIALIZED = true;
 		self::$RENDERERS = array();
+		self::$RENDERER_EXTENSIONS = array();
 	}
 
-	public static function registerRenderer($format, $rendererClass)
+	public static function registerRenderer($format, $rendererClass, $extension)
 	{
 		self::$RENDERERS[$format] = $rendererClass;
+		self::$RENDERER_EXTENSIONS[$format] = $extension;
 	}
 
 	public static function getRenderer($format, $templatePath)
 	{
-		$className = self::$RENDERERS[$format];
-		$renderer = new $className($format, $templatePath);
+		if (isset(self::$RENDERERS[$format])) {
+			$className = self::$RENDERERS[$format];
+			$extension = self::$RENDERER_EXTENSIONS[$format];
+		} else {
+			throw new Exception('BaseRenderer::getRenderer -- ' . $format . 'のレンダラは設定されてない。');
+		}
+		$renderer = new $className($format, $templatePath . $extension);
+		$renderer->initialize();
 		return $renderer;
 	}
 
@@ -36,24 +45,32 @@ class BaseRenderer
 		$this->format = $format;
 	}
 
-	public function render($data, $httpResponse)
+	public function initialize()
 	{
+		
+	}
+
+	public function renderHttpResponse($data, $httpResponse)
+	{
+		$output = $this->customRender($data);
+
 		$httpResponse->setContentTypeCharset(HttpResponseFormat::mimeType($this->format), HttpResponseFormat::charset($this->format));
 		$httpResponse->setEncoding(HttpResponseFormat::encoding($this->format));
-		$this->customRender($data, $httpResponse);
+		$httpResponse->setResponse($output);
+		$this->customHttpResponse($data, $httpResponse);
+	}
+
+	public function renderFetch($data)
+	{
+		return $this->customRender($data);
 	}
 
 	public function customRender($data, $httpResponse)
 	{
-		$this->templatePath .= '.html';
-		if (file_exists($this->templatePath)) {
-			$contents = file_get_contents($this->templatePath);
-			$format = HttpResponseFormat::$TEXT;
-		} else {
-			$format = HttpResponseFormat::$JSON;
-			$contents = json_encode($data);
-		}
-		$httpResponse->setContentTypeCharset(HttpResponseFormat::mimeType($format), HttpResponseFormat::charset($format));
-		$httpResponse->setResponse($contents);
+	}
+
+	public function customHttpResponse($data, $httpResponse)
+	{
+		
 	}
 }
