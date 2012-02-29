@@ -50,41 +50,21 @@ class Logger
 			return true;
 		}
 
-		//file_put_contents($this->filepath, $msg, FILE_APPEND);
-		//return;
-
-		if (($fp = @fopen($this->filepath, "a")) <= false) {
+		$fp = fopen($this->filepath, 'a');
+		if ($fp === false) {
 			print $msg;
-			trigger_error("Couldn't open log file '" . $this->filepath . "'.", E_USER_NOTICE);
-			return false;
+			throw new Exception('ログファイルを開けませんでした。');
 		}
 
-		if (!flock($fp, LOCK_EX)) {
+		if (fwrite($fp, $msg) === false) {
 			@fclose($fp);
-			print $msg;
-			trigger_error("Couldn't lock log file. '" . $this->filepath . "'.", E_USER_NOTICE);
+			throw new Exception('');
 			return false;
 		}
 
-		if (fwrite($fp, $line) <= false) {
-			@flock($fp, LOCK_UN);
-			@fclose($fp);
+		if (fclose($fp) === false) {
 			print $msg;
-			trigger_error("Couldn't write log file. '" . $this->filepath . "'.", E_USER_NOTICE);
-			return false;
-		}
-
-		if (!flock($fp, LOCK_UN)) {
-			@fclose($fp);
-			print $msg;
-			trigger_error("Couldn't unlock log file. '" . $this->filepath . "'.", E_USER_NOTICE);
-			return false;
-		}
-
-		if (!fclose($fp)) {
-			print $msg;
-			trigger_error("Couldn't close log file. '" . $this->filepath . "'.", E_USER_NOTICE);
-			return false;
+			throw new Exception('ログファイルを正しく閉じられませんでした。');
 		}
 
 		return true;
