@@ -30,8 +30,7 @@ class HttpRequest
 
 		foreach ($_FILES as $key => $value) {
 			if (is_array($value)) {
-				$file = null; //TODO: new UploadFile($value)
-				$params[$key] = $file;
+				$params[$key] = new RequestFileUpload($value);
 			} else {
 				$params[$key] = $value;
 			}
@@ -51,7 +50,6 @@ class HttpRequest
 
 	private function setVerb()
 	{
-		//TODO: use either $_SERVER['REQUEST_METHOD'] or alternately read from a specific param to override it (in case of non GET/POST verbs)
 		$this->httpVerb = strtolower($_SERVER['REQUEST_METHOD']);
 		if (defined('HTTP_METHOD_PARAM') && array_key_exists(HTTP_METHOD_PARAM, $this->params)) {
 			$this->httpVerb = $this->params[HTTP_METHOD_PARAM];
