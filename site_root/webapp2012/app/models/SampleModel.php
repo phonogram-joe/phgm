@@ -11,13 +11,12 @@ class SampleModel extends BaseModel
 	public static function classInitialize()
 	{
 		$modelDefinition = BaseModel::initializeSubclass(__CLASS__);
-		$modelDefinition->defineField('name', 'text', array('required'), null, true);
-		$modelDefinition->defineField('email', 'email', array('required', 'email'), null, true);
+		$modelDefinition->defineField('name', '名前', 'text', array('required', 'validateNonEmpty'), null, true);
+		$modelDefinition->defineField('email', 'Eメール', 'email', array('required', 'email'), null, true);
 	}
 
-	private function validateSample($value)
+	private static function validateNonEmpty($value)
 	{
-		var_dump('validateSample: ' . $value);
-		return null;
+		return is_null($value) || strlen(trim($value)) === 0 ? '未入力です' : null;
 	}
 }

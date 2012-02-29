@@ -29,10 +29,14 @@ class ModelDefinition
 	{
 		return $this->fields;
 	}
-
-	public function defineField($name, $type, $validations, $kanaConversion = null, $isVisible = false)
+	public function getLabel($key)
 	{
-		$this->fields[$name] = array('name' => $name, 'type' => $type, 'validations' => $validations, 'kanaConversion' => $kanaConversion);
+		return $this->fields[$key]['label'];
+	}
+
+	public function defineField($name, $label, $type, $validations, $kanaConversion = null, $isVisible = false)
+	{
+		$this->fields[$name] = array('name' => $name, 'label' => $label, 'type' => $type, 'validations' => $validations, 'kanaConversion' => $kanaConversion);
 		foreach ($validations as $validator) {
 			//each validator should be given as a string with method name optionally followed by arguments. separate all segments with a colon eg 'lengthMax:10' or 'lengthRange:8:20'
 			$validatorParts = preg_split('/[:]/', $validator);
@@ -118,7 +122,7 @@ class ModelDefinition
 
 			if (!is_null($errorMsg)) {
 				$modelValid = false;
-				$object->validationErrors[] = array($name, $errorMsg);
+				$object->validationErrors[] = array('name' => $name, 'message' => $errorMsg, 'label' => $this->fields[$name]['label']);
 			}
 		}
 		return $modelValid;

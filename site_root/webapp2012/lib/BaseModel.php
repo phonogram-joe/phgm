@@ -68,6 +68,12 @@ class BaseModel
 		return $this->{$key};
 	}
 
+	public function getLabel($key)
+	{
+		$modelDefinition = self::classModelDefinition(get_class($this));
+		return $modelDefinition->getLabel($key);
+	}
+
 	public function getChanged()
 	{
 		return $this->changedFields;
