@@ -25,6 +25,8 @@ class SampleController extends BaseController
 	public function editForm($params)
 	{
 		$this->id = $params['id'];
+		$this->urlName = Router::getRouter()->urlForName('restSample_new_form', array('id' => 5));
+		$this->urlRoute = Router::getRouter()->urlForRoute('SampleController', 'editForm', array('id' => 5));
 		return $this->doRender(null, null, 'show');
 	}
 }

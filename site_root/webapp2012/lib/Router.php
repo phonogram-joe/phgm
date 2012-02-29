@@ -82,7 +82,9 @@ class Router
 
 	public function urlForName($name, $params = array())
 	{
-		$url = $this->routes[$name]->attemptCreateUrl(null, $action, $params);
+		$controller = $this->routes[$name]->getController();
+		$action = $this->routes[$name]->getAction();
+		$url = $this->routes[$name]->attemptCreateUrl($controller, $action, $params);
 		return $this->routableToUri($url);
 	}
 
@@ -154,10 +156,11 @@ class Router
 	{
 		$prefix = '';
 		if (strpos($routable, '/') === 0) {
-			$routable = substr($rou, 1);
+			$routable = substr($routable, 1);
 		}
+		$routable = trim($routable);
 		if (strlen($this->urlPrefix) > 0) {
-			if (!preg_match('#/$#', $routable)) {
+			if (!preg_match('/\/$/', $this->urlPrefix)) {
 				$prefix = $this->urlPrefix . '/';
 			} else {
 				$prefix = $this->urlPrefix;

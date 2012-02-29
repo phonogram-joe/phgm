@@ -43,8 +43,7 @@ class Route
 			$this->http_verb = strtolower($matchParts[0]);
 			$this->url_pattern = $matchParts[1];
 		} else {
-			$this->http_verb = null;
-			$this->url_pattern = $matchParts[0];
+			throw new Exception('Route:__construct -- URLパタンは「GET /url」のようにHTTPメソッド・スペース・URLで書いてください。');
 		}
 
 		$this->matcher = null;
@@ -55,8 +54,7 @@ class Route
 	{
 		//	convert the url_pattern into a regex, converting param placeholders into regex segments that match the param conditions
 		$regex = preg_replace_callback(self::$PARAM_PATTERN, array($this, 'createRegexCallback'), $this->url_pattern);
-		$regex .= '/?';
-		$this->matcher = '@^' . $regex . '$@';
+		$this->matcher = '@^' . $regex . '/?$@';
 
 		//	store the param names used within the url_pattern, in order. first char of each is /:#@/ type delimiter, so discard it.
 		$paramNames = array();
@@ -105,8 +103,17 @@ class Route
 	{
 		return $this->name;
 	}
+	public function getController()
+	{
+		return $this->controller;
+	}
+	public function getAction()
+	{
+		return $this->action;
+	}
 
 	/*
+	 *	ERROR/TODO: url from route details fails
 	 *	attemptCreateUrl($controller, $action, $params)
 	 *		コントローラ名・アクション名・パラムをこのルートのパタンに基づいてURLに変換する。コントローラやアクションが合わない場合または
 	 *		パラムの内容が条件に一致しないばあいはナルを返す。すべて一致する場合はURLストリングを返す。
@@ -130,7 +137,7 @@ class Route
 			}
 		}
 		//	check the completed URL and see if it matches this route's criteria
-		if (is_null($this->attemptMatchRoute($urlPath))) {
+		if (is_null($this->attemptMatchRoute($urlPath, null))) {
 			return null;
 		}
 		return $urlPath . '?' . http_build_query($queryParams);
