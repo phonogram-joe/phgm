@@ -4,6 +4,8 @@
  *	Licensed Under the MIT license http://www.opensource.org/licenses/mit-license.php
  */
 
+ClassLoader::load(MODEL, 'SampleModel');
+
 class SampleController extends BaseController
 {
 	public $message = 'Hello There! 宜しくお願いします！';
@@ -27,6 +29,14 @@ class SampleController extends BaseController
 		$this->id = $params['id'];
 		$this->urlName = Router::getRouter()->urlForName('restSample_new_form', array('id' => 5));
 		$this->urlRoute = Router::getRouter()->urlForRoute('SampleController', 'editForm', array('id' => 5));
+
+		$this->smodel = new SampleModel();
+		//$this->smodel->set('name', 'スミス');
+		$this->smodel->set('email', 'smith@example.com@');
+		if (!$this->smodel->isValid()) {
+			$this->smodelErrors = $this->smodel->getValidationErrors();
+		}
+
 		return $this->doRender(null, null, 'show');
 	}
 	public function editSave($params)
