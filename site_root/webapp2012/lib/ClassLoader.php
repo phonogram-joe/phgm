@@ -5,42 +5,56 @@
  */
 
 define('CONTROLLER', CONTROLLERS_DIR); //コントローラクラス
-define('APP_LIB', APP_LIB_DIR . 'classes'); //共通のクラスやビュープラグイン
+define('HELPER', APP_LIB_DIR . DS . 'classes'); //共通のクラスやビュープラグイン
 define('MODEL', MODELS_DIR); //DBやフォームのモデルクラス
-define('VIEW_MODEL', VIEW_MODELS_DIR); //モデルを表示する際に使うクラス
+define('DECORATOR', DECORATORS_DIR); //モデルを表示する際に使うクラス
 define('VIEW', VIEWS_DIR); //共通のレイアウト・ガジェットと、コントローラのアクションごとのテンプレート
+define('LIB_VALIDATOR', LIB_DIR . DS . 'validators'); //コントローラクラス
+define('VALIDATOR', VALIDATORS_DIR);
 
 /*
 //TODO: use PHP 5's __autoload($name) feature to autoload classes using naming conventions
-function __autoload($name)
-{
-	if (preg_match('/Controller/', $name)) {
-		ClassLoader::load(CONTROLLER, $name);
-	}
-	if (preg_match('/Model/', $name)) {
-		ClassLoader::load(MODEL, $name);
-	}
-	if (preg_match('/Decorator/', $name)) {
-		ClassLoader::load(VIEW_MODEL, $name);
-	}
-	if (preg_match('/View/', $name)) {
-		ClassLoader::load(VIEW, $name);
-	}
-	if (preg_match('/Helper/', $name)) {
-		ClassLoader::load(APP_LIB, $name);
-	}
-}
 */
 
 class ClassLoader
 {
-	public static function load($type, $filename)
+
+	public static function load($type, $name)
+	{
+		if (preg_match('/Controller$/', $name)) {
+			self::loadType(CONTROLLER, $name);
+		}
+		if (preg_match('/Model$/', $name)) {
+			self::loadType(MODEL, $name);
+		}
+		if (preg_match('/Decorator$/', $name)) {
+			self::loadType(DECORATOR, $name);
+		}
+		if (preg_match('/View$/', $name)) {
+			self::loadType(VIEW, $name);
+		}
+		if (preg_match('/Helper$/', $name)) {
+			self::loadType(HELPER, $name);
+		}
+		if (preg_match('/Validator$/', $name)) {
+			if (file_exists(self::path(VALIDATOR, $name))) {
+				self::loadType(VALIDATOR, $name);
+			} else {
+				self::loadType(LIB_VALIDATOR, $name);
+			}
+		}
+	}
+
+	private static function loadType($type, $filename)
 	{
 		$path = self::path($type, $filename);
 		if (!file_exists($path)) {
 			throw new Exception('ClassLoader::load -- ファイルは見つかりません: ' . $path);
 		}
 		require_once(self::path($type, $filename));
+		if (method_exists($filename, 'classInitialize')) {
+			call_user_func(array($filename, 'classInitialize'));
+		}
 	}
 
 	private static function path($type, $filename)

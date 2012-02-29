@@ -10,26 +10,54 @@
 
 class BaseModel
 {
-	public function BaseModel()
+	private static $CLASS_MODEL_DEFINITIONS;
+
+	public $changedFields;
+	public $validationErrors;
+
+	public function BaseModel($values = null)
 	{
-		
+		$this->changedFields = null;
+		$modelDefinition = self::classModelDefinition(get_class($this));
+		$modelDefinition->initializeObject($this);
+		if (!is_null($values)) {
+			$modelDefinition->set($this, $values);
+		}
+		$this->changedFields = array();
+		$this->validationErrors = array();
 	}
 
+	public static function classInitialize()
+	{
+		if (is_null(self::$CLASS_MODEL_DEFINITIONS)) {
+			self::$CLASS_MODEL_DEFINITIONS = array();
+		}
+	}
+
+	public static function initializeSubclass($class)
+	{
+		$reflector = new ReflectionClass($class);
+		if (false !== array_search('MODEL_DEFINITION', $reflector->getStaticProperties())) {
+			return;
+		}
+		$modelDefinition = new ModelDefinition($class);
+		$reflector->setStaticPropertyValue('MODEL_DEFINITION', $modelDefinition);
+		self::$CLASS_MODEL_DEFINITIONS[$class] = $modelDefinition;
+		return $modelDefinition;
+	}
+
+	private static function classModelDefinition($class)
+	{
+		return self::$CLASS_MODEL_DEFINITIONS[$class];
+	}
+	
 	/*
 	 *	set($key[, $value])
 	 */
 	public function set($key, $value = null)
 	{
-		if (is_null($key)) {
-			throw new Exception('BaseModel:set() -- キーはナルです。');
-		}
-		if (is_array($key)) {
-			foreach ($key as $property => $value) {
-				$this->$property = $value;
-			}
-		} else {
-			$this->$key = $value;
-		}
+		$modelDefinition = self::classModelDefinition(get_class($this));
+		$modelDefinition->set($this, $key, $value);
 	}
 
 	/*
@@ -37,66 +65,22 @@ class BaseModel
 	 */
 	public function get($key)
 	{
-		
+		return $this->{$key};
 	}
 
-	/*
-	 *	fromJSON($json)
-	 *		JSONフォーマットのストリングからデータを読み取って設定する
-	 *
-	 *	params:
-	 *		String $json: JSONフォーマットされたストリング。キーはクラスのプロパティーに一致すると設定される
-	 *
-	 *	returns:
-	 *		String: 今オブジェクトのデータをJSONフォーマットにしたストリング
-	 */
-	public function toJSON()
+	public function getChanged()
 	{
-		
+		return $this->changedFields;
 	}
 
-	/*
-	 *	fromJSON($json)
-	 *		JSONフォーマットのストリングからデータを読み取って設定する
-	 *
-	 *	params:
-	 *		String $json: JSONフォーマットされたストリング。キーはクラスのプロパティーに一致すると設定される
-	 *
-	 *	returns:
-	 *		null
-	 */
-	public function fromJSON($json)
+	public function getValidationErrors()
 	{
-		
+		return $this->validationErrors;
 	}
 
-	/*
-	 *	isValid()
-	 *		正しい状況であるか確認する
-	 *
-	 *	returns: 
-	 *		boolean: true　OKの場合, false 問題がある場合
-	 */
 	public function isValid()
 	{
-		return false;
-	}
-
-	/*
-	 *	create($array)
-	 *		（便利メソッド）クラスのオブジェクトを作成して、データを渡したアレーに設定して、返す。
-	 *
-	 *	params:
-	 *		Array $array: （key => value）のようなアレー
-	 *
-	 *	returns:
-	 *		object: クラスのオブジェクト
-	 */
-	public static function create($array)
-	{
-		$classname = __CLASS__;
-		$instance = new $classname;
-		$instance->set($array);
-		return $instance;
+		$modelDefinition = self::classModelDefinition(get_class($this));
+		return $modelDefinition->isValid($this);
 	}
 }

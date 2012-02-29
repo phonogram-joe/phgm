@@ -44,20 +44,19 @@ define('LOG_FATAL', 6);
 define('CONTROLLERS_DIR', APP_DIR . DS . 'controllers'); //コントローラクラス
 define('APP_LIB_DIR', APP_DIR . DS . 'lib'); //共通のクラスやビュープラグイン
 define('MODELS_DIR', APP_DIR . DS . 'models'); //DBやフォームのモデルクラス
-define('VIEW_MODELS_DIR', APP_DIR . DS . 'view_models'); //モデルを表示する際に使うクラス
+define('DECORATORS_DIR', APP_DIR . DS . 'view_models'); //モデルを表示する際に使うクラス
 define('VIEWS_DIR', APP_DIR . DS . 'views'); //共通のレイアウト・ガジェットと、コントローラのアクションごとのテンプレート
+define('VALIDATORS_DIR', APP_LIB_DIR . DS . 'validators'); //モデルのデータがデータ刑や規則にあってるか確認するクラス。
 
 //	ライブラリーのクラス
 require_once(LIB_DIR . DS . 'Logger.php');
 require_once(LIB_DIR . DS . 'StringUtils.php');
+require_once(LIB_DIR . DS . 'ModelDefinition.php');
 require_once(LIB_DIR . DS . 'BaseModel.php');
 require_once(LIB_DIR . DS . 'BaseDecorator.php');
 require_once(LIB_DIR . DS . 'BaseController.php');
 require_once(LIB_DIR . DS . 'BaseRenderer.php');
-
-//TODO: reimplement router: 
 require_once(LIB_DIR . DS . 'Router.php');
-
 require_once(LIB_DIR . DS . 'ClassLoader.php');
 require_once(LIB_DIR . DS . 'HttpRequest.php');
 require_once(LIB_DIR . DS . 'HttpResponse.php');
@@ -67,9 +66,9 @@ require_once(LIB_DIR . DS . 'HttpHandler.php');
 //	ライブラリーの初期化
 BaseRenderer::classInitialize();
 HttpResponseFormat::classInitialize();
+BaseModel::classInitialize();
 
 //	vendorのクラス
-//require_once(VENDOR_DIR . DS . 'router' . DS . 'class.Router.php');
 require_once(LIB_DIR . DS . 'renderers' . DS . 'SmartyRenderer.php');
 
 //	サイトの動きに関する設定
