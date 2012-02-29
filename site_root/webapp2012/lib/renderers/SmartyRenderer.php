@@ -14,7 +14,8 @@ class SmartyRenderer extends BaseRenderer
 	{
 		foreach ($data as $key => $value) {
 			if (is_object($value)) {
-				$this->smarty->assignByRef($key, $value);
+				//NOTE: assignByRef(...)を使ってみたら設定されたキーは上書きされるときもある
+				$this->smarty->assign($key, $value);
 			} else {
 				$this->smarty->assign($key, $value);
 			}
