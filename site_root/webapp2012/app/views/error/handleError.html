@@ -1,0 +1,6 @@
+{{extends file="layouts/index.html"}}
+{{block name="main"}}
+	<h1>エラーが発生しました</h1>
+	<p>{{$errorMessage|escape}}</p>
+	<p>{{$errorTrace|escape|nl2br}}</p>
+{{/block}}

@@ -47,4 +47,9 @@ class ClassLoader
 	{
 		return $type . DS . preg_replace('/\.+/', DS, $filename) . '.php';
 	}
+
+	public static function classNamePrefix($class)
+	{
+		return StringUtils::camelToUnderscores(preg_replace('/(Controller|Model|ViewModel|Renderer)$/', '', $class));
+	}
 }

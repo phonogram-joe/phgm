@@ -1,0 +1,102 @@
+2012/02/29 11:20:41 [ERROR] HttpHandler -- このURLに一致するルートはありません。 (/var/www/vhosts/tare.phonogram.tv/public_html/webapp2012/webapp2012/lib/HttpHandler.php:85)
+	#0 /var/www/vhosts/tare.phonogram.tv/public_html/webapp2012/webapp2012/lib/HttpHandler.php(42): HttpHandler->determineControllerActionFromRoute()
+	#1 /var/www/vhosts/tare.phonogram.tv/public_html/webapp2012/webapp.php(17): HttpHandler->handleRequest()
+	#2 {main}
+2012/02/29 11:20:41 [FATAL] ClassLoader::load -- ファイルは見つかりません: /var/www/vhosts/tare.phonogram.tv/public_html/webapp2012/webapp2012/app/controllers/ErrorController.php (/var/www/vhosts/tare.phonogram.tv/public_html/webapp2012/webapp2012/lib/ClassLoader.php:41)
+	#0 /var/www/vhosts/tare.phonogram.tv/public_html/webapp2012/webapp2012/lib/HttpHandler.php(105): ClassLoader::load('/var/www/vhosts...', 'ErrorController')
+	#1 /var/www/vhosts/tare.phonogram.tv/public_html/webapp2012/webapp2012/lib/HttpHandler.php(56): HttpHandler->executeErrorController(Object(Exception))
+	#2 /var/www/vhosts/tare.phonogram.tv/public_html/webapp2012/webapp.php(17): HttpHandler->handleRequest()
+	#3 {main}
+2012/02/29 11:35:38 [ERROR] HttpHandler -- このURLに一致するルートはありません。 (/var/www/vhosts/tare.phonogram.tv/public_html/webapp2012/webapp2012/lib/HttpHandler.php:85)
+	#0 /var/www/vhosts/tare.phonogram.tv/public_html/webapp2012/webapp2012/lib/HttpHandler.php(42): HttpHandler->determineControllerActionFromRoute()
+	#1 /var/www/vhosts/tare.phonogram.tv/public_html/webapp2012/webapp.php(17): HttpHandler->handleRequest()
+	#2 {main}
+2012/02/29 11:35:38 [FATAL] BaseRenderer::getRenderer -- のレンダラは設定されてない。 (/var/www/vhosts/tare.phonogram.tv/public_html/webapp2012/webapp2012/lib/BaseRenderer.php:35)
+	#0 /var/www/vhosts/tare.phonogram.tv/public_html/webapp2012/webapp2012/lib/HttpHandler.php(118): BaseRenderer::getRenderer(NULL, '/var/www/vhosts...')
+	#1 /var/www/vhosts/tare.phonogram.tv/public_html/webapp2012/webapp2012/lib/HttpHandler.php(58): HttpHandler->renderResponse()
+	#2 /var/www/vhosts/tare.phonogram.tv/public_html/webapp2012/webapp.php(17): HttpHandler->handleRequest()
+	#3 {main}
+2012/02/29 11:36:20 [ERROR] HttpHandler -- このURLに一致するルートはありません。 (/var/www/vhosts/tare.phonogram.tv/public_html/webapp2012/webapp2012/lib/HttpHandler.php:85)
+	#0 /var/www/vhosts/tare.phonogram.tv/public_html/webapp2012/webapp2012/lib/HttpHandler.php(42): HttpHandler->determineControllerActionFromRoute()
+	#1 /var/www/vhosts/tare.phonogram.tv/public_html/webapp2012/webapp.php(17): HttpHandler->handleRequest()
+	#2 {main}
+2012/02/29 11:36:20 [FATAL] BaseRenderer::getRenderer -- のレンダラは設定されてない。 (/var/www/vhosts/tare.phonogram.tv/public_html/webapp2012/webapp2012/lib/BaseRenderer.php:35)
+	#0 /var/www/vhosts/tare.phonogram.tv/public_html/webapp2012/webapp2012/lib/HttpHandler.php(118): BaseRenderer::getRenderer(NULL, '/var/www/vhosts...')
+	#1 /var/www/vhosts/tare.phonogram.tv/public_html/webapp2012/webapp2012/lib/HttpHandler.php(58): HttpHandler->renderResponse()
+	#2 /var/www/vhosts/tare.phonogram.tv/public_html/webapp2012/webapp.php(17): HttpHandler->handleRequest()
+	#3 {main}
+2012/02/29 11:36:22 [ERROR] HttpHandler -- このURLに一致するルートはありません。 (/var/www/vhosts/tare.phonogram.tv/public_html/webapp2012/webapp2012/lib/HttpHandler.php:85)
+	#0 /var/www/vhosts/tare.phonogram.tv/public_html/webapp2012/webapp2012/lib/HttpHandler.php(42): HttpHandler->determineControllerActionFromRoute()
+	#1 /var/www/vhosts/tare.phonogram.tv/public_html/webapp2012/webapp.php(17): HttpHandler->handleRequest()
+	#2 {main}
+2012/02/29 11:36:22 [FATAL] BaseRenderer::getRenderer -- のレンダラは設定されてない。 (/var/www/vhosts/tare.phonogram.tv/public_html/webapp2012/webapp2012/lib/BaseRenderer.php:35)
+	#0 /var/www/vhosts/tare.phonogram.tv/public_html/webapp2012/webapp2012/lib/HttpHandler.php(118): BaseRenderer::getRenderer(NULL, '/var/www/vhosts...')
+	#1 /var/www/vhosts/tare.phonogram.tv/public_html/webapp2012/webapp2012/lib/HttpHandler.php(58): HttpHandler->renderResponse()
+	#2 /var/www/vhosts/tare.phonogram.tv/public_html/webapp2012/webapp.php(17): HttpHandler->handleRequest()
+	#3 {main}
+2012/02/29 11:36:33 [ERROR] HttpHandler -- このURLに一致するルートはありません。 (/var/www/vhosts/tare.phonogram.tv/public_html/webapp2012/webapp2012/lib/HttpHandler.php:85)
+	#0 /var/www/vhosts/tare.phonogram.tv/public_html/webapp2012/webapp2012/lib/HttpHandler.php(42): HttpHandler->determineControllerActionFromRoute()
+	#1 /var/www/vhosts/tare.phonogram.tv/public_html/webapp2012/webapp.php(17): HttpHandler->handleRequest()
+	#2 {main}
+2012/02/29 11:36:33 [FATAL] BaseRenderer::getRenderer -- のレンダラは設定されてない。 (/var/www/vhosts/tare.phonogram.tv/public_html/webapp2012/webapp2012/lib/BaseRenderer.php:35)
+	#0 /var/www/vhosts/tare.phonogram.tv/public_html/webapp2012/webapp2012/lib/HttpHandler.php(118): BaseRenderer::getRenderer(NULL, '/var/www/vhosts...')
+	#1 /var/www/vhosts/tare.phonogram.tv/public_html/webapp2012/webapp2012/lib/HttpHandler.php(58): HttpHandler->renderResponse()
+	#2 /var/www/vhosts/tare.phonogram.tv/public_html/webapp2012/webapp.php(17): HttpHandler->handleRequest()
+	#3 {main}
+2012/02/29 11:40:07 [ERROR] HttpHandler -- このURLに一致するルートはありません。 (/var/www/vhosts/tare.phonogram.tv/public_html/webapp2012/webapp2012/lib/HttpHandler.php:85)
+	#0 /var/www/vhosts/tare.phonogram.tv/public_html/webapp2012/webapp2012/lib/HttpHandler.php(42): HttpHandler->determineControllerActionFromRoute()
+	#1 /var/www/vhosts/tare.phonogram.tv/public_html/webapp2012/webapp.php(17): HttpHandler->handleRequest()
+	#2 {main}
+2012/02/29 11:40:07 [FATAL] Unable to load template file '/var/www/vhosts/tare.phonogram.tv/public_html/webapp2012/webapp2012/app/views//handleError.html' (/var/www/vhosts/tare.phonogram.tv/public_html/webapp2012/webapp2012/lib-vendor/smarty/libs/sysplugins/smarty_internal_templatebase.php:127)
+	#0 /var/www/vhosts/tare.phonogram.tv/public_html/webapp2012/webapp2012/lib/renderers/SmartyRenderer.php(22): Smarty_Internal_TemplateBase->fetch('/var/www/vhosts...')
+	#1 /var/www/vhosts/tare.phonogram.tv/public_html/webapp2012/webapp2012/lib/BaseRenderer.php(55): SmartyRenderer->customRender(Array)
+	#2 /var/www/vhosts/tare.phonogram.tv/public_html/webapp2012/webapp2012/lib/HttpHandler.php(119): BaseRenderer->renderHttpResponse(Array, Object(HttpResponse))
+	#3 /var/www/vhosts/tare.phonogram.tv/public_html/webapp2012/webapp2012/lib/HttpHandler.php(58): HttpHandler->renderResponse()
+	#4 /var/www/vhosts/tare.phonogram.tv/public_html/webapp2012/webapp.php(17): HttpHandler->handleRequest()
+	#5 {main}
+2012/02/29 11:40:08 [ERROR] HttpHandler -- このURLに一致するルートはありません。 (/var/www/vhosts/tare.phonogram.tv/public_html/webapp2012/webapp2012/lib/HttpHandler.php:85)
+	#0 /var/www/vhosts/tare.phonogram.tv/public_html/webapp2012/webapp2012/lib/HttpHandler.php(42): HttpHandler->determineControllerActionFromRoute()
+	#1 /var/www/vhosts/tare.phonogram.tv/public_html/webapp2012/webapp.php(17): HttpHandler->handleRequest()
+	#2 {main}
+2012/02/29 11:40:08 [FATAL] Unable to load template file '/var/www/vhosts/tare.phonogram.tv/public_html/webapp2012/webapp2012/app/views//handleError.html' (/var/www/vhosts/tare.phonogram.tv/public_html/webapp2012/webapp2012/lib-vendor/smarty/libs/sysplugins/smarty_internal_templatebase.php:127)
+	#0 /var/www/vhosts/tare.phonogram.tv/public_html/webapp2012/webapp2012/lib/renderers/SmartyRenderer.php(22): Smarty_Internal_TemplateBase->fetch('/var/www/vhosts...')
+	#1 /var/www/vhosts/tare.phonogram.tv/public_html/webapp2012/webapp2012/lib/BaseRenderer.php(55): SmartyRenderer->customRender(Array)
+	#2 /var/www/vhosts/tare.phonogram.tv/public_html/webapp2012/webapp2012/lib/HttpHandler.php(119): BaseRenderer->renderHttpResponse(Array, Object(HttpResponse))
+	#3 /var/www/vhosts/tare.phonogram.tv/public_html/webapp2012/webapp2012/lib/HttpHandler.php(58): HttpHandler->renderResponse()
+	#4 /var/www/vhosts/tare.phonogram.tv/public_html/webapp2012/webapp.php(17): HttpHandler->handleRequest()
+	#5 {main}
+2012/02/29 11:40:09 [ERROR] HttpHandler -- このURLに一致するルートはありません。 (/var/www/vhosts/tare.phonogram.tv/public_html/webapp2012/webapp2012/lib/HttpHandler.php:85)
+	#0 /var/www/vhosts/tare.phonogram.tv/public_html/webapp2012/webapp2012/lib/HttpHandler.php(42): HttpHandler->determineControllerActionFromRoute()
+	#1 /var/www/vhosts/tare.phonogram.tv/public_html/webapp2012/webapp.php(17): HttpHandler->handleRequest()
+	#2 {main}
+2012/02/29 11:40:09 [FATAL] Unable to load template file '/var/www/vhosts/tare.phonogram.tv/public_html/webapp2012/webapp2012/app/views//handleError.html' (/var/www/vhosts/tare.phonogram.tv/public_html/webapp2012/webapp2012/lib-vendor/smarty/libs/sysplugins/smarty_internal_templatebase.php:127)
+	#0 /var/www/vhosts/tare.phonogram.tv/public_html/webapp2012/webapp2012/lib/renderers/SmartyRenderer.php(22): Smarty_Internal_TemplateBase->fetch('/var/www/vhosts...')
+	#1 /var/www/vhosts/tare.phonogram.tv/public_html/webapp2012/webapp2012/lib/BaseRenderer.php(55): SmartyRenderer->customRender(Array)
+	#2 /var/www/vhosts/tare.phonogram.tv/public_html/webapp2012/webapp2012/lib/HttpHandler.php(119): BaseRenderer->renderHttpResponse(Array, Object(HttpResponse))
+	#3 /var/www/vhosts/tare.phonogram.tv/public_html/webapp2012/webapp2012/lib/HttpHandler.php(58): HttpHandler->renderResponse()
+	#4 /var/www/vhosts/tare.phonogram.tv/public_html/webapp2012/webapp.php(17): HttpHandler->handleRequest()
+	#5 {main}
+2012/02/29 11:42:06 [ERROR] HttpHandler -- このURLに一致するルートはありません。 (/var/www/vhosts/tare.phonogram.tv/public_html/webapp2012/webapp2012/lib/HttpHandler.php:85)
+	#0 /var/www/vhosts/tare.phonogram.tv/public_html/webapp2012/webapp2012/lib/HttpHandler.php(42): HttpHandler->determineControllerActionFromRoute()
+	#1 /var/www/vhosts/tare.phonogram.tv/public_html/webapp2012/webapp.php(17): HttpHandler->handleRequest()
+	#2 {main}
+2012/02/29 11:43:18 [ERROR] HttpHandler -- このURLに一致するルートはありません。 (/var/www/vhosts/tare.phonogram.tv/public_html/webapp2012/webapp2012/lib/HttpHandler.php:85)
+	#0 /var/www/vhosts/tare.phonogram.tv/public_html/webapp2012/webapp2012/lib/HttpHandler.php(42): HttpHandler->determineControllerActionFromRoute()
+	#1 /var/www/vhosts/tare.phonogram.tv/public_html/webapp2012/webapp.php(17): HttpHandler->handleRequest()
+	#2 {main}
+2012/02/29 11:43:18 [ERROR] HttpHandler -- このURLに一致するルートはありません。 (/var/www/vhosts/tare.phonogram.tv/public_html/webapp2012/webapp2012/lib/HttpHandler.php:85)
+	#0 /var/www/vhosts/tare.phonogram.tv/public_html/webapp2012/webapp2012/lib/HttpHandler.php(42): HttpHandler->determineControllerActionFromRoute()
+	#1 /var/www/vhosts/tare.phonogram.tv/public_html/webapp2012/webapp.php(17): HttpHandler->handleRequest()
+	#2 {main}
+2012/02/29 11:43:33 [ERROR] HttpHandler -- このURLに一致するルートはありません。 (/var/www/vhosts/tare.phonogram.tv/public_html/webapp2012/webapp2012/lib/HttpHandler.php:85)
+	#0 /var/www/vhosts/tare.phonogram.tv/public_html/webapp2012/webapp2012/lib/HttpHandler.php(42): HttpHandler->determineControllerActionFromRoute()
+	#1 /var/www/vhosts/tare.phonogram.tv/public_html/webapp2012/webapp.php(17): HttpHandler->handleRequest()
+	#2 {main}
+2012/02/29 11:44:03 [ERROR] HttpHandler -- このURLに一致するルートはありません。 (/var/www/vhosts/tare.phonogram.tv/public_html/webapp2012/webapp2012/lib/HttpHandler.php:85)
+	#0 /var/www/vhosts/tare.phonogram.tv/public_html/webapp2012/webapp2012/lib/HttpHandler.php(42): HttpHandler->determineControllerActionFromRoute()
+	#1 /var/www/vhosts/tare.phonogram.tv/public_html/webapp2012/webapp.php(17): HttpHandler->handleRequest()
+	#2 {main}
+2012/02/29 11:47:41 [ERROR] HttpHandler -- このURLに一致するルートはありません。 (/var/www/vhosts/tare.phonogram.tv/public_html/webapp2012/webapp2012/lib/HttpHandler.php:85)
+	#0 /var/www/vhosts/tare.phonogram.tv/public_html/webapp2012/webapp2012/lib/HttpHandler.php(42): HttpHandler->determineControllerActionFromRoute()
+	#1 /var/www/vhosts/tare.phonogram.tv/public_html/webapp2012/webapp.php(17): HttpHandler->handleRequest()
+	#2 {main}

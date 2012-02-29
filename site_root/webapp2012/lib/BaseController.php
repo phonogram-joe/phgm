@@ -5,6 +5,7 @@
  */
 class BaseController
 {
+	public static $ERROR_CONTROLLER_ACTION_NAME = 'handleError';
 	private static $RESULT_REDIRECT = 0;
 	private static $RESULT_RENDER = 1;
 	private static $RESULT_ERROR = 2;

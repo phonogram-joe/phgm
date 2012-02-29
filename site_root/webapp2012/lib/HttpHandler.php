@@ -102,17 +102,19 @@ class HttpHandler
 	private function executeErrorController($error)
 	{
 		$controllerClass = Router::getRouter()->getErrorController();
+		$this->controllerClass = $controllerClass;
+		$this->actionName = BaseController::$ERROR_CONTROLLER_ACTION_NAME;
 		ClassLoader::load(CONTROLLER, $controllerClass);
 
-		$this->controller = new $controllerClass();
+		$this->controller = new $controllerClass(BaseController::$ERROR_CONTROLLER_ACTION_NAME);
 		$this->controller->execute($error);
 	}
 
 	private function renderResponse()
 	{
 		//	コントローラ・メソッドに基づいてビューファイルのパスを計算
-		$templateControllerName = StringUtils::camelToUnderscores(preg_replace('/Controller/', '', $this->controllerClass));
-		$this->templatePath = VIEWS_DIR . DS . $templateControllerName . DS . $this->controller->getRenderAction();
+		$controllerNamePrefix = ClassLoader::classNamePrefix($this->controllerClass);
+		$this->templatePath = VIEWS_DIR . DS . $controllerNamePrefix . DS . $this->controller->getRenderAction();
 
 		//	コントローラのデータを最終的なデータ刑に変換する。Smartyなどにより。
 		$renderer = BaseRenderer::getRenderer($this->controller->getRenderFormat(), $this->templatePath);
