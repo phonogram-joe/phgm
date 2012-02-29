@@ -20,7 +20,7 @@ function __autoload($name)
 	if (preg_match('/Model/', $name)) {
 		ClassLoader::load(MODEL, $name);
 	}
-	if (preg_match('/ViewModel/', $name)) {
+	if (preg_match('/Decorator/', $name)) {
 		ClassLoader::load(VIEW_MODEL, $name);
 	}
 	if (preg_match('/View/', $name)) {
@@ -50,6 +50,6 @@ class ClassLoader
 
 	public static function classNamePrefix($class)
 	{
-		return StringUtils::camelToUnderscores(preg_replace('/(Controller|Model|ViewModel|Renderer)$/', '', $class));
+		return StringUtils::camelToUnderscores(preg_replace('/(Controller|Model|Decorator|Renderer)$/', '', $class));
 	}
 }

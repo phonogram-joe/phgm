@@ -4,7 +4,7 @@
  *	Licensed Under the MIT license http://www.opensource.org/licenses/mit-license.php
  */
 
-class SampleViewModel extends BaseViewModel
+class SampleDecorator extends BaseDecorator
 {
 	
 }

@@ -51,7 +51,7 @@ define('VIEWS_DIR', APP_DIR . DS . 'views'); //共通のレイアウト・ガジ
 require_once(LIB_DIR . DS . 'Logger.php');
 require_once(LIB_DIR . DS . 'StringUtils.php');
 require_once(LIB_DIR . DS . 'BaseModel.php');
-require_once(LIB_DIR . DS . 'BaseViewModel.php');
+require_once(LIB_DIR . DS . 'BaseDecorator.php');
 require_once(LIB_DIR . DS . 'BaseController.php');
 require_once(LIB_DIR . DS . 'BaseRenderer.php');
 

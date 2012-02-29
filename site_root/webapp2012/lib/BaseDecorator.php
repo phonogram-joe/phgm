@@ -4,11 +4,11 @@
  *	Licensed Under the MIT license http://www.opensource.org/licenses/mit-license.php
  */
 
-class BaseViewModel
+class BaseDecorator
 {
 	private $model;
 
-	public function BaseViewModel($model)
+	public function BaseDecorator($model)
 	{
 		$this->model = $model;
 	}
