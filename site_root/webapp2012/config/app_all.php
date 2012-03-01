@@ -5,6 +5,7 @@
 
 //	セッション設定
 ini_set('session.save_path', SESSION_DIR);
+define('SESSIONS_ENABLED', true);
 define('SESSION_FLASH_KEY', 'jp.phonogram.session.flash');
 define('SESSION_FLASHES_KEY', 'jp.phonogram.session.flashes');
 
@@ -13,6 +14,7 @@ ini_set('include_path', ROOT_DIR . DS . 'vendors' . DS . 'pear' . PS . ini_get('
 
 //	ローカル・文字設定
 setlocale(LC_ALL, 'ja_JP.UTF-8');
+ini_set('date.timezone', 'Asia/Tokyo');
 ini_set('output_handler', 'mb_output_handler');
 ini_set('mbstring.language', 'Japanese');
 ini_set('mbstring.internal_encoding', 'UTF-8');
@@ -25,6 +27,10 @@ define('LOGGER_FILE', LOG_DIR . DS . 'system.log');
 
 //	処理できないエラーの場合に返すメッセージ
 define('FATAL_ERROR_MESSAGE', 'エラーが発生しました。');
+
+//	エラー処理の設定
+ini_set('display_errors', true);
+error_reporting(E_ALL + E_NOTICE);
 
 //	環境のオプション
 define('ENVIRONMENT_TEST', 'test');
@@ -60,6 +66,7 @@ HttpResponseFormat::setDefaultFormat(HttpResponseFormat::$HTML);
 
 //	HTTP応答のデータ刑に合わせて、コントローラの変数をそのデータ刑に変換するクラスを設定する
 BaseRenderer::registerRenderer(HttpResponseFormat::$HTML, 'SmartyRenderer', '.html');
+BaseRenderer::registerRenderer(HttpResponseFormat::$TEXT, 'SmartyRenderer', '.tpl');
 
 
 
