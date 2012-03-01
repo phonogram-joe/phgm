@@ -8,6 +8,6 @@ class Helper
 {
 	public static function helper()
 	{
-		return "app/lib/classes/に共通のクラスをおく。このクラスをrequireのにClassLoader::load(APP_LIB, 'Helper')";
+		return "app/lib/classes/に共通のクラスをおく。このクラスをrequireのにClassLoader::load(HELPER, 'Helper')";
 	}
 }
