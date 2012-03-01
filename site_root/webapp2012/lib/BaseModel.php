@@ -57,7 +57,7 @@ class BaseModel
 	public function set($key, $value = null)
 	{
 		$modelDefinition = self::classModelDefinition(get_class($this));
-		$modelDefinition->set($this, $key, $value);
+		return $modelDefinition->set($this, $key, $value);
 	}
 
 	/*

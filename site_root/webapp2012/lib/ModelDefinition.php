@@ -79,15 +79,17 @@ class ModelDefinition
 		}
 		if (is_array($key)) {
 			$params = $key;
+			$setParams = array();
 			foreach ($this->fields as $name => $options) {
 				if (true === array_search($name, $this->visibilityWhitelist) && array_key_exists($name, $params)) {
-					$this->simpleSet($object, $name, $params[$name]);
+					$setParams[$name] = $this->simpleSet($object, $name, $params[$name]);
 				} else {
-					$this->simpleSet($object, $name, null);
+					$setParams[$name] = $this->simpleSet($object, $name, null);
 				}
 			}
+			return $setParams;
 		} else {
-			$this->simpleSet($object, $key, $value);
+			return $this->simpleSet($object, $key, $value);
 		}
 	}
 
@@ -100,6 +102,7 @@ class ModelDefinition
 		if (!is_null($object->changedFields)) {
 			$object->changedFields[$key] = $value;
 		}	
+		return $value;
 	}
 
 	public function isValid($object)
