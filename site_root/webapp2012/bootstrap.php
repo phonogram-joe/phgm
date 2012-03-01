@@ -66,6 +66,10 @@ require_once(LIB_DIR . DS . 'HttpResponse.php');
 require_once(LIB_DIR . DS . 'HttpResponseFormat.php');
 require_once(LIB_DIR . DS . 'HttpHandler.php');
 
+//	データベース
+require_once(LIB_DIR . DS . 'database' . DS . 'DatabaseSession.php');
+require_once(LIB_DIR . DS . 'database' . DS . 'DatabaseConnectionManager.php');
+
 //	ライブラリーの初期化
 BaseRenderer::classInitialize();
 HttpResponseFormat::classInitialize();
@@ -85,3 +89,5 @@ if (ENVIRONMENT === ENVIRONMENT_PRODUCTION) {
 }
 //	サイトのURLー＞コントローラ・アクション設定
 require_once(CONFIG_DIR . DS . 'routes.php');
+//	データベースの接続情報を設定する
+require_once(CONFIG_DIR . DS . 'database.php');

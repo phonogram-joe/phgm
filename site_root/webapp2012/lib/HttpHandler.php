@@ -16,8 +16,8 @@ class HttpHandler
 
 	public function HttpHandler()
 	{
-		$this->request = new HttpRequest();
-		$this->response = new HttpResponse();
+		$this->request = null;
+		$this->response = null;
 		$this->controller = null;
 	
 		$this->controllerClass = null;
@@ -38,11 +38,16 @@ class HttpHandler
 	{
 		try {
 			try {
+				$this->request = new HttpRequest();
+				$this->response = new HttpResponse();
 				if (is_null($controllerClass)) {
 					$this->determineControllerActionFromRoute();
 				} else {
 					$this->useFixedControllerAction($controllerClass, $actionName, $requestParams);
 				}
+				
+				defineDatabases(); //TODO: should probably put this in a separate 'Config::init()' static class, that can initialize DB/routing/sessions/etc as enabled/disabled by the app's environment-specific configuation file.
+
 				$this->executeController();
 				if ($this->controller->isError()) {
 					throw new Exception($this->controller->getErrorMessage());
