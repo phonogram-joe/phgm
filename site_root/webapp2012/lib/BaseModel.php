@@ -18,7 +18,7 @@ class BaseModel
 	public function BaseModel($values = null)
 	{
 		$this->changedFields = null;
-		$modelDefinition = self::classModelDefinition(get_class($this));
+		$modelDefinition = self::getClassModelDefinition(get_class($this));
 		$modelDefinition->initializeObject($this);
 		if (!is_null($values)) {
 			$modelDefinition->set($this, $values);
@@ -46,7 +46,7 @@ class BaseModel
 		return $modelDefinition;
 	}
 
-	private static function classModelDefinition($class)
+	public static function getClassModelDefinition($class)
 	{
 		return self::$CLASS_MODEL_DEFINITIONS[$class];
 	}
@@ -56,7 +56,7 @@ class BaseModel
 	 */
 	public function set($key, $value = null)
 	{
-		$modelDefinition = self::classModelDefinition(get_class($this));
+		$modelDefinition = self::getClassModelDefinition(get_class($this));
 		return $modelDefinition->set($this, $key, $value);
 	}
 
@@ -70,7 +70,7 @@ class BaseModel
 
 	public function getLabel($key)
 	{
-		$modelDefinition = self::classModelDefinition(get_class($this));
+		$modelDefinition = self::getClassModelDefinition(get_class($this));
 		return $modelDefinition->getLabel($key);
 	}
 
@@ -86,7 +86,7 @@ class BaseModel
 
 	public function isValid()
 	{
-		$modelDefinition = self::classModelDefinition(get_class($this));
+		$modelDefinition = self::getClassModelDefinition(get_class($this));
 		return $modelDefinition->isValid($this);
 	}
 }
