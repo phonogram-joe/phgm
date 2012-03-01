@@ -6,8 +6,10 @@
 //	セッション設定
 ini_set('session.save_path', SESSION_DIR);
 define('SESSIONS_ENABLED', true);
-define('SESSION_FLASH_KEY', 'jp.phonogram.session.flash');
-define('SESSION_FLASHES_KEY', 'jp.phonogram.session.flashes');
+define('SESSION_GLOBAL_KEY', 'phgm.session.global');
+define('SESSION_USER_KEY', 'phgm.session.user');
+define('SESSION_FLASH_KEY', 'phgm.session.flash');
+define('SESSION_FLASHES_KEY', 'phgm.session.flashes');
 
 //	PEAR設定
 ini_set('include_path', ROOT_DIR . DS . 'vendors' . DS . 'pear' . PS . ini_get('include_path'));
