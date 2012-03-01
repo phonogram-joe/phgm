@@ -118,14 +118,26 @@ class Router
 	 */
 	public function mapRest($namePrefix, $urlPrefix, $controller)
 	{
-		$this->map($namePrefix . '_index', 'GET ' . $urlPrefix . '', $controller, 'index');
-		$this->map($namePrefix . '_new_form', 'GET ' . $urlPrefix . '/new', $controller, 'newForm');
-		$this->map($namePrefix . '_new_save', 'POST ' . $urlPrefix . '/new', $controller, 'newSave');
-		$this->map($namePrefix . '_show', 'GET ' . $urlPrefix . '/#id', $controller, 'show');
-		$this->map($namePrefix . '_edit_form', 'GET ' . $urlPrefix . '/#id/edit', $controller, 'editForm');
-		$this->map($namePrefix . '_edit_save', 'POST ' . $urlPrefix . '/#id/edit', $controller, 'editSave');
-		$this->map($namePrefix . '_delete_form', 'GET ' . $urlPrefix . '/#id/delete', $controller, 'deleteForm');
-		$this->map($namePrefix . '_delete_save', 'POST ' . $urlPrefix . '/#id/delete', $controller, 'deleteSave');
+		$this->map($namePrefix . '_index', 			'GET  ' . $urlPrefix,	 				$controller, 'index');
+		$this->map($namePrefix . '_new_form', 		'GET  ' . $urlPrefix . '/new', 			$controller, 'newForm');
+		$this->map($namePrefix . '_new_save', 		'POST ' . $urlPrefix . '/new', 			$controller, 'newSave');
+		$this->map($namePrefix . '_show', 			'GET  ' . $urlPrefix . '/#id', 			$controller, 'show');
+		$this->map($namePrefix . '_edit_form', 		'GET  ' . $urlPrefix . '/#id/edit', 	$controller, 'editForm');
+		$this->map($namePrefix . '_edit_save', 		'PUT ' . $urlPrefix . '/#id/edit', 	$controller, 'editSave');
+		$this->map($namePrefix . '_delete_form',	'GET  ' . $urlPrefix . '/#id/delete', 	$controller, 'deleteForm');
+		$this->map($namePrefix . '_delete_save',	'DELETE ' . $urlPrefix . '/#id/delete', 	$controller, 'deleteSave');
+	}
+
+	/*
+	 *	mapForm($namePrefix, $urlPrefix, $controller)
+	 *		shortcut for mapping a RESTful form controller with 3 screens (input, confirm, and complete). Input & Confirm
+	 *		share URLs with GET/POST distinguishing. Complete screen has separate URL.
+	 */
+	public function mapForm($namePrefix, $urlPrefix, $controller)
+	{
+		$this->map($namePrefix . '_form', 		'GET  ' . $urlPrefix, 				$controller, 'form');
+		$this->map($namePrefix . '_confirm', 	'POST ' . $urlPrefix, 				$controller, 'confirm');
+		$this->map($namePrefix . '_complete', 	'GET  ' . $urlPrefix . '/complete', $controller, 'complete');
 	}
 
 	/*
