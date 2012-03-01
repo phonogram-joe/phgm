@@ -60,6 +60,8 @@ require_once(LIB_DIR . DS . 'BaseRenderer.php');
 require_once(LIB_DIR . DS . 'Router.php');
 require_once(LIB_DIR . DS . 'ClassLoader.php');
 require_once(LIB_DIR . DS . 'HttpRequest.php');
+require_once(LIB_DIR . DS . 'Session.php');
+require_once(LIB_DIR . DS . 'SessionUser.php');
 require_once(LIB_DIR . DS . 'HttpResponse.php');
 require_once(LIB_DIR . DS . 'HttpResponseFormat.php');
 require_once(LIB_DIR . DS . 'HttpHandler.php');

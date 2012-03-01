@@ -8,12 +8,31 @@ class HttpRequest
 {
 	private $params;
 	private $httpVerb;
+	private $session;
 
 	public function HttpRequest()
 	{
 		$this->params = array();
 		$this->setParams();
 		$this->setVerb();
+		$this->setSession();
+	}
+
+	private function setSession()
+	{
+		if (SESSIONS_ENABLED) {
+			session_name(SESSION_NAME);
+			if (session_start()) {
+				$this->session = new Session();
+				return;
+			}
+		}
+		$this->session = null;
+	}
+
+	public function getSession()
+	{
+		return $this->session;
 	}
 
 	private function setParams()

@@ -6,6 +6,7 @@
 //	セッション設定
 ini_set('session.save_path', SESSION_DIR);
 define('SESSIONS_ENABLED', true);
+define('SESSION_NAME', 'PHPSESSID');
 define('SESSION_GLOBAL_KEY', 'phgm.session.global');
 define('SESSION_USER_KEY', 'phgm.session.user');
 define('SESSION_FLASH_KEY', 'phgm.session.flash');
