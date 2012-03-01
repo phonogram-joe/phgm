@@ -10,7 +10,7 @@ class SmartyRenderer extends BaseRenderer
 {
 	private $smarty;
 
-	public function customRender($data)
+	public function customRender($data, $httpResponse)
 	{
 		foreach ($data as $key => $value) {
 			if (is_object($value)) {
@@ -23,7 +23,7 @@ class SmartyRenderer extends BaseRenderer
 		return $this->smarty->fetch($this->templatePath);
 	}
 
-	public function customHttpResponse()
+	public function customHttpResponse($data, $httpResponse)
 	{
 		
 	}

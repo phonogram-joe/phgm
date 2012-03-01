@@ -8,11 +8,15 @@ class SampleRenderer
 {
 	public function initialize()
 	{
-		
+		$this->format = HttpResponseFormat::$JSON;
 	}
 
-	public function customRender($data)
+	public function customRender($data, $httpResponse)
 	{
 		return json_encode($data);
+	}
+	
+	public function customHttpResponse($data, $httpResponse)
+	{
 	}
 }
