@@ -18,17 +18,15 @@ class SampleController extends BaseController
 		return $this->doRender();
 	}
 
-	public function show($params)
-	{
-		$this->id = $params['id'];
-		return $this->doRender();
-	}
-
 	public function editForm($params)
 	{
 		$this->id = $params['id'];
-		$this->urlName = Router::getRouter()->urlForName('restSample_new_form', array('id' => 5));
-		$this->urlRoute = Router::getRouter()->urlForRoute('SampleController', 'editForm', array('id' => 5));
+		return $this->doRender(null, null, 'show');
+	}
+
+	public function show($params)
+	{
+		$this->id = $params['id'];
 
 		$this->smodel = new SampleModel();
 		//$this->smodel->set('name', 'スミス');
@@ -36,8 +34,8 @@ class SampleController extends BaseController
 		if (!$this->smodel->isValid()) {
 			$this->smodelErrors = $this->smodel->getValidationErrors();
 		}
+		return $this->doRender();
 
-		return $this->doRender(null, null, 'show');
 	}
 	public function editSave($params)
 	{

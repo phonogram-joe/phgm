@@ -1,9 +1,8 @@
 {{extends file="layouts/index.html"}}
 {{block name="main"}}
 <h1>Sample - Show</h1>
-<p>{{$id|escape}}</p>
-<p>{{$urlName|escape}}</p>
-<p>{{$urlRoute|escape}}</p>
+<p>サンプルモデル　{{$id|escape}}</p>
+<p><a href="{{urlFor name='sample_edit_form' id=5}}">{{urlFor name='sample_edit_form' id=5}}</a></p>
 <p>{{$smodel->getLabel('name')|escape}} {{$smodel->get('name')|escape}}</p>
 <p>{{$smodel->getLabel('email')|escape}} {{$smodel->get('email')|escape}}</p>
 {{foreach $smodelErrors as $error}}
