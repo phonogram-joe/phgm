@@ -14,6 +14,19 @@ class Session
 		return null;
 	}
 
+	public function addFlashMessage($msg)
+	{
+		//TODO: implement addFlashMessage()
+	}
+	public function getFlashList()
+	{
+		//TODO: implement getFlashList()
+	}
+	public function clearFlashList()
+	{
+		//TODO: implement clearFlashList()
+	}
+
 	public function setUser($user)
 	{
 		$_SESSION[SESSION_USER_KEY] = $user;
