@@ -9,8 +9,10 @@ define('HELPER', APP_LIB_DIR . DS . 'classes'); //共通のクラスやビュー
 define('MODEL', MODELS_DIR); //DBやフォームのモデルクラス
 define('DECORATOR', DECORATORS_DIR); //モデルを表示する際に使うクラス
 define('VIEW', VIEWS_DIR); //共通のレイアウト・ガジェットと、コントローラのアクションごとのテンプレート
-define('LIB_VALIDATOR', LIB_DIR . DS . 'validators'); //コントローラクラス
+define('LIB_VALIDATOR', LIB_DIR . DS . 'validators');
 define('VALIDATOR', VALIDATORS_DIR);
+define('LIB_RENDERER', LIB_DIR . DS . 'renderers');
+define('RENDERER', RENDERERS_DIR);
 
 /*
 //TODO: use PHP 5's __autoload($name) feature to autoload classes using naming conventions
@@ -23,24 +25,25 @@ class ClassLoader
 	{
 		if (preg_match('/Controller$/', $name)) {
 			self::loadType(CONTROLLER, $name);
-		}
-		if (preg_match('/Model$/', $name)) {
+		} else if (preg_match('/Model$/', $name)) {
 			self::loadType(MODEL, $name);
-		}
-		if (preg_match('/Decorator$/', $name)) {
+		} else if (preg_match('/Decorator$/', $name)) {
 			self::loadType(DECORATOR, $name);
-		}
-		if (preg_match('/View$/', $name)) {
+		} else if (preg_match('/View$/', $name)) {
 			self::loadType(VIEW, $name);
-		}
-		if (preg_match('/Helper$/', $name)) {
+		} else if (preg_match('/Helper$/', $name)) {
 			self::loadType(HELPER, $name);
-		}
-		if (preg_match('/Validator$/', $name)) {
+		} else if (preg_match('/Validator$/', $name)) {
 			if (file_exists(self::path(VALIDATOR, $name))) {
 				self::loadType(VALIDATOR, $name);
 			} else {
 				self::loadType(LIB_VALIDATOR, $name);
+			}
+		} else if (preg_match('/Renderer/', $name)) {
+			if (file_exists(self::path(RENDERER, $name))) {
+				self::loadType(RENDERER, $name);
+			} else {
+				self::loadType(LIB_RENDERER, $name);
 			}
 		}
 	}

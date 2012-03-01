@@ -34,6 +34,7 @@ class BaseRenderer
 		} else {
 			throw new Exception('BaseRenderer::getRenderer -- ' . $format . 'のレンダラは設定されてない。');
 		}
+		ClassLoader::load(RENDERER, $className);
 		$renderer = new $className($format, $templatePath . $extension);
 		$renderer->initialize();
 		return $renderer;
@@ -52,7 +53,7 @@ class BaseRenderer
 
 	public function renderHttpResponse($data, $httpResponse)
 	{
-		$output = $this->customRender($data);
+		$output = $this->customRender($data, $httpResponse);
 
 		$httpResponse->setContentTypeCharset(HttpResponseFormat::mimeType($this->format), HttpResponseFormat::charset($this->format));
 		$httpResponse->setEncoding(HttpResponseFormat::encoding($this->format));

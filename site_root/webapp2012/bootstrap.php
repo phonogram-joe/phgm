@@ -47,6 +47,7 @@ define('MODELS_DIR', APP_DIR . DS . 'models'); //DBやフォームのモデル�
 define('DECORATORS_DIR', APP_DIR . DS . 'view_models'); //モデルを表示する際に使うクラス
 define('VIEWS_DIR', APP_DIR . DS . 'views'); //共通のレイアウト・ガジェットと、コントローラのアクションごとのテンプレート
 define('VALIDATORS_DIR', APP_LIB_DIR . DS . 'validators'); //モデルのデータがデータ刑や規則にあってるか確認するクラス。
+define('RENDERERS_DIR', APP_LIB_DIR . DS . 'renderers'); //カスタムなレンダラクラス。Smartyのようにデータをテンプレートに埋め込むクラスです。
 
 //	ライブラリーのクラス
 require_once(LIB_DIR . DS . 'Logger.php');
@@ -69,7 +70,7 @@ HttpResponseFormat::classInitialize();
 BaseModel::classInitialize();
 
 //	vendorのクラス
-require_once(LIB_DIR . DS . 'renderers' . DS . 'SmartyRenderer.php');
+//	...none...
 
 //	サイトの動きに関する設定
 require_once(CONFIG_DIR . DS . 'app_all.php'); //appの設定
