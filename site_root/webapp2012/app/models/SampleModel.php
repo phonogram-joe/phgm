@@ -15,7 +15,7 @@ class SampleModel extends BaseModel
 		$modelDefinition->defineField('email', 'Eメール', 'email', array('required', 'email'), null, true);
 	}
 
-	private static function validateNonEmpty($value)
+	public static function validateNonEmpty($value)
 	{
 		return is_null($value) || strlen(trim($value)) === 0 ? '未入力です' : null;
 	}
