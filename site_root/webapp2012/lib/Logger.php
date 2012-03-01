@@ -31,7 +31,13 @@ class Logger
 		return self::$INSTANCE;
 	}
 
-	public function log($level, $message, $filename, $line, $error = null)
+	public function logMessage($message)
+	{
+		$buf = "" . date("Y/m/d H:i:s") . " [" . $level . "] " . $message . "\n";
+		$this->write($buf);
+	}
+
+	public function logError($level, $message, $filename, $line, $error = null)
 	{
 		$buf = "" . date("Y/m/d H:i:s") . " [" . $level . "] " . $message;
 		$buf .= " (" . $filename . ":" . $line . ")\n";
@@ -70,40 +76,40 @@ class Logger
 		return true;
 	}
 
-	public static function trace($error)
+	public static function trace($message)
 	{
 		if (LOGGER_LEVEL <= LOG_TRACE) {
-			self::getLogger()->log('TRACE', $error->getMessage(), $error->getFile(), $error->getLine());
+			self::getLogger()->logMessage('TRACE', $message);
 		}		
 	}
 	public static function debug($error)
 	{
 		if (LOGGER_LEVEL <= LOG_DEBUG) {
-			self::getLogger()->log('DEBUG', $error->getMessage(), $error->getFile(), $error->getLine());
+			self::getLogger()->logMessage('DEBUG', $message);
 		}		
 	}
 	public static function info($error)
 	{
 		if (LOGGER_LEVEL <= LOG_INFO) {
-			self::getLogger()->log('INFO', $error->getMessage(), $error->getFile(), $error->getLine());
+			self::getLogger()->logMessage('INFO', $message);
 		}		
 	}
-	public static function warn($error)
+	public static function warn($message)
 	{
 		if (LOGGER_LEVEL <= LOG_WARN) {
-			self::getLogger()->log('WARN', $error->getMessage(), $error->getFile(), $error->getLine());
+			self::getLogger()->logMessage('WARN', $message);
 		}		
 	}
 	public static function error($error)
 	{
 		if (LOGGER_LEVEL <= LOG_ERROR) {
-			self::getLogger()->log('ERROR', $error->getMessage(), $error->getFile(), $error->getLine(), $error);
+			self::getLogger()->logError('ERROR', $error->getMessage(), $error->getFile(), $error->getLine(), $error);
 		}		
 	}
 	public static function fatal($error)
 	{
 		if (LOGGER_LEVEL <= LOG_FATAL) {
-			self::getLogger()->log('FATAL', $error->getMessage(), $error->getFile(), $error->getLine(), $error);
+			self::getLogger()->logError('FATAL', $error->getMessage(), $error->getFile(), $error->getLine(), $error);
 		}		
 	}
 }
