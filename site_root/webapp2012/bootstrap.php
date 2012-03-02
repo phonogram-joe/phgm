@@ -69,11 +69,15 @@ require_once(LIB_DIR . DS . 'HttpHandler.php');
 //	データベース
 require_once(LIB_DIR . DS . 'database' . DS . 'DatabaseSession.php');
 require_once(LIB_DIR . DS . 'database' . DS . 'DatabaseConnectionManager.php');
+require_once(LIB_DIR . DS . 'database' . DS . 'DbModel.php');
 
 //	ライブラリーの初期化
 BaseRenderer::classInitialize();
 HttpResponseFormat::classInitialize();
 BaseModel::classInitialize();
+
+DatabaseConnectionManager::classInitialize();
+DbModel::classInitialize();
 
 //	vendorのクラス
 //	...none...
