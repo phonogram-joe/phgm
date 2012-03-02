@@ -12,8 +12,8 @@ class BaseModel
 {
 	private static $CLASS_MODEL_DEFINITIONS;
 
-	public $changedFields;
-	public $validationErrors;
+	private $changedFields;
+	private $validationErrors;
 
 	public function BaseModel($values = null)
 	{
@@ -56,6 +56,7 @@ class BaseModel
 	 */
 	public function set($key, $value = null)
 	{
+		Logger::trace('BaseModel:set() -- ' . get_class($this) . 'のオブジェクトに' . $key . '=' . $value);
 		$modelDefinition = self::getClassModelDefinition(get_class($this));
 		return $modelDefinition->set($this, $key, $value);
 	}
@@ -74,9 +75,22 @@ class BaseModel
 		return $modelDefinition->getLabel($key);
 	}
 
-	public function getChanged()
+	public function isChanged($field)
 	{
-		return $this->changedFields;
+		return array_key_exists($field, $this->changedFields);
+	}
+	public function hasChanges()
+	{
+		return count($this->changedFields) !== 0;
+	}
+	public function _change($key, $value)
+	{
+		$this->changedFields[$key] = $value;
+	}
+
+	public function resetChanges()
+	{
+		$this->changedFields = array();
 	}
 
 	public function getValidationErrors()
@@ -84,9 +98,27 @@ class BaseModel
 		return $this->validationErrors;
 	}
 
+	public function setValidationErrors($errors)
+	{
+		$this->validationErrors = $errors;
+	}
+
 	public function isValid()
 	{
 		$modelDefinition = self::getClassModelDefinition(get_class($this));
 		return $modelDefinition->isValid($this);
+	}
+
+	public function hasErrors()
+	{
+		return count($this->validationErrors) > 0;
+	}
+	public function hasError($key)
+	{
+		return array_key_exists($key, $this->validationErrors);
+	}
+	public function getError($key)
+	{
+		return $this->validationErrors[$key]['message'];
 	}
 }

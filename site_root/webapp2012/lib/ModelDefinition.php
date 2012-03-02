@@ -62,7 +62,9 @@ class ModelDefinition
 	public function initializeObject($object)
 	{
 		foreach ($this->fields as $name => $field) {
-			$object->{$name} = null;
+			if (!property_exists($object, $name)) {
+				$object->{$name} = null;
+			}
 		}
 	}
 
@@ -74,21 +76,25 @@ class ModelDefinition
 		if (is_null($key)) {
 			throw new Exception('ModelDefinition:set() -- キーはナルです。');
 		}
-		if (!array_key_exists($key, $this->fields)) {
-			throw new Exception('ModelDefinition:set() -- ' . $this->class . 'には「' . $key . '」というキーはないです。');
-		}
 		if (is_array($key)) {
+			Logger::trace('ModelDefinition:set() -- array()');
 			$params = $key;
 			$setParams = array();
 			foreach ($this->fields as $name => $options) {
-				if (true === array_search($name, $this->visibilityWhitelist) && array_key_exists($name, $params)) {
+				if (false !== array_search($name, $this->visibilityWhitelist) && array_key_exists($name, $params)) {
+					Logger::trace('ModelDefinition:set() -- visible, key/value ' . $name . '=' . $value);
 					$setParams[$name] = $this->simpleSet($object, $name, $params[$name]);
 				} else {
+					Logger::trace('ModelDefinition:set() -- invisible, key/value ' . $name . '=null');
 					$setParams[$name] = $this->simpleSet($object, $name, null);
 				}
 			}
 			return $setParams;
 		} else {
+			if (!array_key_exists($key, $this->fields)) {
+				throw new Exception('ModelDefinition:set() -- ' . $this->class . 'には「' . $key . '」というキーはないです。');
+			}
+			Logger::trace('ModelDefinition:set() -- key/value ' . $key . '=' . $value);
 			return $this->simpleSet($object, $key, $value);
 		}
 	}
@@ -99,17 +105,17 @@ class ModelDefinition
 			$value = mb_convert_kana($value, $this->fields[$key]['kanaConversion']);
 		}
 		$object->{$key} = $value;
-		if (!is_null($object->changedFields)) {
-			$object->changedFields[$key] = $value;
+		if ($object->hasChanges()) {
+			$object->_change($key, $value);
 		}	
 		return $value;
 	}
 
 	public function isValid($object)
 	{
-		$object->validationErrors = array();
 		$modelValid = true;
 		$errorMsg = true;
+		$errors = array();
 		foreach ($this->validations as $validation) {
 			$name = $validation[0];
 			$obj = $validation[1];
@@ -123,11 +129,12 @@ class ModelDefinition
 				$errorMsg = call_user_func_array(array($obj, $method), $args);
 			}
 
-			if (!is_null($errorMsg)) {
+			if (!is_null($errorMsg) && !array_key_exists($name, $errors)) {
 				$modelValid = false;
-				$object->validationErrors[] = array('name' => $name, 'message' => $errorMsg, 'label' => $this->fields[$name]['label']);
+				$errors[$name] = array('name' => $name, 'message' => $errorMsg, 'label' => $this->fields[$name]['label']);
 			}
 		}
+		$object->setValidationErrors($errors);
 		return $modelValid;
 	}
 }
