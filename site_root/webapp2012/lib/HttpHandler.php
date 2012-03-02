@@ -55,12 +55,21 @@ class HttpHandler
 					$this->response->redirect($this->controller->getRedirectUrl());
 					$this->response->respondAndClose();
 					return;
+				} else {
+					$this->renderResponse();
+					return;
 				}
 			} catch (Exception $e) {
 				Logger::error($e);
+				if ($this->response->isEditable()) {
+					$this->response->reset();
+				} else {
+					throw $e; //HTTPレスポンスは既に閉じられたのでエラーを表示できない。
+				}
 				$this->executeErrorController($e);
+				$this->renderResponse();
+				return;
 			}
-			$this->renderResponse();
 		} catch (Exception $e) {
 			try {
 				Logger::fatal($e);
