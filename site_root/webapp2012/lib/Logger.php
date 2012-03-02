@@ -31,7 +31,7 @@ class Logger
 		return self::$INSTANCE;
 	}
 
-	public function logMessage($message)
+	public function logMessage($level, $message)
 	{
 		$buf = "" . date("Y/m/d H:i:s") . " [" . $level . "] " . $message . "\n";
 		$this->write($buf);
@@ -82,13 +82,13 @@ class Logger
 			self::getLogger()->logMessage('TRACE', $message);
 		}		
 	}
-	public static function debug($error)
+	public static function debug($message)
 	{
 		if (LOGGER_LEVEL <= LOG_DEBUG) {
 			self::getLogger()->logMessage('DEBUG', $message);
 		}		
 	}
-	public static function info($error)
+	public static function info($message)
 	{
 		if (LOGGER_LEVEL <= LOG_INFO) {
 			self::getLogger()->logMessage('INFO', $message);
