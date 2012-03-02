@@ -103,6 +103,10 @@ class DatabaseSession
 	{
 		$dbModel = DbModel::getDbModel(get_class($object));
 		$update = $dbModel->getUpdate($object);
+		if (is_null($update)) {
+			//オブジェクトが変わってない
+			return;
+		}
 		$sql = $update['sql'];
 		$data = $update['data'];
 		Logger::info('DatabaseSession:query -- update class ' . get_class($object) . ' with; ' . $sql);

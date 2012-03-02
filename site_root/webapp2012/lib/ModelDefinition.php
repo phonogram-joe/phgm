@@ -104,10 +104,11 @@ class ModelDefinition
 		if (!is_null($this->fields[$key]['kanaConversion'])) {
 			$value = mb_convert_kana($value, $this->fields[$key]['kanaConversion']);
 		}
+		if ($object->{$key} === $value) {
+			return $value;
+		}
 		$object->{$key} = $value;
-		if ($object->hasChanges()) {
-			$object->_change($key, $value);
-		}	
+		$object->_change($key, $value);
 		return $value;
 	}
 

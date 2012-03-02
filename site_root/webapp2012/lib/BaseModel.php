@@ -85,7 +85,9 @@ class BaseModel
 	}
 	public function _change($key, $value)
 	{
-		$this->changedFields[$key] = $value;
+		if (!is_null($this->changedFields)) {
+			$this->changedFields[$key] = $value;
+		}
 	}
 
 	public function resetChanges()
