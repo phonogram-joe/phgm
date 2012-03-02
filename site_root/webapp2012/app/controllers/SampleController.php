@@ -14,31 +14,63 @@ class SampleController extends BaseController
 
 	public function index($params)
 	{
-		$this->fmt = $this->getRenderFormat();
+		$this->samples = DatabaseConnectionManager::getSession()->query('SampleModel');
 		return $this->doRender();
-	}
-
-	public function editForm($params)
-	{
-		$this->id = $params['id'];
-		return $this->doRender(null, null, 'show');
 	}
 
 	public function show($params)
 	{
 		$this->id = $params['id'];
-
-		$this->smodel = new SampleModel();
-		//$this->smodel->set('name', 'スミス');
-		$this->smodel->set('email', 'smith@example.com@');
-		if (!$this->smodel->isValid()) {
-			$this->smodelErrors = $this->smodel->getValidationErrors();
+		$db = DatabaseConnectionManager::getSession();
+		$this->model = $db->find('SampleModel', $this->id);
+		if (is_null($this->model)) {
+			return $this->doError('サンプルモデルが見つかりません。');
 		}
 		return $this->doRender();
 
 	}
+
+	public function newForm($params)
+	{
+		$this->model = new SampleModel();
+		return $this->doRender();
+	}
+	public function newSave($params)
+	{
+		$db = DatabaseConnectionManager::getSession();
+		$this->model = new SampleModel();
+		$this->model->set($params);
+		if (!$this->model->isValid()) {
+			return $this->doRender(null, null, 'newForm');
+		}
+		$db->track($this->model);
+		$db->flush();
+		//return $this->doRedirect('sample_show', array('id' => $this->model->get('id')));
+		return $this->doRedirect('SampleController', 'show', array('id' => $this->model->get('id')));
+	}
+
+	public function editForm($params)
+	{
+		$this->id = $params['id'];
+		$db = DatabaseConnectionManager::getSession();
+		$this->model = $db->find('SampleModel', $this->id);
+		if (is_null($this->model)) {
+			return $this->doError('サンプルモデルが見つかりません。');
+		}
+		return $this->doRender();
+	}
+
 	public function editSave($params)
 	{
-		
+		$this->id = $params['id'];
+		$db = DatabaseConnectionManager::getSession();
+		$this->model = $db->find('SampleModel', $this->id);
+		$this->model->set($params);
+		if (!$this->model->isValid()) {
+			return $this->doRender(null, null, 'editForm');
+		}
+		$db->track($this->model);
+		$db->flush();
+		return $this->doRedirect('sample_show', array('id' => $this->id));
 	}
 }

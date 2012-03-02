@@ -3,4 +3,9 @@
 	<h1>エラーが発生しました</h1>
 	<p>{{$errorMessage|escape}}</p>
 	<p>{{$errorTrace|escape|nl2br}}</p>
+	<p>mimeType: {{HttpResponseFormat::mimeType($fmt)|escape}}</p>
+	<p>charset: {{HttpResponseFormat::charset($fmt)|escape}}</p>
+	<p>encoding: {{HttpResponseFormat::encoding($fmt)|escape}}</p>
+	<p>mb_internal_encoding: {{mb_internal_encoding()|escape}}</p>
+	<p>mb_http_output: {{mb_http_output()|escape}}</p>
 {{/block}}

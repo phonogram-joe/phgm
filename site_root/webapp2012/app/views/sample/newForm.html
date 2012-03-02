@@ -1,0 +1,19 @@
+{{extends file="layouts/index.html"}}
+{{block name="main"}}
+<h1>Sample - New</h1>
+<form method="POST" action="{{urlFor name='sample_new_save'}}">
+<div>
+<label for="sample_name">名前</label>
+{{if $model->hasError('name')}}<span>{{$model->getError('name')}}{{/if}}
+<input type="text" name="name" id="sample_name" value="{{$model->get('name')|escape}}" />
+</div>
+<div>
+<label for="sample_email">メールアドレス</label>
+{{if $model->hasError('email')}}<span>{{$model->getError('email')}}{{/if}}
+<input type="text" name="email" id="sample_email" value="{{$model->get('email')|escape}}" />
+</div>
+<div>
+<input type="submit" name="save" value="投稿する" />
+</div>
+</form>
+{{/block}}

@@ -1,11 +1,8 @@
 {{extends file="layouts/index.html"}}
 {{block name="main"}}
 <h1>Sample - Show</h1>
-<p>サンプルモデル　{{$id|escape}}</p>
-<p><a href="{{urlFor name='sample_edit_form' id=5}}">{{urlFor name='sample_edit_form' id=5}}</a></p>
-<p>{{$smodel->getLabel('name')|escape}} {{$smodel->get('name')|escape}}</p>
-<p>{{$smodel->getLabel('email')|escape}} {{$smodel->get('email')|escape}}</p>
-{{foreach $smodelErrors as $error}}
-<p>エラー： {{$error.label|escape}}: {{$error.message|escape}}</p>
-{{/foreach}}
+<p>サンプルモデル　#{{$id|escape}}</p>
+<p>{{$model->getLabel('name')|escape}} {{$model->get('name')|escape}}</p>
+<p>{{$model->getLabel('email')|escape}} {{$model->get('email')|escape}}</p>
+<p><a href="{{urlFor name='sample_edit_form' id=$id}}">{{urlFor name='sample_edit_form' id=$id}}</a></p>
 {{/block}}
