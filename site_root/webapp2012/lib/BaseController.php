@@ -138,14 +138,23 @@ class BaseController
 	/*--------------------------------------------------------------
 	 *	リダイレクトの場合
 	 */
-	public function doRedirect($url, $actionName = null, $params = null)
+	public function doRedirectUrl($url) {
+		$this->doIsReturned();
+		$this->_phgmRedirectUrl = $url;
+	}
+	public function doRedirect($controller, $actionName, $params = null)
 	{
 		$this->doIsReturned();
-		if (!is_null($actionName)) {
-			$controllerName = $url;
-			$this->_phgmRedirectUrl = Router::urlFor($controllerName, $actionName, $params);
+		if (is_null($actionName) || (is_array($actionName) && is_null($params))) {
+			//	名前が付いてるルート
+			$name = $controller;
+			$params = $actionName;
+			$this->_phgmRedirectUrl = Router::getRouter()->urlForName($name, $params);
 		} else {
-			$this->_phgmRedirectUrl = $url; //TODO: if action given, the $url is a controller name and we need to determine URL from router
+			$this->_phgmRedirectUrl = Router::getRouter()->urlForRoute($controller, $actionName, $params);
+		}
+		if (is_null($this->_phgmRedirectUrl)) {
+			throw new Exception('BaseController:doRedirect() -- そのルートはありません。' . $controller . ' ' . $actionName . ' ' . $params);
 		}
 	}
 	public function isRedirect()
