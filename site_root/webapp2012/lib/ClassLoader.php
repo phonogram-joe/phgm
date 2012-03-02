@@ -67,6 +67,6 @@ class ClassLoader
 
 	public static function classNamePrefix($class)
 	{
-		return StringUtils::camelToUnderscores(preg_replace('/(Controller|Model|Decorator|Renderer)$/', '', $class));
+		return StringUtils::camelToUnderscores(preg_replace('/(Controller|Model|Decorator|Renderer|Validator|Helper)$/', '', $class));
 	}
 }
