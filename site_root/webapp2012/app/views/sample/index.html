@@ -3,7 +3,7 @@
 <h1>Sample - Index</h1>
 <ul>
 {{foreach $samples as $sample}}
-<li>{{$sample->getLabel('name')|escape}}: {{$sample->get('name')|escape}}</li>
+<li><a href="{{urlFor name='sample_show' id=$sample->get('id')}}">{{$sample->get('name')|escape}}</a></li>
 {{/foreach}}
 </ul>
 {{/block}}

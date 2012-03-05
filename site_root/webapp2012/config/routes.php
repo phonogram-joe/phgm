@@ -15,7 +15,8 @@ function defineRoutes($router)
 	$router->map('sample_delete_form',	'GET /sample/#id/delete', 	'SampleController', 'deleteForm');
 	$router->map('sample_delete_save',	'POST /sample/#id/delete', 	'SampleController', 'deleteSave');
 
-	$router->mapRest('restSample', '/restSample', 'SampleController');
+	//	上記と全く同じルートを一気に作る
+	//$router->mapRest('sample', '/restSample', 'SampleController');
 }
 
 /*
