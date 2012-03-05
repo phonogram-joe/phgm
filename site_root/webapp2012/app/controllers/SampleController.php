@@ -14,14 +14,14 @@ class SampleController extends BaseController
 
 	public function index($params)
 	{
-		$this->samples = DatabaseConnectionManager::getSession()->query('SampleModel');
+		$this->samples = DB::getSession()->query('SampleModel');
 		return $this->doRender();
 	}
 
 	public function show($params)
 	{
 		$this->id = $params['id'];
-		$db = DatabaseConnectionManager::getSession();
+		$db = DB::getSession();
 		$this->model = $db->find('SampleModel', $this->id);
 		if (is_null($this->model)) {
 			return $this->doError('サンプルモデルが見つかりません。');
@@ -37,7 +37,7 @@ class SampleController extends BaseController
 	}
 	public function newSave($params)
 	{
-		$db = DatabaseConnectionManager::getSession();
+		$db = DB::getSession();
 		$this->model = new SampleModel();
 		$this->model->set($params);
 		if (!$this->model->isValid()) {
@@ -52,7 +52,7 @@ class SampleController extends BaseController
 	public function editForm($params)
 	{
 		$this->id = $params['id'];
-		$db = DatabaseConnectionManager::getSession();
+		$db = DB::getSession();
 		$this->model = $db->find('SampleModel', $this->id);
 		if (is_null($this->model)) {
 			return $this->doError('サンプルモデルが見つかりません。');
@@ -63,7 +63,7 @@ class SampleController extends BaseController
 	public function editSave($params)
 	{
 		$this->id = $params['id'];
-		$db = DatabaseConnectionManager::getSession();
+		$db = DB::getSession();
 		$this->model = $db->find('SampleModel', $this->id);
 		$this->model->set($params);
 		if (!$this->model->isValid()) {

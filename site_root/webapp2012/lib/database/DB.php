@@ -4,7 +4,7 @@
  *	Licensed Under the MIT license http://www.opensource.org/licenses/mit-license.php
  */
 
-class DatabaseConnectionManager
+class DB
 {
 	private static $IS_INITIALIZED = false;
 	private static $CONNECTION_DEFINITIONS;
@@ -36,7 +36,7 @@ class DatabaseConnectionManager
 		$dbname = is_null($dbname) ? self::$DEFAULT_DATABASE : $dbname;
 		$dbh = null;
 		if (!array_key_exists($dbname, self::$CONNECTIONS)) {
-			throw new Exception('DatabaseConnectionManager::getSession() -- 「」というデータベースは設定されてないです。');
+			throw new Exception('DB::getSession() -- 「」というデータベースは設定されてないです。');
 		} else if (!is_null(self::$CONNECTIONS[$dbname])) {
 			$dbh = self::$CONNECTIONS[$dbname];
 		} else {
