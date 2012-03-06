@@ -13,7 +13,7 @@ class StringUtils
 	public static function camelToUnderscores($string)
 	{
 		$toUnderscore = create_function('$c', 'return $c[1] . \'_\' . strtolower($c[2]);');
-		return strtolower(preg_replace('/([a-z])([A-Z])/', $toUnderscore, $string));
+		return strtolower(preg_replace_callback('/([a-z])([A-Z])/', $toUnderscore, $string));
 	}
 
 	/*
