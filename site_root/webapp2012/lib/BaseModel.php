@@ -68,6 +68,12 @@ class BaseModel
 		return $this->{$key};
 	}
 
+	public function getFieldsList()
+	{
+		$modelDefinition = self::getClassModelDefinition(get_class($this));
+		return array_keys($modelDefinition->getFields());
+	}
+
 	public function getLabel($key)
 	{
 		$modelDefinition = self::getClassModelDefinition(get_class($this));
