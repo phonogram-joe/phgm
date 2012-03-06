@@ -9,6 +9,7 @@ class HttpRequest
 	private $params;
 	private $httpVerb;
 	private $session;
+	private $originalUri;
 
 	public function HttpRequest()
 	{
@@ -16,7 +17,13 @@ class HttpRequest
 		$this->setParams();
 		$this->setVerb();
 		$this->setSession();
+		$this->originalUri = $_SERVER['REQUEST_URI'];
 	}
+
+	public function getOriginalUri()
+	{
+		return $this->originalUri;
+	}	
 
 	private function setSession()
 	{
