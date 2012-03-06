@@ -56,7 +56,6 @@ class BaseModel
 	 */
 	public function set($key, $value = null)
 	{
-		Logger::trace('BaseModel:set() -- ' . get_class($this) . 'のオブジェクトに' . $key . '=' . $value);
 		$modelDefinition = self::getClassModelDefinition(get_class($this));
 		return $modelDefinition->set($this, $key, $value);
 	}
@@ -100,6 +99,16 @@ class BaseModel
 		return $this->validationErrors;
 	}
 
+	public function addValidationError($field, $message)
+	{
+		$modelDefinition = self::getClassModelDefinition(get_class($this));
+		if (!$modelDefinition->hasField($field)) {
+			throw new Exception('BaseModel:addValidationError() -- ' . get_class($this) . 'クラスには' . $field . 'というキーはありません。');
+		}
+
+		$this->validationErrors[$field] = $message;
+	}
+
 	public function setValidationErrors($errors)
 	{
 		$this->validationErrors = $errors;
@@ -121,6 +130,6 @@ class BaseModel
 	}
 	public function getError($key)
 	{
-		return $this->validationErrors[$key]['message'];
+		return $this->validationErrors[$key];
 	}
 }

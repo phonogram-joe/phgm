@@ -25,7 +25,7 @@ class ClassLoader
 	{
 		if (preg_match('/Controller$/', $name)) {
 			self::loadType(CONTROLLER, $name);
-		} else if (preg_match('/Model$/', $name)) {
+		} else if (preg_match('/(Model|Form)$/', $name)) {
 			self::loadType(MODEL, $name);
 		} else if (preg_match('/Decorator$/', $name)) {
 			self::loadType(DECORATOR, $name);
@@ -67,6 +67,6 @@ class ClassLoader
 
 	public static function classNamePrefix($class)
 	{
-		return StringUtils::camelToUnderscores(preg_replace('/(Controller|Model|Decorator|Renderer|Validator|Helper)$/', '', $class));
+		return StringUtils::camelToUnderscores(preg_replace('/(Controller|Model|Form|Decorator|Renderer|Validator|Helper)$/', '', $class));
 	}
 }
