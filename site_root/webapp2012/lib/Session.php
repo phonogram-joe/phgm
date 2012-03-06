@@ -1,4 +1,8 @@
 <?php
+/*
+ *	Copyright (C) Phonogram Inc 2012
+ *	Licensed Under the MIT license http://www.opensource.org/licenses/mit-license.php
+ */
 
 class Session
 {
@@ -14,6 +18,18 @@ class Session
 		return null;
 	}
 
+	public function setUser($user)
+	{
+		$_SESSION[SESSION_USER_KEY] = $user;
+	}
+
+	public function clearUser()
+	{
+		$user = $this->getUser();
+		unset($_SESSION[SESSION_USER_KEY]);
+		return $user;
+	}
+
 	public function addFlashMessage($msg)
 	{
 		//TODO: implement addFlashMessage()
@@ -25,11 +41,6 @@ class Session
 	public function clearFlashList()
 	{
 		//TODO: implement clearFlashList()
-	}
-
-	public function setUser($user)
-	{
-		$_SESSION[SESSION_USER_KEY] = $user;
 	}
 
 	public function set($key, $value)
@@ -47,7 +58,9 @@ class Session
 
 	public function clear($key)
 	{
+		$value = $this->get($key);
 		unset($_SESSION[SESSION_GLOBAL_KEY][$key]);
+		return $value;
 	}
 
 	public function generateOneTimeTicket()

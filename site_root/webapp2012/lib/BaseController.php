@@ -20,6 +20,8 @@ class BaseController
 	private $_phgmRenderData;
 	private $_phgmResultState;
 	private $_phgmIsReturned;
+	private $_phgmHttpRequest;
+	private $_phgmHttpResponse;
 
 	public static $BEFORE_FILTER = 'before';
 	private $_beforeFilters;
@@ -30,8 +32,10 @@ class BaseController
 	public static $AROUND_FILTER_BEFORE = 0;
 	public static $AROUND_FILTER_AFTER = 1;
 
-	public function BaseController($actionName)
+	public function BaseController($request, $response, $actionName)
 	{
+		$this->_phgmHttpRequest = $request;
+		$this->_phgmHttpResponse = $response;
 		$this->_phgmActionName = $actionName;
 		$this->_phgmRenderActionName = $actionName;
 		$this->_phgmRedirectUrl = null;
@@ -124,13 +128,38 @@ class BaseController
 	}
 
 	/*
+	 *	getRequest()
+	 *		HTTPリクエストを返す
+	 */
+	public function getRequest()
+	{
+		return $this->_phgmHttpRequest;
+	}
+
+	/*
+	 *	getResponse()
+	 *		HTTPレスポンスを返す。注意：直接使うとフレームワークとぶつかる可能性が高いので、フレームワークを通す方がお勧めです。
+	 *		例えばデータにより画像書き出して返す場合、カスタムなレンダラ(/webapp/app/libs/renderers/)
+	 *		とそれに合わせてHttpResponseFormatを設定する。レンダラではコントローラのパラムにより画像を作成する。
+	 */
+	public function getResponse()
+	{
+		return $this->_phgmHttpResponse;
+	}
+
+	public function getSession()
+	{
+		return $this->_phgmHttpRequest->getSession();
+	}
+
+	/*
 	 *	doIsReturned()　－－　応答が決まったってことを設定する
 	 *		二度コールするとエラーを発生する
 	 */
 	private function doIsReturned()
 	{
 		if ($this->_phgmIsReturned) {
-			throw new Exception('BaseController::doIsReturned -- レンダー・エラー・リダイレクトは既に設定されてます。');
+			throw new Exception('BaseController::doIsReturned -- レンダー・エラー・リダイレクトは既にコールされてます。');
 		}
 		$this->_phgmIsReturned = true;
 	}

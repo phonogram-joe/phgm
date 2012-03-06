@@ -109,7 +109,7 @@ class HttpHandler
 		$controllerClass = $this->controllerClass;
 		ClassLoader::load(CONTROLLER, $controllerClass);
 
-		$this->controller = new $controllerClass($actionName);
+		$this->controller = new $controllerClass($this->request, $this->response, $actionName);
 		$this->controller->execute($this->request->getParams());
 	}
 
@@ -120,7 +120,7 @@ class HttpHandler
 		$this->actionName = BaseController::$ERROR_CONTROLLER_ACTION_NAME;
 		ClassLoader::load(CONTROLLER, $controllerClass);
 
-		$this->controller = new $controllerClass(BaseController::$ERROR_CONTROLLER_ACTION_NAME);
+		$this->controller = new $controllerClass($this->request, $this->response, BaseController::$ERROR_CONTROLLER_ACTION_NAME);
 		$this->controller->execute($error);
 	}
 
