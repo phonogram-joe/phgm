@@ -20,6 +20,9 @@ class SmartyRenderer extends BaseRenderer
 				$this->smarty->assign($key, $value);
 			}
 		}
+		if (!file_exists($this->templatePath)) {
+			throw new Exception('SmartyRenderer:customRender() -- テンプレートファイル' . $this->templatePath . 'は見つかりません。');
+		}
 		return $this->smarty->fetch($this->templatePath);
 	}
 
