@@ -15,6 +15,22 @@ class DatabaseSession
 		$this->trackedObjects = array();
 	}
 
+	public function findBy($className, $column, $value)
+	{
+		$table = DbModel::getDbModel($className);
+		$sql = $table->getSelectSql();
+		$sql .= ' WHERE ' . $column . ' = ?';
+		$sql .= ' LIMIT 1';
+		$data = array($value);
+		Logger::info('DatabaseSession:query -- ' . $sql);
+		$statement = $this->dbHandle->prepare($sql); // '->query()'かな？
+		$statement->setFetchMode(PDO::FETCH_CLASS, $className);
+		$result = $statement->execute($data);
+		$result = $statement->fetch();
+		$statement->closeCursor();
+		return $result !== false ? $result : null;
+	}
+
 	public function find($className, $id)
 	{
 		$table = DbModel::getDbModel($className);
@@ -27,20 +43,38 @@ class DatabaseSession
 		$result = $statement->execute($data);
 		$result = $statement->fetch();
 		$statement->closeCursor();
-		return $result;
+		return $result !== false ? $result : null;
 	}
 
-	public function query($className)
+	/*
+	 *	query($className, $conditions, $values)
+	 *		クエリを行って結果を返す。
+	 *
+	 *	@className: String - 結果をどのクラスに変換するか設定する。例： 'SampleModel'
+	 *	@conditions: String - クエリの条件。例：　'name = :name OR email = :email'
+	 *	@values: Array - クエリの条件に合わせたデータ。例： array('name' => '田中', 'email' => 'tanaka@example.com')
+	 *	
+	 *	@returns: Array. array('sql' => 'SQLストリング', 'data' => array(...)
+	 *	上記の例で、array('sql' => 'name = ? or email = ?', 'data' => array('田中', 'tanaka@example.com'))
+	 */
+	public function query($className, $conditions = null, $values = null)
 	{
 		$table = DbModel::getDbModel($className);
 		$sql = $table->getSelectSql();
+		if (!is_null($conditions)) {
+			$where = new WhereClause($conditions, $values);
+			$sql .= $where->getSql();
+			$data = $where->getData();
+		} else {
+			$data = array();
+		}
 		Logger::info('DatabaseSession:query -- ' . $sql);
 		$statement = $this->dbHandle->prepare($sql); // '->query()'かな？
 		$statement->setFetchMode(PDO::FETCH_CLASS, $className);
-		$result = $statement->execute();
+		$result = $statement->execute($data);
 		$results = $statement->fetchAll();
 		$statement->closeCursor();
-		return $results;
+		return $results !== false && is_array($results) && count($results) > 0 ? $results : null;
 	}
 
 	public function track($object)
