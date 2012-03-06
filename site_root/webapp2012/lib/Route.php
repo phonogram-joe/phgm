@@ -127,7 +127,7 @@ class Route
 		$urlPath = $this->url_pattern;
 		foreach ($params as $param => $value) {
 			//	attempt to swap in the parameter for a placeholder in the url_pattern
-			$urlPath = preg_replace(self::$PARAM_PATTERN_PREFIX . $param . self::$PARAM_PATTERN_SUFFIX, $value, $urlPath);
+			$urlPath = preg_replace(self::$PARAM_PATTERN_PREFIX . $param . self::$PARAM_PATTERN_SUFFIX, urlencode($value), $urlPath);
 			if (is_null($urlPath)) {
 				return null;
 			}
@@ -140,7 +140,7 @@ class Route
 		if (is_null($this->attemptMatchRoute($urlPath, null))) {
 			return null;
 		}
-		return $urlPath . '?' . http_build_query($queryParams);
+		return $urlPath . (count($queryParams) === 0 ? '' : ('?' . http_build_query($queryParams)));
 	}
 
 	public function attemptMatchRoute($url, $httpVerb)

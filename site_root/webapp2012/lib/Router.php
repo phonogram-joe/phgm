@@ -123,9 +123,9 @@ class Router
 		$this->map($namePrefix . '_new_save', 		'POST ' . $urlPrefix . '/new', 			$controller, 'newSave');
 		$this->map($namePrefix . '_show', 			'GET  ' . $urlPrefix . '/#id', 			$controller, 'show');
 		$this->map($namePrefix . '_edit_form', 		'GET  ' . $urlPrefix . '/#id/edit', 	$controller, 'editForm');
-		$this->map($namePrefix . '_edit_save', 		'PUT ' . $urlPrefix . '/#id/edit', 	$controller, 'editSave');
+		$this->map($namePrefix . '_edit_save', 		'POST ' . $urlPrefix . '/#id/edit', 	$controller, 'editSave');
 		$this->map($namePrefix . '_delete_form',	'GET  ' . $urlPrefix . '/#id/delete', 	$controller, 'deleteForm');
-		$this->map($namePrefix . '_delete_save',	'DELETE ' . $urlPrefix . '/#id/delete', 	$controller, 'deleteSave');
+		$this->map($namePrefix . '_delete_save',	'POST ' . $urlPrefix . '/#id/delete', 	$controller, 'deleteSave');
 	}
 
 	public function mapRestPair($namePrefix, $urlPrefix, $controller)
