@@ -68,6 +68,11 @@ class ModelDefinition
 		}
 	}
 
+	public function hasField($key)
+	{
+		return array_key_exists($key, $this->fields);
+	}
+
 	public function set($object, $key, $value = null)
 	{
 		if (is_null($object)) {
@@ -132,7 +137,7 @@ class ModelDefinition
 
 			if (!is_null($errorMsg) && !array_key_exists($name, $errors)) {
 				$modelValid = false;
-				$errors[$name] = array('name' => $name, 'message' => $errorMsg, 'label' => $this->fields[$name]['label']);
+				$errors[$name] = $errorMsg;
 			}
 		}
 		$object->setValidationErrors($errors);
