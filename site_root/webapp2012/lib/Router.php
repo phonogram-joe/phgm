@@ -128,6 +128,12 @@ class Router
 		$this->map($namePrefix . '_delete_save',	'DELETE ' . $urlPrefix . '/#id/delete', 	$controller, 'deleteSave');
 	}
 
+	public function mapRestPair($namePrefix, $urlPrefix, $controller)
+	{
+		$this->map($namePrefix . '_form',	'GET  ' . $urlPrefix,	$controller, $namePrefix . 'Form');
+		$this->map($namePrefix . '_save',	'POST ' . $urlPrefix,	$controller, $namePrefix . 'Save');
+	}
+
 	/*
 	 *	mapForm($namePrefix, $urlPrefix, $controller)
 	 *		shortcut for mapping a RESTful form controller with 3 screens (input, confirm, and complete). Input & Confirm
@@ -135,9 +141,9 @@ class Router
 	 */
 	public function mapForm($namePrefix, $urlPrefix, $controller)
 	{
-		$this->map($namePrefix . '_form', 		'GET  ' . $urlPrefix, 				$controller, 'form');
-		$this->map($namePrefix . '_confirm', 	'POST ' . $urlPrefix, 				$controller, 'confirm');
-		$this->map($namePrefix . '_complete', 	'GET  ' . $urlPrefix . '/complete', $controller, 'complete');
+		$this->map($namePrefix . '_form', 		'GET  ' . $urlPrefix, 				$controller, $namePrefix . 'Form');
+		$this->map($namePrefix . '_confirm', 	'POST ' . $urlPrefix, 				$controller, $namePrefix . 'Confirm');
+		$this->map($namePrefix . '_complete', 	'GET  ' . $urlPrefix . '/complete', $controller, $namePrefix . 'Complete');
 	}
 
 	/*
@@ -178,6 +184,10 @@ class Router
 				$prefix = $this->urlPrefix;
 			}
 		}
-		return $prefix . $routable;
+		$routable = $prefix . $routable;
+		if (strpos($routable, '/') !== 0) {
+			$routable = '/' . $routable;
+		}
+		return $routable;
 	}
 }
