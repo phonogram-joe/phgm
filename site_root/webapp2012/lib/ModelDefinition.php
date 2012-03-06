@@ -92,9 +92,6 @@ class ModelDefinition
 				if (false !== array_search($name, $this->visibilityWhitelist) && array_key_exists($name, $params)) {
 					Logger::trace('ModelDefinition:set() -- visible, key/value ' . $name . '=' . $value);
 					$setParams[$name] = $this->simpleSet($object, $name, $params[$name]);
-				} else {
-					Logger::trace('ModelDefinition:set() -- invisible, key/value ' . $name . '=null');
-					$setParams[$name] = $this->simpleSet($object, $name, null);
 				}
 			}
 			return $setParams;
