@@ -66,6 +66,17 @@ class DbModel extends BaseModel
 		return $this->idName;
 	}
 
+	public function setNonDbColumn($field)
+	{
+		$columnIndex = array_search($field, $this->columns);
+		if (false === $columnIndex) {
+			throw new Exception('DbModel:setNonDbColumn() -- ' . $this->tableName . 'には' . $field . 'というコラムはありません。');
+		}
+		unset($this->columns[$columnIndex]);
+		$this->createInsertSql();
+		$this->createSelectSql();
+	}
+
 	public function setId($object, $id)
 	{
 		$object->{$this->idName} = $id;
