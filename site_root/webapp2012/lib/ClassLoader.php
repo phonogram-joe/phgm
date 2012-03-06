@@ -65,6 +65,19 @@ class ClassLoader
 		return $type . DS . preg_replace('/\.+/', DS, $filename) . '.php';
 	}
 
+	/*
+	 *	toClassName($prefix[, $type])
+	 *		「login_user」のようなテキストを「LoginUserModel」のようなクラス名の形に変換する。
+	 *
+	 *	@prefix: String, 変換するストリング。
+	 *	@type: String, 任意、Model・Validator・Controllerのような、クラスの種類を区別するストリング。
+	 *	@returns: String, @prefixをクラス名の形に変換した結果。@typeが指定される場合は、最後に付けられる。
+	 */
+	public static function toClassName($prefix, $type = null)
+	{
+		return ucfirst(StringUtils::underscoresToCamel($prefix)) . (is_null($type) ? '' : $type);
+	}
+
 	public static function classNamePrefix($class)
 	{
 		return StringUtils::camelToUnderscores(preg_replace('/(Controller|Model|Form|Decorator|Renderer|Validator|Helper)$/', '', $class));

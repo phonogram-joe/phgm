@@ -29,6 +29,9 @@ class ModelDefinition
 	{
 		return $this->fields;
 	}
+	public function getFieldList($includeHidden = false)
+	{
+	}
 	public function getLabel($key)
 	{
 		return $this->fields[$key]['label'];
@@ -42,12 +45,12 @@ class ModelDefinition
 			$validatorParts = preg_split('/[:]/', $validator);
 			$validatorMethod = $validatorParts[0];
 			array_shift($validatorParts);
-			if (method_exists($this->class, $validator)) {
+			if (method_exists($this->class, $validatorMethod)) {
 				//class method
 				$this->validations[] = array($name, null, $validatorMethod, $validatorParts);
 			} else {
 				//validator class
-				$validatorClass = StringUtils::underscoresToCamel($validatorMethod) . 'Validator';
+				$validatorClass = ClassLoader::toClassName($validatorMethod, 'Validator');
 				ClassLoader::load(VALIDATOR, $validatorClass);
 				$this->validations[] = array($name, $validatorClass, $validatorMethod, $validatorParts);
 			}
