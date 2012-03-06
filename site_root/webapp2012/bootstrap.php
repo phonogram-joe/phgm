@@ -52,6 +52,7 @@ define('RENDERERS_DIR', APP_LIB_DIR . DS . 'renderers'); //カスタムなレン
 //	ライブラリーのクラス
 require_once(LIB_DIR . DS . 'Logger.php');
 require_once(LIB_DIR . DS . 'StringUtils.php');
+require_once(LIB_DIR . DS . 'TimeUtils.php');
 require_once(LIB_DIR . DS . 'ModelDefinition.php');
 require_once(LIB_DIR . DS . 'BaseModel.php');
 require_once(LIB_DIR . DS . 'BaseDecorator.php');
@@ -67,6 +68,7 @@ require_once(LIB_DIR . DS . 'HttpResponseFormat.php');
 require_once(LIB_DIR . DS . 'HttpHandler.php');
 
 //	データベース
+require_once(LIB_DIR . DS . 'database' . DS . 'WhereClause.php');
 require_once(LIB_DIR . DS . 'database' . DS . 'DatabaseSession.php');
 require_once(LIB_DIR . DS . 'database' . DS . 'DB.php');
 require_once(LIB_DIR . DS . 'database' . DS . 'DbModel.php');
@@ -75,6 +77,8 @@ require_once(LIB_DIR . DS . 'database' . DS . 'DbModel.php');
 BaseRenderer::classInitialize();
 HttpResponseFormat::classInitialize();
 BaseModel::classInitialize();
+TimeUtils::classInitialize();
+TimeUtils::setTime(REQUEST_TIME);
 
 DB::classInitialize();
 DbModel::classInitialize();
