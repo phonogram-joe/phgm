@@ -8,11 +8,13 @@ class DatabaseSession
 {
 	private $dbHandle;
 	private $trackedObjects;
+	private $deletedObjects;
 
 	public function DatabaseSession($dbHandle)
 	{
 		$this->dbHandle = $dbHandle;
 		$this->trackedObjects = array();
+		$this->deletedObjects = array();
 	}
 
 	public function findBy($className, $column, $value)
@@ -86,6 +88,17 @@ class DatabaseSession
 			Logger::trace('DatabaseSession:track() -- object ' . $object . ' already being tracked');
 		}
 	}
+	public function delete($object)
+	{
+		if (!in_array($object, $this->trackedObjects, true)) {
+			if (!in_array($object, $this->deletedObjects, true)) {
+				Logger::trace('DatabaseSession:delete() -- deleting ' . $object);
+				$this->deletedObjects[] = $object;
+			}
+		} else {
+			throw new Exception('DatabaseSession:delete() -- オブジェクトの変更・購入は既にトラックされています。');
+		}
+	}
 
 	public function flush()
 	{
@@ -108,6 +121,11 @@ class DatabaseSession
 					$this->insertObject($object);
 				}
 			}
+			foreach ($this->deletedObjects as $object) {
+				if (DbModel::hasId($object)) {
+					$this->deleteObject($object);
+				}
+			}
 
 			Logger::trace('DatabaseSession:flush() -- commit');
 			$this->dbHandle->commit();
@@ -124,6 +142,8 @@ class DatabaseSession
 	private function insertObject($object)
 	{
 		$dbModel = DbModel::getDbModel(get_class($object));
+		$dbModel->doCallback(DbModel::BEFORE_INSERT, $object);
+		$dbModel->doCallback(DbModel::BEFORE_SAVE, $object);
 		$insert = $dbModel->getInsert($object);
 		$sql = $insert['sql'];
 		$data = $insert['data'];
@@ -136,6 +156,8 @@ class DatabaseSession
 	private function updateObject($object)
 	{
 		$dbModel = DbModel::getDbModel(get_class($object));
+		$dbModel->doCallback(DbModel::BEFORE_UPDATE, $object);
+		$dbModel->doCallback(DbModel::BEFORE_SAVE, $object);
 		$update = $dbModel->getUpdate($object);
 		if (is_null($update)) {
 			//オブジェクトが変わってない
@@ -144,6 +166,19 @@ class DatabaseSession
 		$sql = $update['sql'];
 		$data = $update['data'];
 		Logger::info('DatabaseSession:query -- update class ' . get_class($object) . ' with; ' . $sql);
+		$statement = $this->dbHandle->prepare($sql);
+		$statement->execute($data);
+		return $statement->rowCount();
+	}
+
+	private function deleteObject($object)
+	{
+		$dbModel = DbModel::getDbModel(get_class($object));
+		$dbModel->doCallback(DbModel::BEFORE_DELETE, $object);
+		$delete = $dbModel->getDelete($object);
+		$sql = $delete['sql'];
+		$data = $delete['data'];
+		Logger::info('DatabaseSession:query -- delete class ' . get_class($object) . ' with; ' . $sql);
 		$statement = $this->dbHandle->prepare($sql);
 		$statement->execute($data);
 		return $statement->rowCount();

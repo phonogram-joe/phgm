@@ -9,11 +9,17 @@ class DbModel extends BaseModel
 	private static $DB_MODELS;
 	private static $IS_INITIALIZED = false;
 
+	const BEFORE_INSERT = 0; //INSERTのみ
+	const BEFORE_UPDATE = 1; //UPDATEのみ
+	const BEFORE_SAVE = 2; //INSERTとUPDATEの両方
+	const BEFORE_DELETE = 3; //DELETEのみ
+
 	private $tableName;
 	private $idName;
 	private $columns;
 	private $insertSql;
 	private $selectSql;
+	private $callbacks;
 
 	private function __construct($className, $modelDefinition) {
 		$this->tableName = null;
@@ -21,6 +27,7 @@ class DbModel extends BaseModel
 		$this->columns = array();
 		$this->insertSql = null;
 		$this->selectSql = null;
+		$this->callbacks = array();
 
 		$fields = $modelDefinition->getFields();
 		foreach ($fields as $name => $field) {
@@ -44,6 +51,23 @@ class DbModel extends BaseModel
 		$sql = 'SELECT ' . $this->idName . ', ' . implode(', ', $this->columns);
 		$sql .= ' FROM ' . $this->tableName;
 		$this->selectSql = $sql;
+	}
+
+	public function addCallback($type, $methodName)
+	{
+		if (!array_search($type, array(self::BEFORE_DELETE, self::BEFORE_UPDATE, self::BEFORE_INSERT, self::BEFORE_SAVE))) {
+			throw new Exception('DbModel:addCallback() -- コールバックコードは無効です。');
+		}
+		$this->callbacks[$type] = $methodName;
+	}
+
+	public function doCallback($type, $object)
+	{
+		if (!array_key_exists($type, $this->callbacks)) {
+			return;
+		}
+		$callback = $this->callbacks[$type];
+		call_user_func(array($object, $callback));
 	}
 
 	public function setTableName($tableName)
@@ -119,6 +143,14 @@ class DbModel extends BaseModel
 		return array('sql' => $sql, 'data' => $data);
 	}
 
+	public function getDelete($object)
+	{
+		$sql = 'DELETE FROM ' . $this->tableName;
+		$sql .= ' WHERE ' . $this->idName . ' = ?';
+		$data = array($object->get($this->idName));
+		return array('sql' => $sql, 'data' => $data);
+	}
+
 	public static function classInitialize()
 	{
 		if (self::$IS_INITIALIZED) {
@@ -148,5 +180,10 @@ class DbModel extends BaseModel
 	{
 		$dbModel = self::getDbModel(get_class($object));
 		return isset($object->{$dbModel->getIdName()});
+	}
+
+	public static function datetime($epoch)
+	{
+		return date('Y-m-d H:i:s', $epoch);
 	}
 }
