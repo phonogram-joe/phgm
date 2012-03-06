@@ -22,16 +22,16 @@ class DB
 		self::$DEFAULT_DATABASE = null;
 	}
 
-	public static function addConnection($adapter, $host, $dbname, $username, $password, $isDefault = null)
+	public static function addConnection($adapter, $host, $dbname, $username, $password, $isDefault = null, $dbOptions = array())
 	{
 		self::$CONNECTIONS[$dbname] = null;
-		self::$CONNECTION_DEFINITIONS[$dbname] = array($adapter . ':host=' . $host . ';dbname=' . $dbname, $username, $password);
+		self::$CONNECTION_DEFINITIONS[$dbname] = array($adapter . ':host=' . $host . ';dbname=' . $dbname, $username, $password, $dbOptions);
 		if ($isDefault || is_null(self::$DEFAULT_DATABASE)) {
 			self::$DEFAULT_DATABASE = $dbname;
 		}
 	}
 
-	public static function getSession($dbname = null)
+	public static function getHandle($dbname = null)
 	{
 		$dbname = is_null($dbname) ? self::$DEFAULT_DATABASE : $dbname;
 		$dbh = null;
@@ -41,10 +41,15 @@ class DB
 			$dbh = self::$CONNECTIONS[$dbname];
 		} else {
 			$definition = self::$CONNECTION_DEFINITIONS[$dbname];
-			$dbh = new PDO($definition[0], $definition[1], $definition[2]);
+			$dbh = new PDO($definition[0], $definition[1], $definition[2], $definition[3]);
 			$dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 			self::$CONNECTIONS[$dbname] = $dbh;
 		}
-		return new DatabaseSession($dbh);
+		return $dbh;
+	}
+
+	public static function getSession($dbname = null)
+	{
+		return new DatabaseSession(self::getHandle($dbname));
 	}
 }
