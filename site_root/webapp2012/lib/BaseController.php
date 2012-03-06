@@ -77,35 +77,35 @@ class BaseController
 			$this->_phgmActionName = $this->_phgmDefaultActionName;
 		}
 
-		$this->doFilters(self::$BEFORE_FILTER);
+		$this->doFilters(self::$BEFORE_FILTER, null, $params);
 		if ($this->_phgmIsReturned) { return; }
 
-		$this->doFilters(self::$AROUND_FILTER, self::$AROUND_FILTER_BEFORE);
+		$this->doFilters(self::$AROUND_FILTER, self::$AROUND_FILTER_BEFORE, $params);
 		if ($this->_phgmIsReturned) { return; }
 
 		call_user_func(array($this, $this->_phgmActionName), $params);
 		
-		$this->doFilters(self::$AROUND_FILTER, self::$AROUND_FILTER_AFTER);
-		$this->doFilters(self::$AFTER_FILTER);
+		$this->doFilters(self::$AROUND_FILTER, self::$AROUND_FILTER_AFTER, $params);
+		$this->doFilters(self::$AFTER_FILTER, null, $params);
 	}
 
-	private function doFilters($type, $beforeAfter = null)
+	private function doFilters($type, $beforeAfter = null, $params)
 	{
 		if ($type === self::$BEFORE_FILTER) {
 			foreach ($this->_beforeFilters as $name) {
 				//	アラウンドフィルターの前にこーるする場合、レスポンスが決まったら中止する
 				if ($this->_phgmIsReturned) { return; }
-				call_user_func(array($this, $name));
+				call_user_func(array($this, $name), $params);
 			}
 		} else if ($type === self::$AFTER_FILTER) {
 			foreach ($this->_afterFilters as $name) {
-				call_user_func(array($this, $name));
+				call_user_func(array($this, $name), $params);
 			}
 		} else if ($type === self::$BEFORE_FILTER) {
 			foreach ($this->_aroundFilters as $name) {
 				//	アラウンドフィルターの前にこーるする場合、レスポンスが決まったら中止する
 				if ($this->_phgmIsReturned && $beforeAfter === self::$AROUND_FILTER_BEFORE) { return; }
-				call_user_func(array($this, $name), $beforeAfter);
+				call_user_func(array($this, $name), $params, $beforeAfter);
 			}
 		}
 	}
