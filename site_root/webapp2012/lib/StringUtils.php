@@ -23,6 +23,6 @@ class StringUtils
 	public static function underscoresToCamel($string)
 	{
 		$toCamel = create_function('$c', 'return strtoupper($c[1]);');
-    	return ucfirst(preg_replace_callback('/_([a-z])/', $toCamel, $string));
+    	return preg_replace_callback('/_([a-z])/', $toCamel, $string);
 	}
 }
