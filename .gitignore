@@ -3,3 +3,6 @@
 site_root/webapp2012/lib-vendor/doctrine2-orm/
 site_root/webapp2012/lib-vendor/smarty-3.1.8-php-5.2up/
 site_root/webapp2012/config/database.php
+site_root/webapp2012/lib-vendor/phpdoc/
+site_root/webapp2012/docs/app/
+site_root/webapp2012/docs/lib/
