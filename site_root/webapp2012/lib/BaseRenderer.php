@@ -34,7 +34,7 @@ class BaseRenderer
 		} else {
 			throw new Exception('BaseRenderer::getRenderer -- ' . $format . 'のレンダラは設定されてない。');
 		}
-		ClassLoader::load(RENDERER, $className);
+		ClassLoader::load($className);
 		$renderer = new $className($format, $templatePath . $extension);
 		$renderer->initialize();
 		return $renderer;

@@ -4,7 +4,7 @@
  *	Licensed Under the MIT license http://www.opensource.org/licenses/mit-license.php
  */
 
-ClassLoader::load(MODEL, 'SampleModel');
+ClassLoader::load('SampleModel');
 
 class SampleController extends BaseController
 {

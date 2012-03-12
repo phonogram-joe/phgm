@@ -4,7 +4,7 @@
  *	Licensed Under the MIT license http://www.opensource.org/licenses/mit-license.php
  */
 
-require_once(LIB_DIR . DS . 'Route.php');
+ClassLoader::loadFrom('Route', phgm::$LIB_DIR);
 
 class Router
 {
@@ -62,10 +62,16 @@ class Router
 		return $this->errorController;
 	}
 
-	public function routeCurrent($httpVerb)
+	public function routeRequest($httpRequest)
 	{
-		$routable = $this->uriToRoutable();
-		return $this->routeFor($routable, $httpVerb);
+		$uri = $httpRequest->getOriginalUri();
+		$routable = $this->uriToRoutable($uri);
+		return $this->routeFor($routable, $httpRequest->getVerb());
+	}
+
+	public function getNamedRoute($name)
+	{
+		return $this->routes[$name];
 	}
 
 	public function routeFor($routable, $httpVerb = null)
@@ -79,6 +85,7 @@ class Router
 		}
 		return null;
 	}
+
 
 	public function urlForName($name, $params = array())
 	{

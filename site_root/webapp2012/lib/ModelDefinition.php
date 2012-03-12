@@ -51,7 +51,7 @@ class ModelDefinition
 			} else {
 				//validator class
 				$validatorClass = ClassLoader::toClassName($validatorMethod, 'Validator');
-				ClassLoader::load(VALIDATOR, $validatorClass);
+				ClassLoader::load($validatorClass);
 				$this->validations[] = array($name, $validatorClass, $validatorMethod, $validatorParts);
 			}
 		}

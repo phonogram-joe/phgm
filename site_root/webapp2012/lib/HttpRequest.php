@@ -11,6 +11,11 @@ class HttpRequest
 	private $session;
 	private $originalUri;
 
+	const GET = 'GET';
+	const POST = 'POST';
+	const PUT = 'PUT';
+	const DELETE = 'DELETE';
+
 	public function HttpRequest()
 	{
 		$this->params = array();
@@ -20,6 +25,11 @@ class HttpRequest
 		$this->originalUri = $_SERVER['REQUEST_URI'];
 	}
 
+	public function toString()
+	{
+		return strtoupper($this->httpVerb) . ' ' . $this->originalUri;
+	}
+
 	public function getOriginalUri()
 	{
 		return $this->originalUri;
@@ -27,11 +37,13 @@ class HttpRequest
 
 	private function setSession()
 	{
-		if (SESSIONS_ENABLED) {
-			session_name(SESSION_NAME);
+		if (Config::get(Config::SESSIONS_ENABLED)) {
+			session_name(Config::get(Config::SESSION_NAME));
 			if (session_start()) {
 				$this->session = new Session();
 				return;
+			} else {
+				throw new Exception('HttpRequest:setSession() -- セッションの初期化に失敗がありました。');
 			}
 		}
 		$this->session = null;

@@ -12,9 +12,8 @@
  */
 
 // アプリケーション設定
-require_once(dirname(__FILE__) . DIRECTORY_SEPARATOR . 'webapp2012' . DIRECTORY_SEPARATOR . 'bootstrap.php');
+require_once(dirname(__FILE__) . DIRECTORY_SEPARATOR . 'webapp2012' . DIRECTORY_SEPARATOR . 'phgm.php');
 
-$handler = new HttpHandler();
-$handler->handleRequest();
+phgm::go();
 
 exit;

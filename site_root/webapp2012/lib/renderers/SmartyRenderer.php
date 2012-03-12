@@ -4,7 +4,7 @@
  *	Licensed Under the MIT license http://www.opensource.org/licenses/mit-license.php
  */
 
-require_once(VENDOR_DIR . DS . 'smarty' . DS . 'libs' . DS . 'Smarty.class.php');
+require_once(phgm::$VENDOR_DIR . DS . 'smarty' . DS . 'libs' . DS . 'Smarty.class.php');
 
 class SmartyRenderer extends BaseRenderer
 {
@@ -33,20 +33,15 @@ class SmartyRenderer extends BaseRenderer
 
 	public function initialize()
 	{
-		$this->setup();
-	}
-
-	public function setup()
-	{
 		$this->smarty = new Smarty();
-		$this->smarty->setTemplateDir(VIEWS_DIR);
-		$this->smarty->setCompileDir(TEMPLATES_COMPILE_DIR);
+		$this->smarty->setTemplateDir(ClassLoader::$APP_VIEWS_DIR);
+		$this->smarty->setCompileDir(phgm::$TEMPLATES_COMPILE_DIR);
 		$this->smarty->setConfigDir('');
-		$this->smarty->setCacheDir(TEMPLATES_CACHE_DIR);
-		$this->smarty->addPluginsDir(LIB_DIR . DS . 'smarty-plugins');
-		$this->smarty->addPluginsDir(APP_LIB_DIR . DS . 'smarty-plugins');
+		$this->smarty->setCacheDir(phgm::$TEMPLATES_CACHE_DIR);
+		$this->smarty->addPluginsDir(phgm::$LIB_DIR . DS . 'smarty-plugins');
+		$this->smarty->addPluginsDir(ClassLoader::$APP_LIB_DIR . DS . 'smarty-plugins');
 
-		$this->smarty->left_delimiter = SMARTY_LEFT_DELIMITER;
-		$this->smarty->right_delimiter = SMARTY_RIGHT_DELIMITER;
+		$this->smarty->left_delimiter = Config::get(Config::SMARTY_LEFT_DELIMITER);
+		$this->smarty->right_delimiter = Config::get(Config::SMARTY_RIGHT_DELIMITER);
 	}
 }

@@ -4,10 +4,10 @@
  *	Licensed Under the MIT license http://www.opensource.org/licenses/mit-license.php
  */
 
-class Helper
+class SampleHelper
 {
 	public static function helper()
 	{
-		return "app/lib/classes/に共通のクラスをおく。このクラスをrequireのにClassLoader::load(HELPER, 'Helper')";
+		return "app/lib/classes/に共通のクラスをおく。このクラスをrequireするのにClassLoader::load('SampleHelper');";
 	}
 }

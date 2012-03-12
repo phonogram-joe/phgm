@@ -4,82 +4,180 @@
  *	Licensed Under the MIT license http://www.opensource.org/licenses/mit-license.php
  */
 
-define('CONTROLLER', CONTROLLERS_DIR); //コントローラクラス
-define('HELPER', APP_LIB_DIR . DS . 'classes'); //共通のクラスやビュープラグイン
-define('MODEL', MODELS_DIR); //DBやフォームのモデルクラス
-define('DECORATOR', DECORATORS_DIR); //モデルを表示する際に使うクラス
-define('VIEW', VIEWS_DIR); //共通のレイアウト・ガジェットと、コントローラのアクションごとのテンプレート
-define('LIB_VALIDATOR', LIB_DIR . DS . 'validators');
-define('VALIDATOR', VALIDATORS_DIR);
-define('LIB_RENDERER', LIB_DIR . DS . 'renderers');
-define('RENDERER', RENDERERS_DIR);
-
 /*
-//TODO: use PHP 5's __autoload($name) feature to autoload classes using naming conventions
+	TODO: use PHP 5's __autoload($name) feature to autoload classes using naming conventions
+
+public function __autoload($name)
+{
+	ClassLoader::load($name);
+}
 */
 
 class ClassLoader
 {
+	/**
+	 *	コントローラクラスのフラグ
+	 */
+	const CONTROLLER = 'Controller';
 
-	public static function load($type, $name)
+	/**
+	 *	共通ロジック（助かるクラス）のフラグ
+	 */
+	const HELPER = 'Helper';
+
+	/**
+	 *	DBレコードを代表するモデルクラスのフラグ
+	 */
+	const MODEL = 'Model';
+
+	/**
+	 *	フォームデータを代表するクラスのフラグ
+	 */
+	const FORM = 'Form';
+
+	/**
+	 *	モデルオブジェクトのデータを表示するクラスのフラグ
+	 */
+	const DECORATOR = 'Decorator';
+
+	/**
+	 *	データの有効性を確認クラスのフラグ
+	 */
+	const VALIDATOR = 'Validator';
+
+	/**
+	 *	レンダラクラスのフラグ。コントローラのデータをあるデータ刑に変換するクラス
+	 */
+	const RENDERER = 'Renderer';
+
+	public static $IS_INITIALIZED = false;
+
+	//	app専用のファイル
+	public static $APP_CONTROLLERS_DIR; //コントローラクラス
+	public static $APP_MODELS_DIR; //DBやフォームのモデルクラス
+	public static $APP_DECORATORS_DIR; //モデルを表示する際に使うクラス
+	public static $APP_VIEWS_DIR; //共通のレイアウト・ガジェットと、コントローラのアクションごとのテンプレート
+
+	//	app専用の共通クラス
+	public static $APP_LIB_DIR; //共通のクラスやビュープラグイン
+	public static $APP_VALIDATORS_DIR; //モデルのデータがデータ刑や規則にあってるか確認するクラス。
+	public static $APP_RENDERERS_DIR; //カスタムなレンダラクラス。Smartyのようにデータをテンプレートに埋め込むクラスです。
+	public static $APP_HELPERS_DIR; //共通ロジック
+	public static $APP_SMARTY_DIR; //カスタムなSmartyのプラグイン
+
+	public static function classInitialize()
+	{
+		if (self::$IS_INITIALIZED) {
+			return;
+		}
+		self::$IS_INITIALIZED = true;
+
+		//	app専用のファイル
+		self::$APP_CONTROLLERS_DIR = phgm::$APP_DIR . DS . 'controllers'; //コントローラクラス
+		self::$APP_MODELS_DIR = phgm::$APP_DIR . DS . 'models'; //DBやフォームのモデルクラス
+		self::$APP_DECORATORS_DIR = phgm::$APP_DIR . DS . 'view_models'; //モデルを表示する際に使うクラス
+		self::$APP_VIEWS_DIR = phgm::$APP_DIR . DS . 'views'; //共通のレイアウト・ガジェットと、コントローラのアクションごとのテンプレート
+
+		//	app専用の共通クラス
+		self::$APP_LIB_DIR = phgm::$APP_DIR . DS . 'lib'; //共通のクラスやビュープラグイン
+		self::$APP_VALIDATORS_DIR = self::$APP_LIB_DIR . DS . 'validators'; //モデルのデータがデータ刑や規則にあってるか確認するクラス。
+		self::$APP_RENDERERS_DIR = self::$APP_LIB_DIR . DS . 'renderers'; //カスタムなレンダラクラス。Smartyのようにデータをテンプレートに埋め込むクラスです。
+		self::$APP_HELPERS_DIR = self::$APP_LIB_DIR . DS . 'helpers'; //共通ロジック
+		self::$APP_SMARTY_DIR = self::$APP_LIB_DIR . DS . 'smarty-plugins'; //カスタムなSmartyのプラグイン
+
+	}
+
+	/**
+	 *	load($name)
+	 *		クラスをロードする。
+	 *	@param $name String requireするクラス名
+	 *	@return none
+	 */
+	public static function load($name)
 	{
 		if (preg_match('/Controller$/', $name)) {
-			self::loadType(CONTROLLER, $name);
+			self::loadFrom($name, self::$APP_CONTROLLERS_DIR);
 		} else if (preg_match('/(Model|Form)$/', $name)) {
-			self::loadType(MODEL, $name);
+			self::loadFrom($name, self::$APP_MODELS_DIR);
 		} else if (preg_match('/Decorator$/', $name)) {
-			self::loadType(DECORATOR, $name);
-		} else if (preg_match('/View$/', $name)) {
-			self::loadType(VIEW, $name);
+			self::loadFrom($name, self::$APP_DECORATORS_DIR);
 		} else if (preg_match('/Helper$/', $name)) {
-			self::loadType(HELPER, $name);
+			self::loadFrom($name, self::$APP_HELPERS_DIR);
 		} else if (preg_match('/Validator$/', $name)) {
-			if (file_exists(self::path(VALIDATOR, $name))) {
-				self::loadType(VALIDATOR, $name);
+			if (file_exists(self::path(self::$APP_VALIDATORS_DIR, $name))) {
+				self::loadFrom($name, self::$APP_VALIDATORS_DIR);
 			} else {
-				self::loadType(LIB_VALIDATOR, $name);
+				self::loadFrom($name, phgm::$LIB_VALIDATORS_DIR);
 			}
 		} else if (preg_match('/Renderer/', $name)) {
-			if (file_exists(self::path(RENDERER, $name))) {
-				self::loadType(RENDERER, $name);
+			if (file_exists(self::path(self::$APP_RENDERERS_DIR, $name))) {
+				self::loadFrom($name, self::$APP_RENDERERS_DIR);
 			} else {
-				self::loadType(LIB_RENDERER, $name);
+				self::loadFrom($name, phgm::$LIB_RENDERERS_DIR);
 			}
 		}
 	}
 
-	private static function loadType($type, $filename)
+	public static function loadFrom($filename, $folder)
 	{
-		$path = self::path($type, $filename);
+		$path = self::path($folder, $filename);
 		if (!file_exists($path)) {
 			throw new Exception('ClassLoader::load -- ファイルは見つかりません: ' . $path);
 		}
-		require_once(self::path($type, $filename));
+		require_once($path);
 		if (method_exists($filename, 'classInitialize')) {
 			call_user_func(array($filename, 'classInitialize'));
 		}
 	}
 
-	private static function path($type, $filename)
+	public static function path($type, $filename)
 	{
 		return $type . DS . preg_replace('/\.+/', DS, $filename) . '.php';
 	}
 
-	/*
+	/**
 	 *	toClassName($prefix[, $type])
 	 *		「login_user」のようなテキストを「LoginUserModel」のようなクラス名の形に変換する。
 	 *
-	 *	@prefix: String, 変換するストリング。
-	 *	@type: String, 任意、Model・Validator・Controllerのような、クラスの種類を区別するストリング。
-	 *	@returns: String, @prefixをクラス名の形に変換した結果。@typeが指定される場合は、最後に付けられる。
+	 *	@param $prefix String 変換するストリング。
+	 *	@param type String (任意) Model・Validator・Controllerのような、クラスの種類を区別するストリング。
+	 *	@return String <prefix>をクラス名の形に変換した結果。<type>が指定される場合は、最後に付けられる。
 	 */
 	public static function toClassName($prefix, $type = null)
 	{
-		return ucfirst(StringUtils::underscoresToCamel($prefix)) . (is_null($type) ? '' : $type);
+		return ucfirst(self::underscoresToCamel($prefix)) . (is_null($type) ? '' : $type);
 	}
 
+	/**
+	 *	classNamePrefix($class)
+	 *		「...Model」や「...Controller」のようなクラス名の接尾辞を抜いてクラス名のベースを返す。
+	 *
+	 *	@access public
+	 *	@param $class String クラス名
+	 *	@return String 接尾辞を抜いてクラス名
+	 */
 	public static function classNamePrefix($class)
 	{
-		return StringUtils::camelToUnderscores(preg_replace('/(Controller|Model|Form|Decorator|Renderer|Validator|Helper)$/', '', $class));
+		return self::camelToUnderscores(preg_replace('/(Controller|Model|Form|Decorator|Renderer|Validator|Helper)$/', '', $class));
+	}
+
+	/*
+	 *	camelToUnderscores($string)
+	 *		'className' => 'class_name'
+	 */
+	public static function camelToUnderscores($string)
+	{
+		$toUnderscore = create_function('$c', 'return $c[1] . \'_\' . strtolower($c[2]);');
+		return strtolower(preg_replace_callback('/([a-z])([A-Z])/', $toUnderscore, $string));
+	}
+
+	/*
+	 *	underscoresToCamel($string)
+	 *		'class_name' => 'className'
+	 */
+	public static function underscoresToCamel($string)
+	{
+		$toCamel = create_function('$c', 'return strtoupper($c[1]);');
+    	return preg_replace_callback('/_([a-z])/', $toCamel, $string);
 	}
 }

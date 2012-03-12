@@ -4,7 +4,7 @@
  *	Licensed Under the MIT license http://www.opensource.org/licenses/mit-license.php
  */
 
-require_once(LIB_DIR . DS . 'RouteMatch.php');
+ClassLoader::loadFrom('RouteMatch', phgm::$LIB_DIR);
 
 class Route
 {

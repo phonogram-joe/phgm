@@ -6,38 +6,40 @@
 
 class Logger
 {
+	//	ログレベルのオプション
+	const TRACE = 1;
+	const DEBUG = 2;
+	const INFO = 3;
+	const WARN = 4;
+	const ERROR = 5;
+	const FATAL = 6;
+
 	private static $INSTANCE;
 
 	private $filepath;
+	private $level;
 
     private function __construct() {
-    	$this->filepath = LOGGER_FILE;
+    	$this->filepath = null;
+    	$this->level = self::ERROR;
     }
-    public function __clone()
+    private function __clone()
     {
         trigger_error('Clone is not allowed.', E_USER_ERROR);
     }
 
-    public function __wakeup()
+    private function __wakeup()
     {
         trigger_error('Unserializing is not allowed.', E_USER_ERROR);
     }
 	
-	public static function getLogger() {
-		if (is_null(self::$INSTANCE)) {
-    		self::$INSTANCE = new Logger();
-		}
-
-		return self::$INSTANCE;
-	}
-
-	public function logMessage($level, $message)
+	private function logMessage($level, $message)
 	{
 		$buf = "" . date("Y/m/d H:i:s") . " [" . $level . "] " . $message . "\n";
 		$this->write($buf);
 	}
 
-	public function logError($level, $message, $filename, $line, $error = null)
+	private function logError($level, $message, $filename, $line, $error = null)
 	{
 		$buf = "" . date("Y/m/d H:i:s") . " [" . $level . "] " . $message;
 		$buf .= " (" . $filename . ":" . $line . ")\n";
@@ -50,7 +52,7 @@ class Logger
 		$this->write($buf);
 	}
 
-	public function write($msg)
+	private function write($msg)
 	{
 		if (is_null($this->filepath)) {
 			return true;
@@ -76,40 +78,59 @@ class Logger
 		return true;
 	}
 
+	public static function classInitialize()
+	{
+		if (is_null(self::$INSTANCE)) {
+    		self::$INSTANCE = new Logger();
+		}
+
+		return self::$INSTANCE;
+	}
+
+	public static function setLevel($level)
+	{
+		self::$INSTANCE->level = $level;
+	}
+
+	public static function setFile($filepath)
+	{
+		self::$INSTANCE->filepath = $filepath;
+	}
+
 	public static function trace($message)
 	{
-		if (LOGGER_LEVEL <= LOG_TRACE) {
-			self::getLogger()->logMessage('TRACE', $message);
+		if (LOGGER_LEVEL <= self::TRACE) {
+			self::$INSTANCE->logMessage('TRACE', $message);
 		}		
 	}
 	public static function debug($message)
 	{
-		if (LOGGER_LEVEL <= LOG_DEBUG) {
-			self::getLogger()->logMessage('DEBUG', $message);
+		if (LOGGER_LEVEL <= self::DEBUG) {
+			self::$INSTANCE->logMessage('DEBUG', $message);
 		}		
 	}
 	public static function info($message)
 	{
-		if (LOGGER_LEVEL <= LOG_INFO) {
-			self::getLogger()->logMessage('INFO', $message);
+		if (LOGGER_LEVEL <= self::INFO) {
+			self::$INSTANCE->logMessage('INFO', $message);
 		}		
 	}
 	public static function warn($message)
 	{
-		if (LOGGER_LEVEL <= LOG_WARN) {
-			self::getLogger()->logMessage('WARN', $message);
+		if (LOGGER_LEVEL <= self::WARN) {
+			self::$INSTANCE->logMessage('WARN', $message);
 		}		
 	}
 	public static function error($error)
 	{
-		if (LOGGER_LEVEL <= LOG_ERROR) {
-			self::getLogger()->logError('ERROR', $error->getMessage(), $error->getFile(), $error->getLine(), $error);
+		if (LOGGER_LEVEL <= self::ERROR) {
+			self::$INSTANCE->logError('ERROR', $error->getMessage(), $error->getFile(), $error->getLine(), $error);
 		}		
 	}
 	public static function fatal($error)
 	{
-		if (LOGGER_LEVEL <= LOG_FATAL) {
-			self::getLogger()->logError('FATAL', $error->getMessage(), $error->getFile(), $error->getLine(), $error);
+		if (LOGGER_LEVEL <= self::FATAL) {
+			self::$INSTANCE->logError('FATAL', $error->getMessage(), $error->getFile(), $error->getLine(), $error);
 		}		
 	}
 }
