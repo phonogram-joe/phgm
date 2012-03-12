@@ -99,37 +99,37 @@ class Logger
 
 	public static function trace($message)
 	{
-		if (LOGGER_LEVEL <= self::TRACE) {
+		if (self::$INSTANCE->level <= self::TRACE) {
 			self::$INSTANCE->logMessage('TRACE', $message);
 		}		
 	}
 	public static function debug($message)
 	{
-		if (LOGGER_LEVEL <= self::DEBUG) {
+		if (self::$INSTANCE->level <= self::DEBUG) {
 			self::$INSTANCE->logMessage('DEBUG', $message);
 		}		
 	}
 	public static function info($message)
 	{
-		if (LOGGER_LEVEL <= self::INFO) {
+		if (self::$INSTANCE->level <= self::INFO) {
 			self::$INSTANCE->logMessage('INFO', $message);
 		}		
 	}
 	public static function warn($message)
 	{
-		if (LOGGER_LEVEL <= self::WARN) {
+		if (self::$INSTANCE->level <= self::WARN) {
 			self::$INSTANCE->logMessage('WARN', $message);
 		}		
 	}
 	public static function error($error)
 	{
-		if (LOGGER_LEVEL <= self::ERROR) {
+		if (self::$INSTANCE->level <= self::ERROR) {
 			self::$INSTANCE->logError('ERROR', $error->getMessage(), $error->getFile(), $error->getLine(), $error);
 		}		
 	}
 	public static function fatal($error)
 	{
-		if (LOGGER_LEVEL <= self::FATAL) {
+		if (self::$INSTANCE->level <= self::FATAL) {
 			self::$INSTANCE->logError('FATAL', $error->getMessage(), $error->getFile(), $error->getLine(), $error);
 		}		
 	}
