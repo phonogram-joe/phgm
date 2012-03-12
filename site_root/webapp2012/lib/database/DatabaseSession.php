@@ -81,11 +81,13 @@ class DatabaseSession
 
 	public function track($object)
 	{
-		if (!in_array($object, $this->trackedObjects, true)) {
-			Logger::trace('DatabaseSession:track() -- adding ' . $object . ' to tracking.');
-			$this->trackedObjects[] = $object;
+		if (!in_array($object, $this->deletedObjects, true)) {
+			if (!in_array($object, $this->trackedObjects, true)) {
+				Logger::trace('DatabaseSession:track() -- tracking ' . $object);
+				$this->trackedObjects[] = $object;
+			}
 		} else {
-			Logger::trace('DatabaseSession:track() -- object ' . $object . ' already being tracked');
+			throw new Exception('DatabaseSession:track() -- オブジェクトの削除リストに追加(delete)されています。');
 		}
 	}
 	public function delete($object)
@@ -96,13 +98,13 @@ class DatabaseSession
 				$this->deletedObjects[] = $object;
 			}
 		} else {
-			throw new Exception('DatabaseSession:delete() -- オブジェクトの変更・購入は既にトラックされています。');
+			throw new Exception('DatabaseSession:delete() -- オブジェクトは変更・登録リストに追加(track)されています。');
 		}
 	}
 
 	public function flush()
 	{
-		if (count($this->trackedObjects) === 0) {
+		if (count($this->trackedObjects) === 0 && count($this->deletedObjects) === 0) {
 			return null;
 		}
 		try {
@@ -124,6 +126,8 @@ class DatabaseSession
 			foreach ($this->deletedObjects as $object) {
 				if (DbModel::hasId($object)) {
 					$this->deleteObject($object);
+				} else {
+					throw new Exception('DatabaseSession:flush() -- object does NOT have id, cannot delete');
 				}
 			}
 
