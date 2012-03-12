@@ -89,9 +89,15 @@ class Router
 
 	public function urlForName($name, $params = array())
 	{
+		if (!isset($this->routes[$name])) {
+			return null;
+		}
 		$controller = $this->routes[$name]->getController();
 		$action = $this->routes[$name]->getAction();
 		$url = $this->routes[$name]->attemptCreateUrl($controller, $action, $params);
+		if (is_null($url)) {
+			return null;
+		}
 		return $this->routableToUri($url);
 	}
 
