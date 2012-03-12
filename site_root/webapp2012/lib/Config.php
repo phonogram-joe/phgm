@@ -24,6 +24,9 @@ class Config
 
 	const HTTP_METHOD_PARAM = 'routing.http_method_param';
 
+	/* フォームの提出者を確認するように、すべてのフォームに非表示項目にランダムなキーを埋め込む。セッションでもその価値を持って、一致するか登録際に確認。その非表示の項目を設定する。 */
+	const FORM_SAFE_KEY = 'security.form_safe_key';
+
 	private static $SETTINGS = null;
 	private static $IS_INITIALIZED = false;
 
@@ -40,6 +43,7 @@ class Config
 	private static function setDefaults()
 	{
 		self::$SETTINGS[self::HTTP_METHOD_PARAM] = '__http_method';
+		self::$SETTINGS[self::FORM_SAFE_KEY] = '__form_id';
 		self::$SETTINGS[self::FATAL_ERROR_MESSAGE] = 'エラーが発生しました。';
 		self::$SETTINGS[self::SESSIONS_ENABLED] = false;
 	}

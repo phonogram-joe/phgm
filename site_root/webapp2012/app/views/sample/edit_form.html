@@ -2,6 +2,7 @@
 {{block name="main"}}
 <h1>Sample - Edit</h1>
 <form method="POST" action="{{urlFor name='sample_edit_save' id=$model->get('id')}}">
+{{formSafe}}
 <div>
 <label for="sample_name">名前</label>
 {{if $model->hasError('name')}}<span>{{$model->getError('name')}}{{/if}}

@@ -7,14 +7,29 @@
 class DatabaseSession
 {
 	private $dbHandle;
+	private $allowUpdates;
 	private $trackedObjects;
 	private $deletedObjects;
 
 	public function DatabaseSession($dbHandle)
 	{
 		$this->dbHandle = $dbHandle;
+		$this->allowUpdates = false;
 		$this->trackedObjects = array();
 		$this->deletedObjects = array();
+	}
+
+	public function setAllowUpdates($allow)
+	{
+		if (!is_bool($allow)) {
+			throw new Exception('DatabaseSession:setAllowUpdates() -- ブールを指定ください。');
+		}
+		$this->allowUpdates = $allow;
+	}
+
+	public function getAllowUpdates()
+	{
+		return $this->allowUpdates;
 	}
 
 	public function findBy($className, $column, $value)
@@ -104,6 +119,10 @@ class DatabaseSession
 
 	public function flush()
 	{
+		if (!$this->allowUpdates) {
+			//	DBに書き込むする場合はHTTPのGETリクエストは非常危険なので、POST・PUT・DELETEHTTPメソッドを使ってください。
+			throw new Exception('DatabaseSession:flush() -- リクエストの形によりDBの書き込みは禁止されています。');
+		}
 		if (count($this->trackedObjects) === 0 && count($this->deletedObjects) === 0) {
 			return null;
 		}

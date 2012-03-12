@@ -51,14 +51,14 @@ class BaseRenderer
 		
 	}
 
-	public function renderHttpResponse($data, $httpResponse)
+	public function renderHttpResponse($data, $httpRequest, $httpResponse)
 	{
-		$output = $this->customRender($data, $httpResponse);
+		$output = $this->customRender($data, $httpRequest, $httpResponse);
 
 		$httpResponse->setContentTypeCharset(HttpResponseFormat::mimeType($this->format), HttpResponseFormat::charset($this->format));
 		$httpResponse->setEncoding(HttpResponseFormat::encoding($this->format));
 		$httpResponse->setResponse($output);
-		$this->customHttpResponse($data, $httpResponse);
+		$this->customHttpResponse($data, $httpRequest, $httpResponse);
 	}
 
 	public function renderFetch($data)
@@ -66,11 +66,11 @@ class BaseRenderer
 		return $this->customRender($data);
 	}
 
-	public function customRender($data, $httpResponse)
+	public function customRender($data, $httpRequest, $httpResponse)
 	{
 	}
 
-	public function customHttpResponse($data, $httpResponse)
+	public function customHttpResponse($data, $httpRequest, $httpResponse)
 	{
 		
 	}

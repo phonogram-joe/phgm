@@ -9,6 +9,7 @@ class DB
 	private static $IS_INITIALIZED = false;
 	private static $CONNECTION_DEFINITIONS;
 	private static $CONNECTIONS;	
+	private static $SESSIONS;
 	private static $DEFAULT_DATABASE;
 
 	public static function classInitialize()
@@ -18,6 +19,7 @@ class DB
 		}
 		self::$IS_INITIALIZED = true;
 		self::$CONNECTIONS = array();
+		self::$SESSIONS = array();
 		self::$CONNECTION_DEFINITIONS = array();
 		self::$DEFAULT_DATABASE = null;
 	}
@@ -37,7 +39,7 @@ class DB
 		$dbh = null;
 		if (!array_key_exists($dbname, self::$CONNECTIONS)) {
 			throw new Exception('DB::getSession() -- 「」というデータベースは設定されてないです。');
-		} else if (!is_null(self::$CONNECTIONS[$dbname])) {
+		} else if (isset(self::$CONNECTIONS[$dbname])) {
 			$dbh = self::$CONNECTIONS[$dbname];
 		} else {
 			$definition = self::$CONNECTION_DEFINITIONS[$dbname];
@@ -50,6 +52,12 @@ class DB
 
 	public static function getSession($dbname = null)
 	{
-		return new DatabaseSession(self::getHandle($dbname));
+		if (isset(self::$SESSIONS[$dbname])) {
+			return self::$SESSIONS[$dbname];
+		} else {
+			$session = new DatabaseSession(self::getHandle($dbname));
+			self::$SESSIONS[$dbname] = $session;
+			return $session;
+		}
 	}
 }

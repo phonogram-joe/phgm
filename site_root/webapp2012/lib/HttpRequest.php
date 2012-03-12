@@ -41,6 +41,7 @@ class HttpRequest
 			session_name(Config::get(Config::SESSION_NAME));
 			if (session_start()) {
 				$this->session = new Session();
+				$this->session->generateNonce();
 				return;
 			} else {
 				throw new Exception('HttpRequest:setSession() -- セッションの初期化に失敗がありました。');
@@ -56,7 +57,6 @@ class HttpRequest
 
 	private function setParams()
 	{
-		//TODO: combine input from $_GET and $_POST, also read in upload files
 		$params = array();
 		foreach ($_GET as $key => $value) {
 			$params[$key] = $value;
@@ -98,4 +98,20 @@ class HttpRequest
 	{
 		return $this->httpVerb;
 	}
+
+	public function isFormSafe()
+	{
+		$formSafeKey = Config::get(Config::FORM_SAFE_KEY);
+		if (isset($this->params[$formSafeKey]) && $this->session->isValidNonce($this->params[$formSafeKey])) {
+			return true;
+		}
+		return false;
+	}
+
 }
+
+
+
+
+
+

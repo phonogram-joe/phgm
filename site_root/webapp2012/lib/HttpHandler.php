@@ -43,6 +43,20 @@ class HttpHandler
 				$this->useFixedControllerAction($routeName, $routeParams);
 			}
 			
+			$httpMethod = strtoupper($this->request->getVerb());
+			if (false !== array_search($httpMethod, array(HttpRequest::POST, HttpRequest::PUT, HttpRequest::DELETE))) {
+				$db = DB::getSession();
+				if (!is_null($db)) {
+					//	POST・PUT・DELETEのリクエストに対してDBの変更・購入・削除を有効にする
+					$db->setAllowUpdates(true);
+					var_dump($db);
+				}
+
+				if (!$this->request->isFormSafe()) {
+					//	XSRFの対策で、フォームにはランダムなキーを埋め込まないといけない。{{formSafe}}というSmartyメソッドを使ってください。
+					throw new Exception('HttpHandler:handleRequest() -- フォームの提出者を確認できません。');
+				}
+			}
 			$this->executeController();
 			if ($this->controller->isError()) {
 				throw new Exception($this->controller->getErrorMessage());
@@ -120,7 +134,7 @@ class HttpHandler
 
 		//	コントローラのデータを最終的なデータ刑に変換する。Smartyなどにより。
 		$renderer = BaseRenderer::getRenderer($this->controller->getRenderFormat(), $this->templatePath);
-		$renderer->renderHttpResponse($this->controller->getRenderData(), $this->response);
+		$renderer->renderHttpResponse($this->controller->getRenderData(), $this->request, $this->response);
 		$this->response->respondAndClose();
 	}
 }

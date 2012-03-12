@@ -2,27 +2,34 @@
 
 class Session
 {
+	private $userKey;
+	private $globalKey;
+
+	const NONCE_KEY = 'phgm:nonce';
+
 	public function Session()
 	{
+		$this->userKey = Config::get(Config::SESSION_USER_KEY);
+		$this->globalKey = Config::get(Config::SESSION_GLOBAL_KEY);
 	}
 
 	public function getUser()
 	{
-		if (isset($_SESSION[SESSION_USER_KEY])) {
-			return $_SESSION[SESSION_USER_KEY];
+		if (isset($_SESSION[$this->userKey])) {
+			return $_SESSION[$this->userKey];
 		}
 		return null;
 	}
 
 	public function setUser($user)
 	{
-		$_SESSION[SESSION_USER_KEY] = $user;
+		$_SESSION[$this->userKey] = $user;
 	}
 
 	public function clearUser()
 	{
 		$user = $this->getUser();
-		unset($_SESSION[SESSION_USER_KEY]);
+		unset($_SESSION[$this->userKey]);
 		return $user;
 	}
 
@@ -41,13 +48,13 @@ class Session
 
 	public function set($key, $value)
 	{
-		$_SESSION[SESSION_GLOBAL_KEY][$key] = $value;
+		$_SESSION[$this->globalKey][$key] = $value;
 	}
 
 	public function get($key)
 	{
-		if (isset($_SESSION[SESSION_GLOBAL_KEY][$key])) {
-			return $_SESSION[SESSION_GLOBAL_KEY][$key];
+		if (isset($_SESSION[$this->globalKey][$key])) {
+			return $_SESSION[$this->globalKey][$key];
 		}
 		return null;
 	}
@@ -55,23 +62,27 @@ class Session
 	public function clear($key)
 	{
 		$value = $this->get($key);
-		unset($_SESSION[SESSION_GLOBAL_KEY][$key]);
+		unset($_SESSION[$this->globalKey][$key]);
 		return $value;
 	}
 
-	public function generateOneTimeTicket()
+	public function generateNonce()
 	{
-		$ticket = md5(uniqid(mt_rand(), true));
-		$this->set('ticket', $ticket);
-		return $ticket;
+		$nonce = $this->get(self::NONCE_KEY);
+		if (!is_null($nonce)) {
+			return $nonce;
+		} else {
+			$nonce = md5(uniqid(mt_rand(), true));
+			$this->set(self::NONCE_KEY, $nonce);
+			return $nonce;
+		}
 	}
 
-	public function isValidOneTimeTicket($ticket)
+	public function isValidNonce($nonce)
 	{
-		$storedTicket = $this->get('ticket');
+		$storedTicket = $this->get(self::NONCE_KEY);
 		if (!is_null($storedTicket)) {
-			$this->clear('ticket');
-			return $ticket === $storedTicket;
+			return $nonce === $storedTicket;
 		}
 		return false;
 	}

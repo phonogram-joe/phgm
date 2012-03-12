@@ -9,8 +9,9 @@ require_once(phgm::$VENDOR_DIR . DS . 'smarty' . DS . 'libs' . DS . 'Smarty.clas
 class SmartyRenderer extends BaseRenderer
 {
 	private $smarty;
+	const SESSION_VAR_NAME = 'phgmSession';
 
-	public function customRender($data, $httpResponse)
+	public function customRender($data, $httpRequest, $httpResponse)
 	{
 		foreach ($data as $key => $value) {
 			if (is_object($value)) {
@@ -20,13 +21,17 @@ class SmartyRenderer extends BaseRenderer
 				$this->smarty->assign($key, $value);
 			}
 		}
+		//	XSRFのためにセッションに保存するキーをフォームで使わないといけないで、セッションをわたす。
+		$this->smarty->assign(self::SESSION_VAR_NAME, $httpRequest->getSession());
+
+		//	Smartyはエラーをcatchするので、一応ファイルの存在を確認する
 		if (!file_exists($this->templatePath)) {
 			throw new Exception('SmartyRenderer:customRender() -- テンプレートファイル' . $this->templatePath . 'は見つかりません。');
 		}
 		return $this->smarty->fetch($this->templatePath);
 	}
 
-	public function customHttpResponse($data, $httpResponse)
+	public function customHttpResponse($data, $httpRequest, $httpResponse)
 	{
 		
 	}
