@@ -171,19 +171,12 @@ class BaseController
 		$this->doIsReturned();
 		$this->_phgmRedirectUrl = $url;
 	}
-	public function doRedirect($controller, $actionName, $params = null)
+	public function doRedirect($routeName, $params = null)
 	{
 		$this->doIsReturned();
-		if (is_null($actionName) || (is_array($actionName) && is_null($params))) {
-			//	名前が付いてるルート
-			$name = $controller;
-			$params = $actionName;
-			$this->_phgmRedirectUrl = Router::getRouter()->urlForName($name, $params);
-		} else {
-			$this->_phgmRedirectUrl = Router::getRouter()->urlForRoute($controller, $actionName, $params);
-		}
+		$this->_phgmRedirectUrl = Router::getRouter()->urlForName($routeName, $params);
 		if (is_null($this->_phgmRedirectUrl)) {
-			throw new Exception('BaseController:doRedirect() -- そのルートはありません。' . $controller . ' ' . $actionName . ' ' . $params);
+			throw new Exception('BaseController:doRedirect() -- そのルートはありません。' . $routeName . ' ' . $params);
 		}
 	}
 	public function isRedirect()
@@ -196,16 +189,41 @@ class BaseController
 	}
 
 	/*--------------------------------------------------------------
-	 *	普段の場合（データを返す）
+	 *	普段の場合：
+	 *		テンプレート：	アクション名
+	 *		データ刑：		コントローラのデフォルトのデータ刑
+	 *		データ刑：		コントローラのインスタンスデータプロパティー
 	 */
-	public function doRender($format = null, $data = null, $actionName = null)
+	public function doRender()
+	{
+
+	}
+
+	/*
+	 *	doRenderAction($actionName)
+	 *	@param $actionName String 現在のアクション名の代わりに、このアクションのテンプレートを使う。
+	 */
+	public function doRenderAction($actionName)
 	{
 		$this->doIsReturned();
-		if (!is_null($format)) {
-			$this->_phgmRenderFormat = $format;
-		}
+		$this->_phgmRenderActionName = $actionName;
+	}
+
+	/*
+	 *	doRenderDataAs([$data[, $format[, $actionName]]])
+	 *		指定のデータとデータ刑を使ってHTTP応答の内容を決める。
+	 *	@param $data Array レンダーするデータ。任意：デフォルトはコントローラのインスタンスパラム
+	 *	@param $format String応答のデータ刑。任意：コントローラのデフォルトデータ刑
+	 +	@param $actionName String 任意。テンプレートが必要の場合現在と違うアクションを指定できる。デフォルトは現在のアクション
+	 */
+	public function doRenderDataAs($data, $format = null, $actionName = null)
+	{
+		$this->doIsReturned();
 		if (!is_null($data)) {
 			$this->_phgmRenderData = $data;
+		}
+		if (!is_null($format)) {
+			$this->_phgmRenderFormat = $format;
 		}
 		if (!is_null($actionName)) {
 			$this->_phgmRenderActionName = $actionName;
