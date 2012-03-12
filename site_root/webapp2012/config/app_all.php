@@ -28,7 +28,7 @@ function appConfigAll()
 	ini_set('mbstring.substitute_character', 'none');
 
 	//	有効のログレベル
-	Logger::setLevel(Logger::WARN);
+	Logger::setLevel(Logger::TRACE);
 	Logger::setFile(phgm::$LOG_DIR . DS . 'system.log');
 
 	//	処理できないエラーの場合に返すメッセージ
@@ -36,7 +36,7 @@ function appConfigAll()
 
 	//	エラー処理の設定
 	ini_set('display_errors', true);
-	error_reporting(E_ALL + E_NOTICE);
+	error_reporting(E_ALL | E_NOTICE | E_STRICT);
 
 	//	有効の環境。設定がこれによって変わる
 	Config::set(Config::ENVIRONMENT, Config::ENVIRONMENT_DEVELOPMENT);
@@ -70,3 +70,5 @@ function appConfigAll()
 	BaseRenderer::registerRenderer(HttpResponseFormat::$TEXT, 'SmartyRenderer', '.tpl');
 
 }
+appConfigAll();
+

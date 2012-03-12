@@ -125,7 +125,6 @@ class phgm
 	{
 		//	サイトの動きに関する設定
 		require_once(self::$CONFIG_DIR . DS . 'app_all.php'); //appの設定
-		appConfigAll();
 		Config::readEnvironment(); //環境設定によりコンフィグする
 		$environment = Config::get(Config::ENVIRONMENT);
 		if ($environment === Config::ENVIRONMENT_PRODUCTION) {
