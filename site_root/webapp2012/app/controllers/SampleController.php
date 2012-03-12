@@ -41,12 +41,11 @@ class SampleController extends BaseController
 		$this->model = new SampleModel();
 		$this->model->set($params);
 		if (!$this->model->isValid()) {
-			return $this->doRender(null, null, 'newForm');
+			return $this->doRenderAction('newForm');
 		}
 		$db->track($this->model);
 		$db->flush();
-		//return $this->doRedirect('sample_show', array('id' => $this->model->get('id')));
-		return $this->doRedirect('SampleController', 'show', array('id' => $this->model->get('id')));
+		return $this->doRedirect('sample_show', array('id' => $this->model->get('id')));
 	}
 
 	public function editForm($params)
@@ -65,12 +64,42 @@ class SampleController extends BaseController
 		$this->id = $params['id'];
 		$db = DB::getSession();
 		$this->model = $db->find('SampleModel', $this->id);
+		if (is_null($this->model)) {
+			return $this->doError('サンプルモデルが見つかりません。');
+		}
 		$this->model->set($params);
 		if (!$this->model->isValid()) {
-			return $this->doRender(null, null, 'editForm');
+			return $this->doRenderAction('editForm');
 		}
 		$db->track($this->model);
 		$db->flush();
 		return $this->doRedirect('sample_show', array('id' => $this->id));
+	}
+
+	public function deleteForm($params)
+	{
+		$this->id = $params['id'];
+		$db = DB::getSession();
+		$this->model = $db->find('SampleModel', $this->id);
+		if (is_null($this->model)) {
+			return $this->doError('サンプルモデルが見つかりません。');
+		}
+		return $this->doRender();
+	}
+
+	public function deleteSave($params)
+	{
+		$this->id = $params['id'];
+		$db = DB::getSession();
+		$this->model = $db->find('SampleModel', $this->id);
+		if (is_null($this->model)) {
+			return $this->doError('サンプルモデルが見つかりません。');
+		}
+		$db->delete($this->model);
+		if (!$db->flush()) {
+			$this->pageError = '削除できませんでした。';
+			return $this->doRenderAction('deleteForm');
+		}
+		return $this->doRedirect('sample_index');
 	}
 }

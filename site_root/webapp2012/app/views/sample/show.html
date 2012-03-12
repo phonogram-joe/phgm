@@ -5,4 +5,5 @@
 <p>{{$model->getLabel('name')|escape}} {{$model->get('name')|escape}}</p>
 <p>{{$model->getLabel('email')|escape}} {{$model->get('email')|escape}}</p>
 <p><a href="{{urlFor name='sample_edit_form' id=$id}}">{{urlFor name='sample_edit_form' id=$id}}</a></p>
+<p><a href="{{urlFor name='sample_delete_form' id=$id}}">{{urlFor name='sample_delete_form' id=$id}}</a></p>
 {{/block}}
