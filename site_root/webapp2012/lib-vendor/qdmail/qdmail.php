@@ -2191,7 +2191,7 @@ $this->debugEchoLf($this->to);
 			}
 		}elseif( $fg_debug ){
 			$this->undone = array_merge( $this->undone , $this->to , $this->cc , $this->bcc ) ;
-			$fg = $this->errorGather('Error happen, see upper' ,__LINE__);;
+			$fg = $this->errorGather('Error happen, see upper' ,__LINE__);
 		}else{
 			$this->undone = array_merge( $this->undone , $this->to , $this->cc , $this->bcc ) ;
 			$fg = true ;
