@@ -16,8 +16,8 @@ class HttpHandler
 
 	public function HttpHandler()
 	{
-		$this->request = null;
-		$this->response = null;
+		$this->request = new HttpRequest();
+		$this->response = new HttpResponse();
 		$this->controller = null;
 	
 		$this->controllerClass = null;
@@ -37,8 +37,6 @@ class HttpHandler
 	public function handleRequest($routeName = null, $routeParams = null)
 	{
 		try {
-			$this->request = new HttpRequest();
-			$this->response = new HttpResponse();
 			if (is_null($routeName)) {
 				$this->determineControllerActionFromRoute();
 			} else {
@@ -117,7 +115,8 @@ class HttpHandler
 	{
 		//	コントローラ・メソッドに基づいてビューファイルのパスを計算
 		$controllerNamePrefix = ClassLoader::classNamePrefix($this->controllerClass);
-		$this->templatePath = ClassLoader::$APP_VIEWS_DIR . DS . $controllerNamePrefix . DS . $this->controller->getRenderAction();
+		$renderAction = ClassLoader::camelToUnderscores($this->controller->getRenderAction());
+		$this->templatePath = ClassLoader::$APP_VIEWS_DIR . DS . $controllerNamePrefix . DS . $renderAction;
 
 		//	コントローラのデータを最終的なデータ刑に変換する。Smartyなどにより。
 		$renderer = BaseRenderer::getRenderer($this->controller->getRenderFormat(), $this->templatePath);
