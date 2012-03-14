@@ -13,10 +13,9 @@ function appConfigAll()
 	//	セッション設定
 	ini_set('session.save_path', phgm::$SESSION_DIR);
 	Config::set(Config::SESSIONS_ENABLED, true);
-	Config::set(Config::SESSION_NAME, 'PHPSESSID');
-	Config::set(Config::SESSION_GLOBAL_KEY, 'phgm.session.global');
-	Config::set(Config::SESSION_USER_KEY, 'phgm.session.user');
-	Config::set(Config::SESSION_FLASH_KEY, 'phgm.session.flash');
+	Config::set(Config::SESSION_NAME, 'o293847HJa5bxfqvhb7B86346nk456$8b7kj89878d99fg574qw4g3j4g635KJHYR&KJKHUIY234526214');
+	Config::set(Config::SESSIONS_MAX_NONCE_COUNT, 3);
+	Config::set(Config::SESSIONS_NONCE_SECRET, '|=dLJAK9d$Pu{CO!X%j/boHtuoYS#;KO3 QCzmDn-|d&*gI:8%yI/MXOSYX.TvUn');
 
 	//	ローカル・文字設定
 	setlocale(LC_ALL, 'ja_JP.UTF-8');

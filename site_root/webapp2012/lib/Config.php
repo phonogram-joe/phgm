@@ -13,9 +13,9 @@ class Config
 
 	const SESSIONS_ENABLED = 'session.enabled';
 	const SESSION_NAME = 'session.name';
-	const SESSION_GLOBAL_KEY = 'session.global_key';
-	const SESSION_USER_KEY = 'session.user_key';
-	const SESSION_FLASH_KEY = 'session.flash_key';
+	const SESSIONS_MAX_NONCE_COUNT = 'session.max_nonce_count';
+	const SESSIONS_NONCE_SECRET = 'session.nonce_secret';
+	const SESSION_TIMEOUT = 'session.timeout';
 
 	const FATAL_ERROR_MESSAGE = 'config.fatal_error_message';
 
@@ -26,6 +26,15 @@ class Config
 
 	/* フォームの提出者を確認するように、すべてのフォームに非表示項目にランダムなキーを埋め込む。セッションでもその価値を持って、一致するか登録際に確認。その非表示の項目を設定する。 */
 	const FORM_SAFE_KEY = 'security.form_safe_key';
+
+	const DEFAULT_HTTP_METHOD_PARAM = '__http_method';
+	const DEFAULT_FORM_SAFE_KEY = '__form_id';
+	const DEFAULT_FATAL_ERROR_MESSAGE = 'エラーが発生しました。';
+	const DEFAULT_SESSIONS_ENABLED = false;
+	const DEFAULT_SESSION_NAME = 'phgm_session_id';
+	const DEFAULT_SESSIONS_MAX_NONCE_COUNT = 0;
+	const DEFAULT_SESSIONS_NONCE_SECRET = '';
+	const DEFAULT_SESSION_TIMEOUT = 72000; //20分
 
 	private static $SETTINGS = null;
 	private static $IS_INITIALIZED = false;
@@ -42,10 +51,14 @@ class Config
 
 	private static function setDefaults()
 	{
-		self::$SETTINGS[self::HTTP_METHOD_PARAM] = '__http_method';
-		self::$SETTINGS[self::FORM_SAFE_KEY] = '__form_id';
-		self::$SETTINGS[self::FATAL_ERROR_MESSAGE] = 'エラーが発生しました。';
-		self::$SETTINGS[self::SESSIONS_ENABLED] = false;
+		self::$SETTINGS[self::HTTP_METHOD_PARAM] = self::DEFAULT_HTTP_METHOD_PARAM;
+		self::$SETTINGS[self::FORM_SAFE_KEY] = self::DEFAULT_FORM_SAFE_KEY;
+		self::$SETTINGS[self::FATAL_ERROR_MESSAGE] = self::DEFAULT_FATAL_ERROR_MESSAGE;
+		self::$SETTINGS[self::SESSIONS_ENABLED] = self::DEFAULT_SESSIONS_ENABLED;
+		self::$SETTINGS[self::SESSION_NAME] = self::DEFAULT_SESSION_NAME;
+		self::$SETTINGS[self::SESSIONS_MAX_NONCE_COUNT] = self::DEFAULT_SESSIONS_MAX_NONCE_COUNT;
+		self::$SETTINGS[self::SESSIONS_NONCE_SECRET] = self::DEFAULT_SESSIONS_NONCE_SECRET;
+		self::$SETTINGS[self::SESSION_TIMEOUT] = self::DEFAULT_SESSION_TIMEOUT;
 	}
 
 	public static function readEnvironment()

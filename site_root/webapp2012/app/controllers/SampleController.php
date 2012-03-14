@@ -23,6 +23,7 @@ class SampleController extends BaseController
 		$this->id = $params['id'];
 		$db = DB::getSession();
 		$this->model = $db->find('SampleModel', $this->id);
+		$this->pageError = $this->getPassedData('alert');
 		if (is_null($this->model)) {
 			return $this->doError('サンプルモデルが見つかりません。');
 		}
@@ -73,7 +74,7 @@ class SampleController extends BaseController
 		}
 		$db->track($this->model);
 		$db->flush();
-		return $this->doRedirect('sample_show', array('id' => $this->id));
+		return $this->doRedirect('sample_show', array('id' => $this->id), array('alert' => '保存できました。'));
 	}
 
 	public function deleteForm($params)

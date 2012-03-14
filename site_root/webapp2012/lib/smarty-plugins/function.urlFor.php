@@ -25,16 +25,8 @@
 function smarty_function_urlFor($params, Smarty_Internal_Template $template)
 {
 	$router = Router::getRouter();
-	$controller = array_key_exists('controller', $params) ? $params['controller'] : null;
-	unset($params['controller']);
-	$action = array_key_exists('action', $params) ? $params['action'] : null;
-	unset($params['action']);
 	$name = array_key_exists('name', $params) ? $params['name'] : null;
 	unset($params['name']);
 
-	if (!is_null($name)) {
-		return $router->urlForName($name, $params);
-	} else {
-		return $router->urlForRoute($controller, $action, $params);
-	}
+	return $router->urlForName($name, $params);
 }

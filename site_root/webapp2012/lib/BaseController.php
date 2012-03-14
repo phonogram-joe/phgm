@@ -22,6 +22,7 @@ class BaseController
 	private $_phgmIsReturned;
 	private $_phgmHttpRequest;
 	private $_phgmHttpResponse;
+	private $_phgmSession;
 
 	public static $BEFORE_FILTER = 'before';
 	private $_beforeFilters;
@@ -36,6 +37,7 @@ class BaseController
 	{
 		$this->_phgmHttpRequest = $request;
 		$this->_phgmHttpResponse = $response;
+		$this->_phgmSession = $request->getSession();
 		$this->_phgmActionName = $actionName;
 		$this->_phgmRenderActionName = $actionName;
 		$this->_phgmRedirectUrl = null;
@@ -149,7 +151,25 @@ class BaseController
 
 	public function getSession()
 	{
-		return $this->_phgmHttpRequest->getSession();
+		return $this->_phgmSession;
+	}
+
+	/*
+	 *	getPassedData($key)
+	 *		「フラッシュ」というセッションによりリリダイレクト後のリクエストに渡すデータを読み取る。
+	 */
+	public function getPassedData($key)
+	{
+		return $this->_phgmSession->getPassedData($key);
+	}
+
+	/*
+	 *	setPassData($key, $value)
+	 *		「フラッシュ」というセッションによりリリダイレクト後のリクエストに渡すデータを読み取る。
+	 */
+	public function setPassData($key, $value)
+	{
+		$this->_phgmSession->passData($key, $value);
 	}
 
 	/*
@@ -167,16 +187,37 @@ class BaseController
 	/*--------------------------------------------------------------
 	 *	リダイレクトの場合
 	 */
+
+	/*
+	 *	doRedirectUrl($url)
+	 *		指定のURLへリダイレクト。外部URL向き：内部のURL（ルートがあるもの）はdoRedirect()を使ってください。
+	 *	@param $url String このURLへリダイレクトする
+	 */
 	public function doRedirectUrl($url) {
 		$this->doIsReturned();
 		$this->_phgmRedirectUrl = $url;
 	}
-	public function doRedirect($routeName, $params = null)
+
+	/*
+	 *	doRedirect($routeName[$params[, $passData]])
+	 *		指定のルートへリダイレクトする。ルートデータやクエリパラムは$paramsで指定できる。セッションによりリダイレクト先のアクションへデータを渡す場合に$passDataも指定できる。
+	 *	例：
+	 *		POST /sample/1/edit
+	 *			モデルを変更して保存する。
+	 *			成功メッセージをリダイレクト後で表示したいので、
+	 *			doRedirect('sample_show', array('id' => ...), array('message' => '保存できた！'))
+	 *		GET /sample/1
+	 *			getPassedData('message') => '保存できた！'
+	 */
+	public function doRedirect($routeName, $params = array(), $passData = array())
 	{
 		$this->doIsReturned();
 		$this->_phgmRedirectUrl = Router::getRouter()->urlForName($routeName, $params);
 		if (is_null($this->_phgmRedirectUrl)) {
 			throw new Exception('BaseController:doRedirect() -- そのルートはありません。' . $routeName . ' ' . $params);
+		}
+		foreach ($passData as $key => $value) {
+			$this->_phgmSession->passData($key, $value);
 		}
 	}
 	public function isRedirect()
@@ -190,7 +231,7 @@ class BaseController
 
 	/*--------------------------------------------------------------
 	 *	普段の場合：
-	 *		テンプレート：	アクション名
+	 *		テンプレート：	アクション名 (editSave -> edit_save)
 	 *		データ刑：		コントローラのデフォルトのデータ刑
 	 *		データ刑：		コントローラのインスタンスデータプロパティー
 	 */
@@ -201,7 +242,7 @@ class BaseController
 
 	/*
 	 *	doRenderAction($actionName)
-	 *	@param $actionName String 現在のアクション名の代わりに、このアクションのテンプレートを使う。
+	 *	@param $actionName String 現在のアクション名の代わりに、指定するアクションのテンプレートを使う。
 	 */
 	public function doRenderAction($actionName)
 	{

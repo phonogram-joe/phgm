@@ -38,16 +38,10 @@ class HttpRequest
 	private function setSession()
 	{
 		if (Config::get(Config::SESSIONS_ENABLED)) {
-			session_name(Config::get(Config::SESSION_NAME));
-			if (session_start()) {
-				$this->session = new Session();
-				$this->session->generateNonce();
-				return;
-			} else {
-				throw new Exception('HttpRequest:setSession() -- セッションの初期化に失敗がありました。');
-			}
+			$this->session = Session::makeSession();
+		} else {
+			$this->session = null;
 		}
-		$this->session = null;
 	}
 
 	public function getSession()
@@ -102,9 +96,10 @@ class HttpRequest
 	public function isFormSafe()
 	{
 		$formSafeKey = Config::get(Config::FORM_SAFE_KEY);
-		if (isset($this->params[$formSafeKey]) && $this->session->isValidNonce($this->params[$formSafeKey])) {
-			return true;
+		if (isset($this->params[$formSafeKey])) {
+			return $this->session->isValidNonce($this->params[$formSafeKey]);
 		}
+		Logger::trace('HttpRequest:isFormSafe() -- フォームの提出者を確認できません。');
 		return false;
 	}
 
