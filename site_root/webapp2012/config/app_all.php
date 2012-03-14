@@ -35,7 +35,7 @@ function appConfigAll()
 
 	//	エラー処理の設定
 	ini_set('display_errors', true);
-	error_reporting(E_ALL | E_NOTICE | E_STRICT);
+	error_reporting(E_ERROR | E_PARSE | E_DEPRECATED | E_STRICT | E_WARNING);
 
 	//	有効の環境。設定がこれによって変わる
 	Config::set(Config::ENVIRONMENT, Config::ENVIRONMENT_DEVELOPMENT);
