@@ -15,6 +15,9 @@ class BaseRenderer
 
 	public static function classInitialize()
 	{
+		if (self::$IS_INITIALIZED) {
+			return;
+		}
 		self::$IS_INITIALIZED = true;
 		self::$RENDERERS = array();
 		self::$RENDERER_EXTENSIONS = array();

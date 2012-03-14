@@ -49,7 +49,6 @@ class HttpHandler
 				if (!is_null($db)) {
 					//	POST・PUT・DELETEのリクエストに対してDBの変更・購入・削除を有効にする
 					$db->setAllowUpdates(true);
-					var_dump($db);
 				}
 
 				if (!$this->request->isFormSafe()) {
