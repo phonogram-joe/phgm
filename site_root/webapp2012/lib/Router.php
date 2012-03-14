@@ -143,7 +143,7 @@ class Router
 
 	public function mapRestPair($namePrefix, $urlPrefix, $controller)
 	{
-		$actionPrefix = StringUtils::underscoresToCamel($namePrefix);
+		$actionPrefix = ClassLoader::underscoresToCamel($namePrefix);
 		$this->map($namePrefix . '_form',	'GET  ' . $urlPrefix,	$controller, $actionPrefix . 'Form');
 		$this->map($namePrefix . '_save',	'POST ' . $urlPrefix,	$controller, $actionPrefix . 'Save');
 	}
@@ -155,7 +155,7 @@ class Router
 	 */
 	public function mapForm($namePrefix, $urlPrefix, $controller)
 	{
-		$actionPrefix = StringUtils::underscoresToCamel($namePrefix);
+		$actionPrefix = ClassLoader::underscoresToCamel($namePrefix);
 		$this->map($namePrefix . '_form', 		'GET  ' . $urlPrefix, 				$controller, $actionPrefix . 'Form');
 		$this->map($namePrefix . '_confirm', 	'POST ' . $urlPrefix, 				$controller, $actionPrefix . 'Confirm');
 		$this->map($namePrefix . '_complete', 	'GET  ' . $urlPrefix . '/complete', $controller, $actionPrefix . 'Complete');
