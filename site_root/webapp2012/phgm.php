@@ -80,12 +80,13 @@ class phgm
 				/*TODO: show fatal errors in dev/test
 				$environment = Config::get(Config::ENVIRONMENT);
 				if ($environment === Config::ENVIRONMENT_DEVELOPMENT || $environment === Config::ENVIRONMENT_TEST) {
-					print $e->getMessage();
+				*/
+					print '<p>' . $e->getMessage() . '</p>';
+					print '<p>' . nl2br($e->getTraceAsString()) . '</p>';
+				/*
 				}
 				*/
-				print "config: " . Config::toString();
-				print $e->getMessage();
-				print Config::get(Config::FATAL_ERROR_MESSAGE);
+				print '<p>' . Config::get(Config::FATAL_ERROR_MESSAGE) . '</p>';
 			} catch (Exception $e) {
 				Logger::fatal($e);
 			}
