@@ -25,16 +25,40 @@ class ModelDefinition
 	{
 		return $this->class;
 	}
+
 	public function getFields()
 	{
 		return $this->fields;
 	}
+
+	/*
+	 *	getFieldList([$includeHidden])
+	 *		項目名のリストを取得する。デフォルトではプライベート項目を返さないが、$includeHiddenをtrueに指定すると全項目を取得できる。
+	 */
 	public function getFieldList($includeHidden = false)
 	{
+		$fields = array();
+		foreach ($this->fields as $name => $field) {
+			if ($includeHidden || false === array_search($name, $this->visibilityBlacklist)) {
+				$fields[] = $name;
+			}
+		}
+		return $fields;
 	}
+
+	/*
+	 *	getLabel($key)
+	 *		指定の項目名のラベルを取得。$keyはromajiの名で、返すのは（日本語の）ラベル。
+	 * 	例： getLabel('name') => '名前'
+	 */
 	public function getLabel($key)
 	{
 		return $this->fields[$key]['label'];
+	}
+
+	public function getType($key)
+	{
+		return $this->fields[$key]['type'];
 	}
 
 	public function defineField($name, $label, $type, $validations, $kanaConversion = null, $isVisible = false)
