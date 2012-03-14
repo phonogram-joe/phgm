@@ -58,7 +58,10 @@ class HttpResponseFormat
 	 */
 	public static function mimeType($typeName)
 	{
-		return self::$MIME_TYPES[$typeName];
+		if (isset(self::$MIME_TYPES[$typeName])) {
+			return self::$MIME_TYPES[$typeName];
+		}
+		throw new Exception('HttpResponseFormat::mimeType() -- 「' . $typeName . '」というフォーマットのMIMEタイプは設定されてない。');
 	}
 
 	/*
@@ -67,7 +70,10 @@ class HttpResponseFormat
 	 */
 	public static function encoding($typeName)
 	{
-		return self::$ENCODINGS[$typeName];
+		if (isset(self::$ENCODINGS[$typeName])) {
+			return self::$ENCODINGS[$typeName];
+		}
+		throw new Exception('HttpResponseFormat::encoding() -- 「' . $typeName . '」というフォーマットのエンコードは設定されてない。');
 	}
 
 	/*
@@ -76,6 +82,9 @@ class HttpResponseFormat
 	 */
 	public static function charset($typeName)
 	{
-		return self::$CHARSETS[$typeName];
+		if (isset(self::$CHARSETS[$typeName])) {
+			return self::$CHARSETS[$typeName];
+		}
+		throw new Exception('HttpResponseFormat::charset() -- 「' . $typeName . '」というフォーマットのcharsetは設定されてない。');
 	}
 }
