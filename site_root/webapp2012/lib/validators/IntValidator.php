@@ -4,17 +4,17 @@
  *	Licensed Under the MIT license http://www.opensource.org/licenses/mit-license.php
  */
 
-class PhoneValidator
+class IntValidator
 {
-	public static function phone($value)
+	public static function int($value)
 	{
 		if (is_null($value)) {
 			return null;
 		}
-		if (mb_strlen($value) === 0 || preg_match('/^\d{1,5}-?\d{1,5}-?\d{1,5}$/', $value)) {
+		if (mb_strlen($value) === 0 || is_int($value)) {
 			return null;
 		} else {
-			return '無効な電話番号です。';
+			return '整数ではありません。';
 		}
 	}
 }

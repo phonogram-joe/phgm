@@ -8,7 +8,10 @@ class EmailValidator
 {
 	public static function email($value)
 	{
-		if (preg_match('/^([*+!.&#$|\'\\%\/0-9a-z^_`{}=?~:-]+)@(([0-9a-z-]+\.)+[0-9a-z]{2,})$/i', $value)) {
+		if (is_null($value)) {
+			return null;
+		}
+		if (mb_strlen($value) === 0 || preg_match('/^([*+!.&#$|\'\\%\/0-9a-z^_`{}=?~:-]+)@(([0-9a-z-]+\.)+[0-9a-z]{2,})$/i', $value)) {
 			return null;
 		} else {
 			return 'メールフォーマットと異なります。';
