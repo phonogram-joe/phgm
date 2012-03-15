@@ -63,15 +63,11 @@ class phgm
 
 	public static function go($routeName = null, $routeParams = null)
 	{
-		self::classInitialize();
-		self::loadBase();
-		self::loadConfig();
-		self::doRequest($routeName, $routeParams);
-	}
-
-	public static function doRequest($routeName = null, $routeParams = null)
-	{
 		try {
+			self::classInitialize();
+			self::loadBase();
+			self::loadConfig();
+
 			$httpHandler = new HttpHandler();
 			$httpHandler->handleRequest($routeName, $routeParams);
 		} catch (Exception $e) {
