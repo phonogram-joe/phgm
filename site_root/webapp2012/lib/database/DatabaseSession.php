@@ -32,15 +32,15 @@ class DatabaseSession
 		return $this->allowUpdates;
 	}
 
-	public function findBy($className, $column, $value)
+	public function findOneBy($className, $column, $value)
 	{
 		$table = DbModel::getDbModel($className);
 		$sql = $table->getSelectSql();
 		$sql .= ' WHERE ' . $column . ' = ?';
 		$sql .= ' LIMIT 1';
 		$data = array($value);
-		Logger::info('DatabaseSession:query -- ' . $sql);
-		$statement = $this->dbHandle->prepare($sql); // '->query()'かな？
+		Logger::info('DatabaseSession:query -- << ' . $sql . ' >> using ' . implode(', ', $data));
+		$statement = $this->dbHandle->prepare($sql);
 		$statement->setFetchMode(PDO::FETCH_CLASS, $className);
 		$result = $statement->execute($data);
 		$result = $statement->fetch();
@@ -48,19 +48,49 @@ class DatabaseSession
 		return $result !== false ? $result : null;
 	}
 
-	public function find($className, $id)
+	public function findOne($className, $id)
 	{
 		$table = DbModel::getDbModel($className);
 		$sql = $table->getSelectSql();
 		$sql .= ' WHERE ' . $table->getIdName() . ' = ?';
 		$data = array($id);
-		Logger::info('DatabaseSession:query -- ' . $sql);
-		$statement = $this->dbHandle->prepare($sql); // '->query()'かな？
+		Logger::info('DatabaseSession:query -- << ' . $sql . ' >> using ' . implode(', ', $data));
+		$statement = $this->dbHandle->prepare($sql);
 		$statement->setFetchMode(PDO::FETCH_CLASS, $className);
 		$result = $statement->execute($data);
 		$result = $statement->fetch();
 		$statement->closeCursor();
 		return $result !== false ? $result : null;
+	}
+
+	public function findAllJoin($baseClassName, $joinArray, $conditions, $values, $perPage = null, $pageIndex = null, $orderBy = null)
+	{
+		$join = new JoinStatement($baseClassName, $joinArray);
+		$sql = $join->getSql();
+		$where = new WhereClause($conditions, $values);
+		$sql .= $where->getSql();
+		$data = $where->getData();
+		if (!is_null($orderBy)) {
+			$sql .= ' ORDER BY ' . $orderBy;
+		}
+		if (!is_null($perPage)) {
+			$sql .= ' LIMIT ' . intval($perPage);
+			if (!is_null($pageIndex) && intval($pageIndex) > 0) {
+				$sql .= ' OFFSET ' . (intval($perPage) * intval($pageIndex));
+			}
+		}
+		Logger::info('DatabaseSession:query -- << ' . $sql . ' >> using ' . implode(', ', $data));
+		$statement = $this->dbHandle->prepare($sql);
+		$statement->setFetchMode(PDO::FETCH_ASSOC);
+		$result = $statement->execute($data);
+		$results = $statement->fetchAll();
+		if ($results === false || !is_array($results) || count($results) <= 0) {
+			Logger::info('DatabaseSession:findAllJoin() -- no resuls.');
+			return null;
+		}
+		$results = $join->processResults($results);
+		$statement->closeCursor();
+		return $results;
 	}
 
 	/*
@@ -74,19 +104,24 @@ class DatabaseSession
 	 *	@returns: Array. array('sql' => 'SQLストリング', 'data' => array(...)
 	 *	上記の例で、array('sql' => 'name = ? or email = ?', 'data' => array('田中', 'tanaka@example.com'))
 	 */
-	public function query($className, $conditions = null, $values = null)
+	public function findAll($className, $conditions, $values, $perPage = null, $pageIndex = null, $orderBy = null)
 	{
 		$table = DbModel::getDbModel($className);
 		$sql = $table->getSelectSql();
-		if (!is_null($conditions)) {
-			$where = new WhereClause($conditions, $values);
-			$sql .= $where->getSql();
-			$data = $where->getData();
-		} else {
-			$data = array();
+		$where = new WhereClause($conditions, $values);
+		$sql .= $where->getSql();
+		$data = $where->getData();
+		if (!is_null($orderBy)) {
+			$sql .= ' ORDER BY ' . $orderBy;
 		}
-		Logger::info('DatabaseSession:query -- ' . $sql);
-		$statement = $this->dbHandle->prepare($sql); // '->query()'かな？
+		if (!is_null($perPage)) {
+			$sql .= ' LIMIT ' . intval($perPage);
+			if (!is_null($pageIndex) && intval($pageIndex) > 0) {
+				$sql .= ' OFFSET ' . (intval($perPage) * intval($pageIndex));
+			}
+		}
+		Logger::info('DatabaseSession:query -- << ' . $sql . ' >> using ' . implode(', ', $data));
+		$statement = $this->dbHandle->prepare($sql);
 		$statement->setFetchMode(PDO::FETCH_CLASS, $className);
 		$result = $statement->execute($data);
 		$results = $statement->fetchAll();
@@ -170,7 +205,7 @@ class DatabaseSession
 		$insert = $dbModel->getInsert($object);
 		$sql = $insert['sql'];
 		$data = $insert['data'];
-		Logger::info('DatabaseSession:query -- insert class ' . get_class($object) . ' with: ' . $sql);
+		Logger::info('DatabaseSession:query -- insert class ' . get_class($object) . ' with: << ' . $sql . ' >> using ' . implode(', ', $data));
 		$statement = $this->dbHandle->prepare($sql);
 		$statement->execute($data);
 		$dbModel->setId($object, $this->dbHandle->lastInsertId());
@@ -188,7 +223,7 @@ class DatabaseSession
 		}
 		$sql = $update['sql'];
 		$data = $update['data'];
-		Logger::info('DatabaseSession:query -- update class ' . get_class($object) . ' with; ' . $sql);
+		Logger::info('DatabaseSession:query -- update class ' . get_class($object) . ' with: << ' . $sql . ' >> using ' . implode(', ', $data));
 		$statement = $this->dbHandle->prepare($sql);
 		$statement->execute($data);
 		return $statement->rowCount();
@@ -201,7 +236,7 @@ class DatabaseSession
 		$delete = $dbModel->getDelete($object);
 		$sql = $delete['sql'];
 		$data = $delete['data'];
-		Logger::info('DatabaseSession:query -- delete class ' . get_class($object) . ' with; ' . $sql);
+		Logger::info('DatabaseSession:query -- delete class ' . get_class($object) . ' with: << ' . $sql . ' >> using ' . implode(', ', $data));
 		$statement = $this->dbHandle->prepare($sql);
 		$statement->execute($data);
 		return $statement->rowCount();
