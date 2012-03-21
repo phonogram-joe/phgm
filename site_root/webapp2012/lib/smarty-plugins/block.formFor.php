@@ -29,6 +29,9 @@ function smarty_block_formFor($params, $content, Smarty_Internal_Template $templ
 		unset($params['html_class']);
 
 		$url = Router::getRouter()->urlForName($name, $params);
+		if (is_null($url)) {
+			throw new Exception('smarty_block_formFor() -- 「' . $name . '」ルートは見つかりません。');
+		}
 
 		$session = $template->getTemplateVars(SmartyRenderer::SESSION_VAR_NAME);
 		$formSafeKey = Config::get(Config::FORM_SAFE_KEY);
