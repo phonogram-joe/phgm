@@ -79,6 +79,11 @@ class Config
 		}
 	}
 
+	public static function getAll()
+	{
+		return self::$SETTINGS;
+	}
+
 	public static function toString()
 	{
 		$str = '';

@@ -111,6 +111,14 @@ class Route
 	{
 		return $this->action;
 	}
+	public function getHttpVerb()
+	{
+		return $this->http_verb;
+	}
+	public function getUrlPattern()
+	{
+		return $this->url_pattern;
+	}
 
 	/*
 	 *	ERROR/TODO: url from route details fails

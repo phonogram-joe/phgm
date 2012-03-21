@@ -35,6 +35,11 @@ class Router
 		return self::$ROUTER;
 	}
 
+	public function getAllRoutes()
+	{
+		return $this->routes;
+	}
+
 	public function setUrlPrefix($prefix)
 	{
 		$this->urlPrefix = $prefix;
