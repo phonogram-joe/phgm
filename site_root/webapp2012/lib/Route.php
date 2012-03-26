@@ -134,14 +134,16 @@ class Route
 		$queryParams = array();
 		$urlPath = $this->url_pattern;
 		foreach ($params as $param => $value) {
-			//	attempt to swap in the parameter for a placeholder in the url_pattern
-			$urlPath = preg_replace(self::$PARAM_PATTERN_PREFIX . $param . self::$PARAM_PATTERN_SUFFIX, urlencode($value), $urlPath);
-			if (is_null($urlPath)) {
-				return null;
-			}
-			//	if the param name is not present in the url_pattern, it must be added as a query parameter to the final URL
 			if (false === array_search($param, $this->url_param_names)) {
+				//	if the param name is not present in the url_pattern, it must be added as a query parameter to the final URL
 				$queryParams[$param] = $value;
+			} else {
+				//	param name is in url pattern, swap value in
+				//	attempt to swap in the parameter for a placeholder in the url_pattern
+				$urlPath = preg_replace(self::$PARAM_PATTERN_PREFIX . $param . self::$PARAM_PATTERN_SUFFIX, urlencode($value), $urlPath);
+				if (is_null($urlPath)) {
+					return null;
+				}
 			}
 		}
 		//	check the completed URL and see if it matches this route's criteria
