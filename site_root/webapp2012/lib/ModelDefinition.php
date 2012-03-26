@@ -4,6 +4,8 @@
  *	Licensed Under the MIT license http://www.opensource.org/licenses/mit-license.php
  */
 
+ClassLoader::load('IntegerType');
+
 class ModelDefinition
 {
 	private $class;
@@ -39,7 +41,7 @@ class ModelDefinition
 	{
 		$fields = array();
 		foreach ($this->fields as $name => $field) {
-			if ($includeHidden || false === array_search($name, $this->visibilityBlacklist)) {
+			if ($includeHidden || false !== array_search($name, $this->visibilityWhitelist)) {
 				$fields[] = $name;
 			}
 		}
@@ -53,7 +55,11 @@ class ModelDefinition
 	 */
 	public function getLabel($key)
 	{
-		return $this->fields[$key]['label'];
+		if (isset($this->fields[$key])) {
+			return $this->fields[$key]['label'];
+		} else {
+			return $key;
+		}
 	}
 
 	public function getType($key)
@@ -61,9 +67,12 @@ class ModelDefinition
 		return $this->fields[$key]['type'];
 	}
 
-	public function defineField($name, $label, $type, $validations, $kanaConversion = null, $isVisible = false)
+	public function defineField($name, $label, $type, $validations, $conversions, $isVisible = false)
 	{
-		$this->fields[$name] = array('name' => $name, 'label' => $label, 'type' => $type, 'validations' => $validations, 'kanaConversion' => $kanaConversion);
+		$this->fields[$name] = array('name' => $name, 'label' => $label, 'validations' => $validations);
+		$type = ClassLoader::toClassName($type, 'Type');
+		ClassLoader::load($type);
+		$this->fields[$name]['type'] = $type;
 		foreach ($validations as $validator) {
 			//each validator should be given as a string with method name optionally followed by arguments. separate all segments with a colon eg 'lengthMax:10' or 'lengthRange:8:20'
 			$validatorParts = preg_split('/[:]/', $validator);
@@ -79,6 +88,18 @@ class ModelDefinition
 				$this->validations[] = array($name, $validatorClass, $validatorMethod, $validatorParts);
 			}
 		}
+		$converters = array();
+		if (is_null($conversions)) {
+			$conversions = array();
+		}
+		foreach ($conversions as $conversion) {
+			$conversionParts = preg_split('/[:]/', $conversion);
+			$conversionClass = ClassLoader::toClassName($conversionParts[0], 'Converter');
+			ClassLoader::load($conversionClass);
+			array_shift($conversionParts);
+			$converters[] = array($conversionClass, $conversionParts);
+		}
+		$this->fields[$name]['converters'] = $converters;
 		if ($isVisible === false) {
 			$this->visibilityBlacklist[] = $name;
 		} else {
@@ -90,8 +111,21 @@ class ModelDefinition
 	{
 		foreach ($this->fields as $name => $field) {
 			if (!property_exists($object, $name)) {
+				//object initialized normally, eg not through PDO which sets properties before constructor called
 				$object->{$name} = null;
+			} else if (!is_null($object->{$name})) {
+				//object initialized through PDO and thus properties already set. will all be strings, convert to internal datatype
+				$value = call_user_func(array($this->fields[$name]['type'], 'fromDb'), $object->{$name});
+				if ($value === BaseDataType::$INVALID) {
+					throw new Exception('ModelDefinition:initializeObject() -- 項目「' . $name . '」：データベースでの価値は無効でした。');
+				}
+				$object->{$name} = $value;
 			}
+		}
+		$dbModel = DbModel::getDbModel(get_class($object));
+		if (!is_null($dbModel)) {
+			$idName = $dbModel->getIdName();
+			$object->{$idName} = IntegerType::fromDb($object->{$idName});
 		}
 	}
 
@@ -100,13 +134,33 @@ class ModelDefinition
 		return array_key_exists($key, $this->fields);
 	}
 
-	public function set($object, $key, $value = null)
+	public function getAll($object)
 	{
-		if (is_null($object)) {
-			throw new Exception('ModelDefinition:set() -- オブジェクトはナルです。');
+		$values = array();
+		foreach ($this->fields as $name => $field) {
+			$values[$name] = $this->get($object, $name);
 		}
-		if (is_null($key)) {
-			throw new Exception('ModelDefinition:set() -- キーはナルです。');
+		return $values;
+	}
+
+	public function get($object, $key)
+	{
+		$value = $object->{$key};
+		if (is_null($value)) {
+			return $value;
+		}
+		$type = $this->fields[$key]['type'];
+		$convertedValue = call_user_func(array($type, 'toWeb'), $value);
+		if ($convertedValue === BaseDataType::$INVALID) {
+			return $value;
+		}
+		return $convertedValue;
+	}
+
+	public function set($object, $key, $value)
+	{
+		if (is_null($object) || is_null($key)) {
+			throw new Exception('ModelDefinition:set() -- オブジェクトまたはキーはナルです。');
 		}
 		if (is_array($key)) {
 			Logger::trace('ModelDefinition:set() -- array()');
@@ -114,7 +168,7 @@ class ModelDefinition
 			$setParams = array();
 			foreach ($this->fields as $name => $options) {
 				if (false !== array_search($name, $this->visibilityWhitelist) && array_key_exists($name, $params)) {
-					Logger::trace('ModelDefinition:set() -- visible, key/value ' . $name . '=' . $value);
+					Logger::trace('ModelDefinition:set() -- visible, key/value ' . $name . '=' . $params[$name]);
 					$setParams[$name] = $this->simpleSet($object, $name, $params[$name]);
 				}
 			}
@@ -130,8 +184,18 @@ class ModelDefinition
 
 	private function simpleSet($object, $key, $value)
 	{
-		if (!is_null($this->fields[$key]['kanaConversion'])) {
-			$value = mb_convert_kana($value, $this->fields[$key]['kanaConversion']);
+		foreach ($this->fields[$key]['converters'] as $converter) {
+			if (is_null($value)) {
+				break;
+			}
+			$value = call_user_func_array(array($converter[0], 'input'), array_merge((array)$value, $converter[1]));
+		}
+		if (!is_null($value)) {
+			$type = $this->fields[$key]['type'];
+			$convertedValue = call_user_func(array($type, 'fromWeb'), $value);
+			if ($convertedValue !== BaseDataType::$INVALID) {
+				$value = $convertedValue;
+			}
 		}
 		if ($object->{$key} === $value) {
 			return $value;
@@ -141,11 +205,38 @@ class ModelDefinition
 		return $value;
 	}
 
+	public function output($object, $key)
+	{
+		$value = $object->{$key};
+		foreach ($this->fields[$key]['converters'] as $converter) {
+			if (is_null($value)) {
+				break;
+			}
+			$value = call_user_func_array(array($converter[0], 'output'), array_merge((array)$value, $converter[1]));
+		}
+		return $value;
+	}
+
 	public function isValid($object)
 	{
 		$modelValid = true;
 		$errorMsg = true;
 		$errors = array();
+
+		//	validate by data type
+		foreach ($this->fields as $name => $options) {
+			if (is_null($object->{$name})) {
+				continue;
+			}
+			$type = $this->fields[$name]['type'];
+			$convertedValue = call_user_func(array($type, 'fromWeb'), $object->{$name});
+			if ($convertedValue === BaseDataType::$INVALID) {
+				$errorMsg = '無効な価値です。';
+				$object->addValidationError($name, $errorMsg);
+				$errors[$name] = $errorMsg;
+			}
+		}
+		//	validate by validation rules
 		foreach ($this->validations as $validation) {
 			$name = $validation[0];
 			$obj = $validation[1];
@@ -162,9 +253,8 @@ class ModelDefinition
 			if (!is_null($errorMsg) && !array_key_exists($name, $errors)) {
 				$modelValid = false;
 				$errors[$name] = $errorMsg;
+				$object->addValidationError($name, $errorMsg);
 			}
 		}
-		$object->setValidationErrors($errors);
-		return $modelValid;
 	}
 }

@@ -46,6 +46,13 @@ class ClassLoader
 	const VALIDATOR = 'Validator';
 
 	/**
+	 *	データ刑を変換するクラス
+	 */
+	const CONVERTER = 'Converter';
+
+	const DATATYPE = 'Type';
+
+	/**
 	 *	レンダラクラスのフラグ。コントローラのデータをあるデータ刑に変換するクラス
 	 */
 	const RENDERER = 'Renderer';
@@ -61,7 +68,9 @@ class ClassLoader
 	//	app専用の共通クラス
 	public static $APP_LIB_DIR; //共通のクラスやビュープラグイン
 	public static $APP_VALIDATORS_DIR; //モデルのデータがデータ刑や規則にあってるか確認するクラス。
+	public static $APP_CONVERTERS_DIR; //モデルにset()する時にデータを変換するクラス
 	public static $APP_RENDERERS_DIR; //カスタムなレンダラクラス。Smartyのようにデータをテンプレートに埋め込むクラスです。
+	public static $APP_TYPES_DIR;
 	public static $APP_HELPERS_DIR; //共通ロジック
 	public static $APP_SMARTY_DIR; //カスタムなSmartyのプラグイン
 
@@ -75,16 +84,17 @@ class ClassLoader
 		//	app専用のファイル
 		self::$APP_CONTROLLERS_DIR = phgm::$APP_DIR . DS . 'controllers'; //コントローラクラス
 		self::$APP_MODELS_DIR = phgm::$APP_DIR . DS . 'models'; //DBやフォームのモデルクラス
-		self::$APP_DECORATORS_DIR = phgm::$APP_DIR . DS . 'view_models'; //モデルを表示する際に使うクラス
+		self::$APP_DECORATORS_DIR = phgm::$APP_DIR . DS . 'decorators'; //モデルを表示する際に使うクラス
 		self::$APP_VIEWS_DIR = phgm::$APP_DIR . DS . 'views'; //共通のレイアウト・ガジェットと、コントローラのアクションごとのテンプレート
 
 		//	app専用の共通クラス
 		self::$APP_LIB_DIR = phgm::$APP_DIR . DS . 'lib'; //共通のクラスやビュープラグイン
 		self::$APP_VALIDATORS_DIR = self::$APP_LIB_DIR . DS . 'validators'; //モデルのデータがデータ刑や規則にあってるか確認するクラス。
+		self::$APP_CONVERTERS_DIR = self::$APP_LIB_DIR . DS . 'converters'; 
 		self::$APP_RENDERERS_DIR = self::$APP_LIB_DIR . DS . 'renderers'; //カスタムなレンダラクラス。Smartyのようにデータをテンプレートに埋め込むクラスです。
+		self::$APP_TYPES_DIR = self::$APP_LIB_DIR . DS . 'datatypes';
 		self::$APP_HELPERS_DIR = self::$APP_LIB_DIR . DS . 'helpers'; //共通ロジック
 		self::$APP_SMARTY_DIR = self::$APP_LIB_DIR . DS . 'smarty-plugins'; //カスタムなSmartyのプラグイン
-
 	}
 
 	/**
@@ -109,11 +119,23 @@ class ClassLoader
 			} else {
 				self::loadFrom($name, phgm::$LIB_VALIDATORS_DIR);
 			}
-		} else if (preg_match('/Renderer/', $name)) {
+		} else if (preg_match('/Renderer$/', $name)) {
 			if (file_exists(self::path(self::$APP_RENDERERS_DIR, $name))) {
 				self::loadFrom($name, self::$APP_RENDERERS_DIR);
 			} else {
 				self::loadFrom($name, phgm::$LIB_RENDERERS_DIR);
+			}
+		} else if (preg_match('/Converter$/', $name)) {
+			if (file_exists(self::path(self::$APP_CONVERTERS_DIR, $name))) {
+				self::loadFrom($name, self::$APP_CONVERTERS_DIR);
+			} else {
+				self::loadFrom($name, phgm::$LIB_CONVERTERS_DIR);
+			}
+		} else if (preg_match('/Type$/', $name)) {
+			if (file_exists(self::path(self::$APP_TYPES_DIR, $name))) {
+				self::loadFrom($name, self::$APP_TYPES_DIR);
+			} else {
+				self::loadFrom($name, phgm::$LIB_TYPES_DIR);
 			}
 		}
 	}
@@ -158,7 +180,7 @@ class ClassLoader
 	 */
 	public static function classNamePrefix($class)
 	{
-		return self::camelToUnderscores(preg_replace('/(Controller|Model|Form|Decorator|Renderer|Validator|Helper)$/', '', $class));
+		return self::camelToUnderscores(preg_replace('/(Controller|Model|Form|Decorator|Renderer|Validator|Converter|Helper)$/', '', $class));
 	}
 
 	/*

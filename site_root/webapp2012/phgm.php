@@ -23,7 +23,9 @@ class phgm
 	public static $LIB_DIR;
 	public static $LIB_DATABASE_DIR;
 	public static $LIB_VALIDATORS_DIR;
+	public static $LIB_CONVERTERS_DIR;
 	public static $LIB_RENDERERS_DIR;
+	public static $LIB_TYPES_DIR;
 	public static $VENDOR_DIR;
 	public static $LOG_DIR;
 	public static $TMP_DIR;
@@ -48,7 +50,9 @@ class phgm
 		self::$LIB_DIR = ROOT_DIR . DS . 'lib';
 		self::$LIB_DATABASE_DIR = self::$LIB_DIR . DS . 'database';
 		self::$LIB_VALIDATORS_DIR = self::$LIB_DIR . DS . 'validators';
+		self::$LIB_CONVERTERS_DIR = self::$LIB_DIR . DS . 'converters';
 		self::$LIB_RENDERERS_DIR = self::$LIB_DIR . DS . 'renderers';
+		self::$LIB_TYPES_DIR = self::$LIB_DIR . DS . 'datatypes';
 		self::$VENDOR_DIR = ROOT_DIR . DS . 'lib-vendor';
 		self::$LOG_DIR = ROOT_DIR . DS . 'log';
 		self::$TMP_DIR = ROOT_DIR . DS . 'tmp';
@@ -98,11 +102,13 @@ class phgm
 		ClassLoader::loadFrom('Logger', self::$LIB_DIR);
 		ClassLoader::loadFrom('TimeUtils', self::$LIB_DIR);
 		ClassLoader::loadFrom('StringUtils', self::$LIB_DIR);
+		ClassLoader::loadFrom('BaseDataType', self::$LIB_TYPES_DIR);
 		ClassLoader::loadFrom('ModelDefinition', self::$LIB_DIR);
 		ClassLoader::loadFrom('BaseModel', self::$LIB_DIR);
 		ClassLoader::loadFrom('BaseDecorator', self::$LIB_DIR);
 		ClassLoader::loadFrom('BaseController', self::$LIB_DIR);
 		ClassLoader::loadFrom('BaseRenderer', self::$LIB_DIR);
+		ClassLoader::loadFrom('ModelRenderFormat', self::$LIB_DIR);
 		ClassLoader::loadFrom('Router', self::$LIB_DIR);
 		ClassLoader::loadFrom('Session', self::$LIB_DIR);
 		ClassLoader::loadFrom('SessionUser', self::$LIB_DIR);
@@ -112,7 +118,7 @@ class phgm
 		ClassLoader::loadFrom('HttpHandler', self::$LIB_DIR);
 
 		//	データベースのクラス
-		ClassLoader::loadFrom('WhereClause', self::$LIB_DATABASE_DIR);
+		ClassLoader::loadFrom('SqlStatement', self::$LIB_DATABASE_DIR);
 		ClassLoader::loadFrom('DatabaseSession', self::$LIB_DATABASE_DIR);
 		ClassLoader::loadFrom('DB', self::$LIB_DATABASE_DIR);
 		ClassLoader::loadFrom('DbModel', self::$LIB_DATABASE_DIR);

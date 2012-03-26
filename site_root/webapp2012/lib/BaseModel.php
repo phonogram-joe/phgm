@@ -10,6 +10,7 @@
 
 class BaseModel
 {
+	private static $IS_INITIALIZED = false;
 	private static $CLASS_MODEL_DEFINITIONS;
 
 	private $changedFields;
@@ -29,9 +30,10 @@ class BaseModel
 
 	public static function classInitialize()
 	{
-		if (is_null(self::$CLASS_MODEL_DEFINITIONS)) {
-			self::$CLASS_MODEL_DEFINITIONS = array();
+		if (self::$IS_INITIALIZED) {
+			return;
 		}
+		self::$CLASS_MODEL_DEFINITIONS = array();
 	}
 
 	public static function initializeSubclass($class)
@@ -50,9 +52,16 @@ class BaseModel
 	{
 		return self::$CLASS_MODEL_DEFINITIONS[$class];
 	}
-	
+
+	public function getAll()
+	{
+		$modelDefinition = self::getClassModelDefinition(get_class($this));
+		return $modelDefinition->getAll($this);
+	}
+
 	/*
-	 *	set($key[, $value])
+	 *	set($key, $value)
+	 *		ウェブからのデータを内部データ刑に変換する
 	 */
 	public function set($key, $value = null)
 	{
@@ -62,10 +71,34 @@ class BaseModel
 
 	/*
 	 *	get()
+	 *		内部のデータ刑をウェブようの価値に変換した価値を返す。HTMLに埋め込めるデータ刑なる
 	 */
 	public function get($key)
 	{
-		return $this->{$key};
+		$modelDefinition = self::getClassModelDefinition(get_class($this));
+		return $modelDefinition->get($this, $key);
+	}
+
+	/*
+	 *	val($key[, $value])
+	 *		内部データ刑で(変換せずに）価値を取得・設定する
+	 */
+	public function val($key, $value = null)
+	{
+		if ($value === null) {
+			return $this->{$key};
+		} else {
+			$this->{$key} = $value;
+			$this->_change($key, $value);
+		}
+	}
+
+	public function nullVal($key)
+	{
+		if (!is_null($this->{$key})) {
+			$this->{$key} = null;
+			$this->_change($key, null);
+		}
 	}
 
 	public function getFieldsList()
@@ -88,16 +121,22 @@ class BaseModel
 	{
 		return count($this->changedFields) !== 0;
 	}
+
+	//record original value. if changed more than once, do not record the subsequent values
 	public function _change($key, $value)
 	{
-		if (!is_null($this->changedFields)) {
-			$this->changedFields[$key] = $value;
+		if (!array_key_exists($key, $this->changedFields)) {
+			$this->changedFields[$key] = $this->{$key};
 		}
 	}
 
 	public function resetChanges()
 	{
+		foreach ($this->changedFields as $key => $value) {
+			$this->{$key} = $value;
+		}
 		$this->changedFields = array();
+		$this->validationErrors = array();
 	}
 
 	public function getValidationErrors()
@@ -111,7 +150,6 @@ class BaseModel
 		if (!$modelDefinition->hasField($field)) {
 			throw new Exception('BaseModel:addValidationError() -- ' . get_class($this) . 'クラスには' . $field . 'というキーはありません。');
 		}
-
 		$this->validationErrors[$field] = $message;
 	}
 
@@ -123,7 +161,8 @@ class BaseModel
 	public function isValid()
 	{
 		$modelDefinition = self::getClassModelDefinition(get_class($this));
-		return $modelDefinition->isValid($this);
+		$modelDefinition->isValid($this);
+		return !$this->hasErrors();
 	}
 
 	public function hasErrors()
