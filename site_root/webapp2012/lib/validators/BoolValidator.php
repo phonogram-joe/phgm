@@ -4,17 +4,17 @@
  *	Licensed Under the MIT license http://www.opensource.org/licenses/mit-license.php
  */
 
-class IntValidator
+class BoolValidator
 {
-	public static function int($value)
+	public static function bool($value)
 	{
-		if (is_null($value)) {
+		if (is_null($value) || mb_strlen($value) === 0) {
 			return null;
 		}
-		if (mb_strlen($value) === 0 || is_int(intval($value))) {
+		if ($value === "0" || $value === "1") {
 			return null;
 		} else {
-			return '整数ではありません。';
+			return 'ブールではありません。';
 		}
 	}
 }
