@@ -214,7 +214,7 @@ class BaseController
 		$this->doIsReturned();
 		$this->_phgmRedirectUrl = Router::getRouter()->urlForName($routeName, $params);
 		if (is_null($this->_phgmRedirectUrl)) {
-			throw new Exception('BaseController:doRedirect() -- そのルートはありません。' . $routeName . ' ' . $params);
+			throw new Exception('BaseController:doRedirect() -- そのルートはありません。' . $routeName . ' ' . implode(', ', $params));
 		}
 		foreach ($passData as $key => $value) {
 			$this->_phgmSession->passData($key, $value);

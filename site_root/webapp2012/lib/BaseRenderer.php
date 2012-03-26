@@ -29,6 +29,11 @@ class BaseRenderer
 		self::$RENDERER_EXTENSIONS[$format] = $extension;
 	}
 
+	public static function hasRenderer($format)
+	{
+		return isset(self::$RENDERERS[$format]);
+	}
+
 	public static function getRenderer($format, $templatePath)
 	{
 		if (isset(self::$RENDERERS[$format])) {

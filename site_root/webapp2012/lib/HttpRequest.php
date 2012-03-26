@@ -25,6 +25,14 @@ class HttpRequest
 		$this->originalUri = $_SERVER['REQUEST_URI'];
 	}
 
+	public static function isHttpMethod($method)
+	{
+		if (false !== array_search($method, array(self::GET, self::POST, self::PUT, self::DELETE))) {
+			return true;
+		}
+		return false;
+	}
+
 	public function toString()
 	{
 		return strtoupper($this->httpVerb) . ' ' . $this->originalUri;

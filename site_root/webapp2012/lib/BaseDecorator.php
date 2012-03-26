@@ -6,39 +6,36 @@
 
 class BaseDecorator
 {
-	private $model;
-
-	public function BaseDecorator($model)
+	public function BaseDecorator()
 	{
-		$this->model = $model;
 	}
 
-	public static function mapToViews($modelArray)
+	public static function modelToDecorator($model)
 	{
-		if (empty($rsArray)) {
-			return array();
+		$klass = __CLASS__;
+		$decorator =  new $klass();
+		$values = $model->getAll();
+		foreach ($values as $key => $value) {
+			$decorator->{$key} = $value;
 		}
-		return array_map(array(__CLASS__, 'makeView'), $modelArray);
+		return $decorator;
 	}
 
-	public static function create($model)
+	public function get($name)
 	{
-		$class = __CLASS__;
-		return new $class($model);
-	}
-
-	public function __call($name, $args)
-	{
-		return $this->model->get($name);
+		if (method_exists($this, $name)) {
+			return call_user_func(array($this, $name));
+		}
+		return $this->{$name};
 	}
 
 	public function __get($name)
 	{
-		return call_user_func(array($this, $name));
+		return $this->{$name};
 	}
 
 	public function toJSON()
 	{
-		return get_object_vars($this->model);
+		return get_object_vars($this);
 	}
 }
