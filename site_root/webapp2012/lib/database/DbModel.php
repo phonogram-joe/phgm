@@ -41,7 +41,11 @@ class DbModel extends BaseModel
 		Logger::info('DbModel:createInsertSql() -- creating insert SQL for table: ' . $this->tableName);
 		$sql = 'INSERT INTO ' . $this->tableName;
 		$sql .= ' (' . implode(', ', $this->columns) . ')';
-		$sql .= ' VALUES (' . implode(',', preg_split('//', str_repeat('?', count($this->columns)), -1, PREG_SPLIT_NO_EMPTY)) . ')';
+		$values = array();
+		foreach ($this->columns as $column) {
+			$values[] = ':' . $column;
+		}
+		$sql .= ' VALUES (' . implode(',', $values) . ')';
 		Logger::info('DbModel:createInsertSql() -- creating insert SQL for table: ' . $this->tableName . ': ' . $sql);
 		$this->insertSql = $sql;
 	}
@@ -108,19 +112,16 @@ class DbModel extends BaseModel
 
 	public function getSelectSql()
 	{
-		return $this->selectSql;
+		return new SqlStatement($this->selectSql, array());
 	}
 
 	public function getInsert($object)
 	{
-		$insert = array('sql' => $this->insertSql);
 		$data = array();
 		foreach ($this->columns as $column) {
-			$data[] = $object->get($column);
+			$data[$column] = $object->get($column);
 		}
-		$insert['data'] = $data;
-		Logger::info('DbModel:getInsert() -- sql: ' . $insert['sql']);
-		return $insert;
+		return new SqlStatement($this->insertSql, $data);
 	}
 
 	public function getUpdate($object, $forceUpdate = false)
@@ -129,8 +130,8 @@ class DbModel extends BaseModel
 		$set = array();
 		foreach ($this->columns as $column) {
 			if ($object->isChanged($column) || $forceUpdate) {
-				$set[] = ' ' . $column . ' = ? ';
-				$data[] = $object->get($column);
+				$set[] = ' ' . $column . ' = :' . $column;
+				$data[$column] = $object->get($column);
 			}
 		}
 		if (count($data) === 0) {
@@ -138,9 +139,9 @@ class DbModel extends BaseModel
 		}
 		$sql = 'UPDATE ' . $this->tableName;
 		$sql .= ' SET ' . implode(', ', $set);
-		$sql .= ' WHERE ' . $this->idName . ' = ?';
-		$data[] = $object->get($this->idName);
-		return array('sql' => $sql, 'data' => $data);
+		$sql .= ' WHERE ' . $this->idName . ' = :' . $this->idName;
+		$data[$this->idName] = $object->get($this->idName);
+		return new SqlStatement($sql, $data);
 	}
 
 	public function getDelete($object)
@@ -148,7 +149,7 @@ class DbModel extends BaseModel
 		$sql = 'DELETE FROM ' . $this->tableName;
 		$sql .= ' WHERE ' . $this->idName . ' = ?';
 		$data = array($object->get($this->idName));
-		return array('sql' => $sql, 'data' => $data);
+		return new SqlStatement($sql, $data);
 	}
 
 	public static function classInitialize()
@@ -173,6 +174,9 @@ class DbModel extends BaseModel
 
 	public static function getDbModel($className)
 	{
+		if (!isset(self::$DB_MODELS[$className])) {
+			return null;
+		}
 		return self::$DB_MODELS[$className];
 	}
 

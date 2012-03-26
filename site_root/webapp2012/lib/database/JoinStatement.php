@@ -109,13 +109,11 @@ class JoinStatement
 					$currentObject->{$field} = $result[$column];
 				} else if (!is_null($klass)) {
 					//join object ID
-					if (is_null($result[$column])) {
-						$currentObject->{$key} = null;
-					} else {
-						$joinObject = new $klass();
+					$joinObject = new $klass();
+					if (!is_null($result[$column])) {
 						$joinObject->{$field} = $result[$column];
-						$currentObject->{$key} = $joinObject;
 					}
+					$currentObject->{$key} = $joinObject;
 				} else if (!is_null($currentObject->{$key})) {
 					//join object property
 					$currentObject->{$key}->{$field} = $result[$column];
