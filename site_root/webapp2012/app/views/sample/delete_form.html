@@ -2,7 +2,7 @@
 {{block name="main"}}
 <h1>Sample - Delete</h1>
 {{if $pageError}}<span class="error" style="color:red;">{{$pageError|escape}}</span>{{/if}}
-<form method="POST" action="{{urlFor name='sample_delete_save' id=$model->get('id')}}">
+<form method="POST" action="{{urlFor name='sample_delete_save' id=$model->id}}">
 <div>
 <label for="sample_name">名前</label>
 </div>

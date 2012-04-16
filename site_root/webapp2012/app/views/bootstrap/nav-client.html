@@ -1,0 +1,26 @@
+<div class="navbar navbar-fixed-top">
+  <div class="navbar-inner">
+    <div class="container-fluid">
+      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </a>
+      <a class="brand" href="#">カーン</a>
+      <div class="nav-collapse">
+        <ul class="nav">
+          <li {{if preg_match('/\brequests\b/', $pageSection)}}class="active"{{/if}}><a href="{{urlFor name='client:request_index'}}">依頼情報</a></li>
+          <li {{if preg_match('/\bclients\b/', $pageSection)}}class="active"{{/if}}><a href="{{urlFor name='client:client_index'}}">クライアント情報</a></li>
+          <li {{if preg_match('/\bpoints\b/', $pageSection)}}class="active"{{/if}}><a href="{{urlFor name='client:point_index'}}">ポイント</a></li>
+          <li {{if preg_match('/\bnews\b/', $pageSection)}}class="active"{{/if}}><a href="{{urlFor name='client:news_index'}}">お知らせ</a></li>
+          <li {{if preg_match('/\btools\b/', $pageSection)}}class="active"{{/if}}><a href="{{urlFor name='client:tool_index'}}">ツール</a></li>
+        </ul>
+        <ul class="nav pull-right">
+          <li {{if preg_match('/\bcontact\b/', $pageSection)}}class="active"{{/if}}><a href="{{urlFor name='client:contact'}}">問い合わせ</a></li>
+          <li {{if preg_match('/\bhelp\b/', $pageSection)}}class="active"{{/if}}><a href="{{urlFor name='client:help'}}">ヘルプ</a></li>
+          <li {{if preg_match('/\bauth\b/', $pageSection)}}class="active"{{/if}}><a href="{{urlFor name='logout'}}">ログアウト</a></li>
+        </ul>
+      </div><!--/.nav-collapse -->
+    </div>
+  </div>
+</div>

@@ -1,0 +1,68 @@
+<!doctype html>
+<!--[if lt IE 7]> <html class="no-js ie6 oldie" lang="ja"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js ie7 oldie" lang="ja"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js ie8 oldie" lang="ja"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="ja"> <!--<![endif]-->
+  <head>
+    <meta charset="utf-8">
+    <title>カーンサポートシステム　｜　{{$pageTitle|escape}}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="{{$pageDescription|escape}}">
+    <meta name="author" content="{{$pageAuthor|escape}}">
+
+    <!-- Twitter Bootstrapを基本としてスタイル設定 ( http://twitter.github.com/bootstrap/ ) -->
+    <link href="/webapp2012/inc/styles/bootstrap/bootstrap.less" rel="stylesheet/less">
+    <!-- カスタムなCSS -->
+    <link href="/webapp2012/inc/styles/bootstrap-adjust.less" rel="stylesheet/less">
+    <!-- Twitter Bootstrapようの日にち選択プラグイン ( http://www.eyecon.ro/bootstrap-datepicker/ ) -->
+    <link href="/webapp2012/inc/styles/bootstrap-datepicker/datepicker.less" rel="stylesheet/less">
+
+    <!-- LESS >> CSS変換するスクリプト ( http://lesscss.org/ )-->
+    <script src="/webapp2012/inc/scripts/less/less-1.3.0.min.js"></script>
+    <!-- IE6-8のHTML5対応（印刷も含め）　・ ブラウザ機能確認　( http://modernizr.com/ )　-->
+    <script src="/webapp2012/inc/scripts/modernizr-2.5.3.min.js"></script>
+
+    <link rel="shortcut icon" href="/webapp2012/inc/images/favicons/favicon.ico">
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="/webapp2012/inc/images/favicons//apple-touch-icon-114-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="/webapp2012/inc/images/favicons//apple-touch-icon-72-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" href="/webapp2012/inc/images/favicons//apple-touch-icon-57-precomposed.png">
+  </head>
+
+  <body class="{{$pageSection}}">
+
+    {{block name="base"}}{{/block}}
+
+    <div class="container">
+      <hr>
+
+      <footer>
+        <p class="pull-right">Copyright &copy; 2012 Phonogram Inc. All Rights Reserved.</p>
+      </footer>
+
+    </div><!--/.fluid-container-->
+
+    <!-- --------------------------------------------------------------- -->
+    <!-- jQuery -->
+    <script src="/webapp2012/inc/scripts/jquery-1.7.2.min.js"></script>
+    <!-- Twitter Bootstrapのスクリプト ( http://twitter.github.com/bootstrap/javascript.html ) -->
+    <script src="/webapp2012/inc/scripts/bootstrap/bootstrap-transition.js"></script>
+    <script src="/webapp2012/inc/scripts/bootstrap/bootstrap-alert.js"></script>
+    <script src="/webapp2012/inc/scripts/bootstrap/bootstrap-modal.js"></script>
+    <script src="/webapp2012/inc/scripts/bootstrap/bootstrap-dropdown.js"></script>
+    <script src="/webapp2012/inc/scripts/bootstrap/bootstrap-scrollspy.js"></script>
+    <script src="/webapp2012/inc/scripts/bootstrap/bootstrap-tab.js"></script>
+    <script src="/webapp2012/inc/scripts/bootstrap/bootstrap-tooltip.js"></script>
+    <script src="/webapp2012/inc/scripts/bootstrap/bootstrap-popover.js"></script>
+    <script src="/webapp2012/inc/scripts/bootstrap/bootstrap-button.js"></script>
+    <script src="/webapp2012/inc/scripts/bootstrap/bootstrap-collapse.js"></script>
+    <script src="/webapp2012/inc/scripts/bootstrap/bootstrap-carousel.js"></script>
+    <script src="/webapp2012/inc/scripts/bootstrap/bootstrap-typeahead.js"></script>
+    <!-- フォノグラムのカスタムなスクリプト -->
+    <script src="/webapp2012/inc/scripts/bootstrap-iconify.js"></script>
+    <script src="/webapp2012/inc/scripts/bootstrap-datetime.js"></script>
+    <script src="/webapp2012/inc/scripts/bootstrap-init.js"></script>
+
+    {{block name='page-scripts'}}{{/block}}
+
+  </body>
+</html>

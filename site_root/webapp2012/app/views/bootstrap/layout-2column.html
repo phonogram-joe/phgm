@@ -1,0 +1,25 @@
+{{extends file='bootstrap/base-responsive.html'}}
+{{block name='base'}}
+	{{block name='nav'}}{{/block}}
+	<div class="container-fluid">
+	  <div class="row-fluid">
+	    <div class="span12">
+	      <div class="page-header">
+	        <h1>{{$pageTitle|escape}}</h1>
+	      </div>
+	    </div>
+	  </div>
+	</div>
+	<div class="container-fluid">
+	  <div class="row-fluid">
+	    <div class="span3">
+	    	{{block name='left-col'}}{{/block}}
+	    </div><!--/span-->
+	    <div class="span9">
+			{{include file='bootstrap/parts-alert-error.html'}}
+			{{include file='bootstrap/parts-alert-info.html'}}
+	    	{{block name='main-col'}}{{/block}}
+	    </div><!--/span-->
+	  </div><!--/row-->
+	</div><!--/.fluid-container-->
+{{/block}}

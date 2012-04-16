@@ -1,7 +1,7 @@
 {{extends file="layouts/index.html"}}
 {{block name="main"}}
 <h1>Sample - Edit</h1>
-{{formFor name='sample_edit_save' id=$model->get('id')}}
+{{formFor name='sample_edit_save' id=$model->id}}
 	<div>
 	<label for="sample_name">名前</label>
 	{{if $model->hasError('name')}}<span>{{$model->getError('name')}}{{/if}}

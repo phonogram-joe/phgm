@@ -14,7 +14,7 @@ class SampleController extends BaseController
 
 	public function index($params)
 	{
-		$this->samples = DB::getSession()->query('SampleModel');
+		$this->samples = DB::getSession()->findAll('SampleModel');
 		return $this->doRender();
 	}
 
@@ -22,7 +22,7 @@ class SampleController extends BaseController
 	{
 		$this->id = $params['id'];
 		$db = DB::getSession();
-		$this->model = $db->find('SampleModel', $this->id);
+		$this->model = $db->findOne('SampleModel', $this->id);
 		$this->pageError = $this->getPassedData('alert');
 		if (is_null($this->model)) {
 			return $this->doError('サンプルモデルが見つかりません。');
@@ -53,7 +53,7 @@ class SampleController extends BaseController
 	{
 		$this->id = $params['id'];
 		$db = DB::getSession();
-		$this->model = $db->find('SampleModel', $this->id);
+		$this->model = $db->findOne('SampleModel', $this->id);
 		if (is_null($this->model)) {
 			return $this->doError('サンプルモデルが見つかりません。');
 		}
@@ -64,7 +64,7 @@ class SampleController extends BaseController
 	{
 		$this->id = $params['id'];
 		$db = DB::getSession();
-		$this->model = $db->find('SampleModel', $this->id);
+		$this->model = $db->findOne('SampleModel', $this->id);
 		if (is_null($this->model)) {
 			return $this->doError('サンプルモデルが見つかりません。');
 		}
@@ -81,7 +81,7 @@ class SampleController extends BaseController
 	{
 		$this->id = $params['id'];
 		$db = DB::getSession();
-		$this->model = $db->find('SampleModel', $this->id);
+		$this->model = $db->findOne('SampleModel', $this->id);
 		if (is_null($this->model)) {
 			return $this->doError('サンプルモデルが見つかりません。');
 		}
@@ -92,7 +92,7 @@ class SampleController extends BaseController
 	{
 		$this->id = $params['id'];
 		$db = DB::getSession();
-		$this->model = $db->find('SampleModel', $this->id);
+		$this->model = $db->findOne('SampleModel', $this->id);
 		if (is_null($this->model)) {
 			return $this->doError('サンプルモデルが見つかりません。');
 		}

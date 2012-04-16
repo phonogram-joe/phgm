@@ -1,0 +1,65 @@
+<div class="datetime-input modal hide">
+  <div class="modal-header">
+    <a class="close" data-dismiss="modal" title="キャンセル">×</a>
+    <h3>日時入力</h3>
+  </div>
+  <div class="modal-body">
+    <table class="table table-bordered x-table-condensed datetime-date">
+      <thead>
+        <tr>
+          <th class="prev"><a href="#" class="datetime-prev" title="前の月へ"><i class="icon-arrow-left"></i></a></th>
+          <th class="year-month" colspan="5"><a href="#" title="年月の選択" class="btn datetime-yyyymm-label">2012年4月</a>
+            <span class="datetime-yyyymm-input">
+              <input type="text" size="4" name="year" value="2012">
+              <input type="text" size="2" name="month" value="4">
+              <a href="#" class="btn datetime-yyyymm-save">年月へ飛ぶ</a>
+            </span>
+          </th>
+          <th class="next"><a href="#" class="datetime-next" title="次の月へ"><i class="icon-arrow-right"></i></a></th>
+        </tr>
+        <tr>
+          <th class="day">日</th>
+          <th class="day">月</th>
+          <th class="day">火</th>
+          <th class="day">水</th>
+          <th class="day">木</th>
+          <th class="day">金</th>
+          <th class="day">土</th>
+        </tr>
+      </thead>
+      <tbody>
+      </tbody>
+    </table>
+    <table class="table table-bordered x-table-condensed datetime-time">
+      <thead>
+        <tr>
+          <th>時</th>
+          <th>分</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><select name="hour">
+            <option value="10">10時</option>
+            <option value="11">11時</option>
+            <option value="12">12時</option>
+            <option value="13">13時</option>
+            <option value="14">14時</option>
+            <option value="15">15時</option>
+            <option value="16">16時</option>
+          </select></td>
+          <td><select name="minute">
+            <option value="00">0分</option>
+            <option value="30">30分</option>
+          </select></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="modal-footer">
+    <p class="pull-left">
+      <a href="#" class="btn datetime-now">現在の日時</a>
+    </p>
+    <a href="#" class="btn btn-primary datetime-close">保存する</a>
+  </div>
+</div><!--/datetime-input-->

@@ -1,0 +1,335 @@
+/*	Copyright Phonogram Co. 2012
+ *	Twitter Bootstrapに加えるカスタムなスタイル
+ *	
+ *	スタイルの指定しかた：
+ *		既存のルールを変えたい場合は、できるだけ元のファイル（inc/styles/bootstrap/内）を編集
+ *		新規ルールや新規のHTML構造・タグ・クラスをスタイルする場合は、ここで書く
+ */
+
+@import "/inc/styles/bootstrap/variables.less";
+@import "/inc/styles/bootstrap/mixins.less";
+@import "/inc/styles/bootstrap/wells.less";
+
+/* 	----------------------------------------------------------------------
+	ヘッダーバーはposition:fixed;なので、そのスペースを空けておく
+   	----------------------------------------------------------------------*/
+body {
+	padding-top: 60px;
+	padding-bottom: 40px;
+}
+
+/* 	----------------------------------------------------------------------
+	上のナビ―バーの右側の部分
+   	----------------------------------------------------------------------*/
+.navbar .pull-right {
+	background-color: #ffffff;
+	color: #2C2C2C;
+	margin-top: 5px;
+	.border-radius(3px);
+}
+.navbar .pull-right > li > a {
+	padding: 5px 10px 5px;
+	color: #2C2C2C;
+	text-shadow: none;
+}
+.navbar .pull-right > li > a:hover {
+	color: #000000;
+}
+
+/* 	----------------------------------------------------------------------
+	「セクション」ぽいやつ。ヘッダは白文字とグレー背景。ボーダーと薄い背景色を付ける
+   	----------------------------------------------------------------------*/
+/* セクションのヘッダー */
+.titled-section-title {
+	background: #8c8c8c;
+	background: -moz-linear-gradient(top, #8c8c8c, #7a7979);
+	background: -webkit-gradient(linear, left top, left bottom, from(#8c8c8c), to(#7a7979));
+	color: #ffffff;
+	.border-radius(4px 4px 0 0);
+	padding: 0 0 0 9px;
+}
+
+/*	セクション自体 */
+.titled-section {
+	.well;
+	padding: 0;
+
+	h3 {
+		.titled-section-title;
+	}
+}
+/* セクションの中身よう。セクションはpadding:0;となってるので、中身にパディング付けるにはこのクラスを使う。 */
+.titled-section-child {
+	padding: 9px;
+	margin: 0;
+}
+
+/* 左側のナビ */
+.sidebar-nav {
+	.titled-section;
+}
+.nav-list .nav-header.active {
+	font-weight: bold;
+	color: black;
+}
+.sidebar-actions {
+	.titled-section;
+	padding: 9px;
+}
+
+/* 
+ *	基本の部分。フォーム・データリスト・テーブルなど
+ *
+ * 使い方： 
+ *	<table class="main">
+ *		<thead><th>...
+ *
+ *	<div class="main">
+ *		<h3>会社情報</h3>
+ *		<dl class="dl-horizontal">...
+ *
+ *	<form class="main form-horizontal">
+ *		<h3>インプット種類</h3>
+ *		<fieldset>...
+ */
+.main {
+	.titled-section;
+
+	dl,
+	fieldset {
+		.titled-section-child;
+	}
+
+	thead {
+		.titled-section-title;
+	}
+}
+
+/* 右側の重要の低い「おまけに」情報 */
+.extra-info {
+	.titled-section;
+
+	address {
+		.titled-section-child;
+	}
+}
+
+
+/* 	----------------------------------------------------------------------
+	h1,h2タイトル
+   	----------------------------------------------------------------------*/
+/* アイコンが付いてるタイトル　*/
+.iconed-title {
+	background-image: none;
+	background-repeat: no-repeat;
+	background-attachment: initial;
+	background-position-x: 0%;
+	background-position-y: 0%;
+	background-origin: initial;
+	background-clip: initial;
+	background-color: inherit;
+}
+/*
+ *	ページのタイトル
+ *
+ *	使い方：
+ *		<div class="page-header">
+ *			<h1>...</h1>
+ *		</div>
+ *		<div class="page-header">
+ *			<h2>...</h2>
+ *		</div>
+ */
+.page-header {
+	padding-bottom: 0;
+	border-bottom-color: gray;
+}
+
+
+/*
+ *	一覧画面の絞り込む条件フォーム
+ *
+ *	<form class="form-inline">
+ *	<div class="index-form">
+ *		<input class="span2" type="text" name="search[keyword]" value="{{$search->get('keyword')|escape}}" placeholder="{{$search->getLabel('keyword')|escape}}" />
+ *		<input class="span2 datetime" data-datetime-format="date" type="text" name="search[release_at]" value="{{$search->get('release_at')|escape}}" placeholder="{{$search->getLabel('release_at')|escape}}" />
+ *		<select class="span2" name="search[status_flag]">...</select>
+ *		<select class="span2" name="search[end_user_id]">...</select>
+ *		<input type="submit" name="search[submit]" value="検索" class="btn" data-iconify="icon-search" />
+ *
+ *		<select name="search[order]" class="pull-right">...</select>
+ *	</div>
+ *	</form>
+ */
+.index-form {
+	.well();
+}
+
+/* 
+ *	<body>のクラスによりページタイトルのアイコンを切り替える。
+ *	使い方：
+ *
+ *		<body class="admin requests">
+ *			...
+ *				<div class="page-header">
+ *					<h1>依頼情報</h1>
+ *				</div>
+ *
+ *	注意：　管理・クライアントのログイン上<body>にadminかclientというクラスが付ける。未ログインの場合はそのクラスが付けないので、下記のスタイルは無効
+ */
+.admin h1,
+.client h1 {
+	padding-left: 35px;
+	.iconed-title;
+}
+.requests h1 {
+	background-image: url(http://kahn-asp.phonogram.tv/inc-OLD/images/common/h1/h1_request.gif);
+}
+.clients h1 {
+	background-image: url(http://kahn-asp.phonogram.tv/inc-OLD/images/common/h1/h1_request.gif);
+}
+
+.admin h2,
+.client h2 {
+	padding-left: 18px;
+	.iconed-title;
+	background-image: url(http://kahn-asp.phonogram.tv/inc-OLD/images/common/bg_h2.gif);
+}
+
+
+/* 	----------------------------------------------------------------------
+	データ表示。<dl>や<table>の微調整
+   	----------------------------------------------------------------------*/
+/*
+ *	状況アイコンよう 
+ *	
+ *	使い方：
+ *		<table>
+ *			<thead>...</thead>
+ *			<tbody>
+ *				<tr>
+ *					<td class="info-status"><a alt=""><i class="icon-search"></i></a></td>
+ */
+table .info-status {
+	text-align: center;
+}
+@media (max-width: 480px) {
+	table .info-secondary {
+		display: none;
+	}
+}
+
+/* 	----------------------------------------------------------------------
+	ダイナミックな表示。　データの価値・状況により表示したり隠したりするクラス。
+   	----------------------------------------------------------------------*/
+.js-conditional {
+	display: none;
+}
+
+/* 	----------------------------------------------------------------------
+	フォーム
+   	----------------------------------------------------------------------*/
+/*
+ *	フォームの右コラムには複数の項目を横に並ぶ場合
+ *
+ *		<div class="control-group">
+ *			<span class="control-label"></span>
+ *			<div class="controls">
+ *				<div class="input-multiple">
+ *					<div class="input-multi-item">
+ *						<label for="..."></label>
+ *						<input id="...">
+ *					</div>
+ *					<div class="input-multi-item">
+ *						<label for="..."></label>
+ *						<input id="...">
+ *					</div>
+ *				</div>
+ *				<div class="input-multiple">
+ *					....
+ *				</div>
+ *			</div><!-- .controls -->
+ *		</div><!-- .control-group -->
+ *						
+ */
+.input-multiple {
+
+}
+.input-multi-item {
+	display: inline-block;
+	vertical-align: top;
+}
+@media (max-width: 1200px) {
+	.input-multi-item {
+		display: block;
+	}
+	.input-multi-item {
+		&:first-child {
+			label {
+				font-weight: bold;
+				border-top: 1px solid gray;
+			}
+		}
+		label {
+			padding-top: 9px;
+		}
+	}
+}
+
+
+/*
+ *	日時入力用
+ *	inc/scripts/bootstrap-datetime.jsをご参考に。
+ */
+.datetime-input {
+	max-width: 300px;
+
+	table th,
+	table td {
+		text-align: center;
+	}
+
+	.datetime-date {
+
+		.datetime-yyyymm-input {
+			display: none;
+		}
+
+		&.datetime-yyyymm-on {
+			.datetime-yyyymm-label {
+				display: none;
+			}
+
+			.datetime-yyyymm-input {
+				display: inline;
+			}
+			.datetime-yyyymm-input input {
+				width: auto;
+				margin-bottom: 0;
+			}
+		}
+
+		tbody td a {
+			cursor: pointer;
+		}
+
+		.inactive a {
+			color: @grayDarker;
+		}
+		.selected {
+			.buttonBackground(@btnPrimaryBackground, @btnPrimaryBackgroundHighlight);
+		}
+		.selected a {
+			color: @white;
+		}
+	}
+
+	.datetime-time {
+		thead {
+			display: none;
+		}
+		select {
+			width: 100%;
+		}
+	}
+} 

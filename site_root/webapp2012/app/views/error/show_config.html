@@ -10,35 +10,11 @@
 </style>
 <div class="tabbable">
 	<ul class="nav nav-tabs">
-		<li class="active"><a href="#error" data-toggle="tab">エラー</a></li>
-		<li><a href="#params" data-toggle="tab">パラム</a></li>
-		<li><a href="#config" data-toggle="tab">設定</a></li>
+		<li class="active"><a href="#config" data-toggle="tab">設定</a></li>
 		<li><a href="#routes" data-toggle="tab">ルート</a></li>
 	</ul>
 	<div class="tab-content">
-		<div class="tab-pane active" id="error">
-			<h2>{{$errorMessage|escape}}</h2>
-			<p>{{$errorTrace|escape|nl2br}}</p>
-		</div>
-		<div class="tab-pane" id="params">
-			<h2>クエリパラム・フォームデータなど</h2>
-			<ul class="unstyled">
-				{{foreach $params as $param => $value}}
-				{{if is_array($value)}}
-				<li>{{$param|escape}}:
-					<ul>
-					{{foreach $value as $innerParam => $innerValue}}
-						<li>{{$innerParam|escape}} : {{$innerValue|escape}}</li>
-					{{/foreach}}
-					</ul>
-				</li>
-				{{else}}
-				<li>{{$param|escape}} : {{$value|escape}}</li>
-				{{/if}}
-				{{/foreach}}
-			</ul>
-		</div>
-		<div class="tab-pane" id="config">
+		<div class="tab-pane active" id="config">
 			<h2>設定</h2>
 			<dl>
 				{{foreach $config as $key=>$value}}

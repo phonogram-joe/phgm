@@ -11,7 +11,7 @@ class SampleModel extends BaseModel
 	public static function classInitialize()
 	{
 		$modelDefinition = BaseModel::initializeSubclass(__CLASS__);
-		$modelDefinition->defineField('name', '名前', 'text', array('required', 'validateNonEmpty'), null, true);
+		$modelDefinition->defineField('name', '名前', 'string', array('required', 'validateNonEmpty'), null, true);
 		$modelDefinition->defineField('email', 'Eメール', 'email', array('required', 'email'), null, true);
 		$dbModel = DbModel::initializeSubclass(__CLASS__);
 		$dbModel->setTableName('sample'); //デフォルトで「Class」を抜いたクラス名になるので、SampleModelはsampleになります。例として入れています。
