@@ -13,7 +13,7 @@ class DatetimeValidator
 		}
 		$datetime = strtotime($value);
 		if (false === $datetime || -1 === $datetime) {
-			return '無効な日時です。';
+			return '無効な日時です';
 		} else {
 			return null;
 		}

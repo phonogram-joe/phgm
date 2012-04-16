@@ -14,7 +14,7 @@ class IntValidator
 		if (mb_strlen($value) === 0 || is_int(intval($value))) {
 			return null;
 		} else {
-			return '整数ではありません。';
+			return '整数ではありません';
 		}
 	}
 }

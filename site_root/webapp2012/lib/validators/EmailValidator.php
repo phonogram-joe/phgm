@@ -14,7 +14,7 @@ class EmailValidator
 		if (mb_strlen($value) === 0 || preg_match('/^([*+!.&#$|\'\\%\/0-9a-z^_`{}=?~:-]+)@(([0-9a-z-]+\.)+[0-9a-z]{2,})$/i', $value)) {
 			return null;
 		} else {
-			return 'メールフォーマットと異なります。';
+			return '無効なメールアドレスです';
 		}
 	}
 }

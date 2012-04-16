@@ -14,7 +14,7 @@ class BoolValidator
 		if ($value === "0" || $value === "1") {
 			return null;
 		} else {
-			return 'ブールではありません。';
+			return 'ブールではありません';
 		}
 	}
 }
