@@ -13,6 +13,14 @@ class SmartyRenderer extends BaseRenderer
 
 	public function customRender($data, $httpRequest, $httpResponse)
 	{
+		//	XSRFのためにセッションに保存するキーをフォームで使わないといけないで、セッションをわたす。
+		$this->smarty->assign(self::SESSION_VAR_NAME, $httpRequest->getSession());
+
+		return $this->renderFetch($data);
+	}
+
+	public function renderFetch($data)
+	{
 		foreach ($data as $key => $value) {
 			if (is_object($value)) {
 				//NOTE: assignByRef(...)を使ってみたら設定されたキーは上書きされるときもある
@@ -21,8 +29,6 @@ class SmartyRenderer extends BaseRenderer
 				$this->smarty->assign($key, $value);
 			}
 		}
-		//	XSRFのためにセッションに保存するキーをフォームで使わないといけないで、セッションをわたす。
-		$this->smarty->assign(self::SESSION_VAR_NAME, $httpRequest->getSession());
 
 		//	Smartyはエラーをcatchするので、一応ファイルの存在を確認する
 		if (!file_exists($this->templatePath)) {
