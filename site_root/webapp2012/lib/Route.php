@@ -40,7 +40,7 @@ class Route
 		
 		$matchParts = preg_split('/\s+/', $verbUrl, 2);	
 		if (count($matchParts) === 2) {
-			$this->http_verb = strtolower($matchParts[0]);
+			$this->http_verb = strtoupper($matchParts[0]);
 			$this->url_pattern = $matchParts[1];
 		} else {
 			throw new Exception('Route:__construct -- URLパタンは「GET /url」のようにHTTPメソッド・スペース・URLで書いてください。');
@@ -89,7 +89,7 @@ class Route
 		}
 	}
 
-	private function getRegex()
+	public function getRegex()
 	{
 		return $this->matcher;
 	}
@@ -126,11 +126,8 @@ class Route
 	 *		コントローラ名・アクション名・パラムをこのルートのパタンに基づいてURLに変換する。コントローラやアクションが合わない場合または
 	 *		パラムの内容が条件に一致しないばあいはナルを返す。すべて一致する場合はURLストリングを返す。
 	 */
-	public function attemptCreateUrl($controller, $action, $params = array())
+	public function attemptCreateUrl($params = array())
 	{
-		if ($this->controller !== $controller || $this->action !== $action) {
-			return null;
-		}
 		$queryParams = array();
 		$urlPath = $this->url_pattern;
 		foreach ($params as $param => $value) {

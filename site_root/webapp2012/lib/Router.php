@@ -76,7 +76,10 @@ class Router
 
 	public function getNamedRoute($name)
 	{
-		return $this->routes[$name];
+		if (array_key_exists($name, $this->routes)) {
+			return $this->routes[$name];
+		}
+		return null;
 	}
 
 	public function routeFor($routable, $httpVerb = null)
@@ -99,23 +102,11 @@ class Router
 		}
 		$controller = $this->routes[$name]->getController();
 		$action = $this->routes[$name]->getAction();
-		$url = $this->routes[$name]->attemptCreateUrl($controller, $action, $params);
+		$url = $this->routes[$name]->attemptCreateUrl($params);
 		if (is_null($url)) {
 			return null;
 		}
 		return $this->routableToUri($url);
-	}
-
-	public function urlForRoute($controller, $action, $params = null)
-	{
-		$url = null;
-		foreach ($this->routes as $route) {
-			$url = $route->attemptCreateUrl($controller, $action, $params);
-			if (!is_null($url)) {
-				return $this->routableToUri($url);
-			}
-		}
-		return null;
 	}
 
 	public function map($name, $verbUrl, $controller, $action, $params = array(), $conditions = array())
@@ -148,7 +139,9 @@ class Router
 
 	public function mapRestPair($namePrefix, $urlPrefix, $controller)
 	{
-		$actionPrefix = ClassLoader::underscoresToCamel($namePrefix);
+		$actionPrefix = explode(':', $namePrefix);
+		$actionPrefix = $actionPrefix[count($actionPrefix) -1];
+		$actionPrefix = ClassLoader::underscoresToCamel($actionPrefix);
 		$this->map($namePrefix . '_form',	'GET  ' . $urlPrefix,	$controller, $actionPrefix . 'Form');
 		$this->map($namePrefix . '_save',	'POST ' . $urlPrefix,	$controller, $actionPrefix . 'Save');
 	}
@@ -160,7 +153,9 @@ class Router
 	 */
 	public function mapForm($namePrefix, $urlPrefix, $controller)
 	{
-		$actionPrefix = ClassLoader::underscoresToCamel($namePrefix);
+		$actionPrefix = explode(':', $namePrefix);
+		$actionPrefix = $actionPrefix[count($actionPrefix) -1];
+		$actionPrefix = ClassLoader::underscoresToCamel($actionPrefix);
 		$this->map($namePrefix . '_form', 		'GET  ' . $urlPrefix, 				$controller, $actionPrefix . 'Form');
 		$this->map($namePrefix . '_confirm', 	'POST ' . $urlPrefix, 				$controller, $actionPrefix . 'Confirm');
 		$this->map($namePrefix . '_complete', 	'GET  ' . $urlPrefix . '/complete', $controller, $actionPrefix . 'Complete');

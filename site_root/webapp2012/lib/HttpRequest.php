@@ -90,10 +90,12 @@ class HttpRequest
 
 	private function setVerb()
 	{
-		$this->httpVerb = strtolower($_SERVER['REQUEST_METHOD']);
-		if (defined('HTTP_METHOD_PARAM') && array_key_exists(HTTP_METHOD_PARAM, $this->params)) {
-			$this->httpVerb = $this->params[HTTP_METHOD_PARAM];
+		$this->httpVerb = $_SERVER['REQUEST_METHOD'];
+		$verbKey = Config::get(Config::HTTP_METHOD_PARAM);
+		if (array_key_exists($verbKey, $this->params)) {
+			$this->httpVerb = $this->params[$verbKey];
 		}
+		$this->httpVerb = strtoupper($this->httpVerb);
 	}
 
 	public function getVerb()
