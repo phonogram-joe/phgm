@@ -45,10 +45,12 @@ class HttpHandler
 			
 			$httpMethod = strtoupper($this->request->getVerb());
 			if (false !== array_search($httpMethod, array(HttpRequest::POST, HttpRequest::PUT, HttpRequest::DELETE))) {
-				$db = DB::getSession();
-				if (!is_null($db)) {
-					//	POST・PUT・DELETEのリクエストに対してDBの変更・購入・削除を有効にする
-					$db->setAllowUpdates(true);
+				if (Config::get(Config::DATABASE_ENABLED)) {
+					$db = DB::getSession();
+					if (!is_null($db)) {
+						//	POST・PUT・DELETEのリクエストに対してDBの変更・購入・削除を有効にする
+						$db->setAllowUpdates(true);
+					}
 				}
 
 				if (!$this->request->isFormSafe()) {
