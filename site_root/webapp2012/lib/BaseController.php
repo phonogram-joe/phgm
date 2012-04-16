@@ -10,8 +10,6 @@ class BaseController
 	private static $RESULT_RENDER = 1;
 	private static $RESULT_ERROR = 2;
 
-	private $_phgmDefaultActionName;
-	private $_phgmDefaultRenderFormat;
 	private $_phgmActionName;
 	private $_phgmRenderActionName;
 	private $_phgmRedirectUrl;
@@ -45,8 +43,6 @@ class BaseController
 		$this->_phgmRenderFormat = null;
 		$this->_phgmRenderData = null;
 		$this->_phgmResultState = null;
-		$this->_phgmDefaultActionName = null;
-		$this->_phgmDefaultRenderFormat = HttpResponseFormat::getDefaultFormat();
 		$this->_phgmIsReturned = false;
 
 		$this->_beforeFilters = array();
@@ -54,7 +50,7 @@ class BaseController
 		$this->_aroundFilters = array();
 	}
 
-	private static function asArray($controller)
+	public static function asArray($controller)
 	{
 		$objectVars = get_object_vars($controller);
 		$array = array();
@@ -73,10 +69,7 @@ class BaseController
 		$this->initialize();
 		//	アクション名や応答データ刑がナルの場合はデフォルトに設定する
 		if (is_null($this->_phgmRenderFormat)) {
-			$this->_phgmRenderFormat = $this->_phgmDefaultRenderFormat;
-		}
-		if (is_null($this->_phgmActionName)) {
-			$this->_phgmActionName = $this->_phgmDefaultActionName;
+			$this->_phgmRenderFormat = HttpResponseFormat::getDefaultFormat();
 		}
 
 		$this->doFilters(self::$BEFORE_FILTER, null, $params);
@@ -302,5 +295,12 @@ class BaseController
 	public function getErrorMessage()
 	{
 		return $this->_phgmErrorMessage;
+	}
+	public function doClearError()
+	{
+		$msg = $this->_phgmErrorMessage;
+		$this->_phgmErrorMessage = null;
+		$this->_phgmIsReturned = false;
+		return $msg;
 	}
 }
