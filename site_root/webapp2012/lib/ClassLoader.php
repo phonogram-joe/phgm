@@ -58,6 +58,7 @@ class ClassLoader
 	const RENDERER = 'Renderer';
 
 	public static $IS_INITIALIZED = false;
+	public static $LOADED_CLASSES;
 
 	//	app専用のファイル
 	public static $APP_CONTROLLERS_DIR; //コントローラクラス
@@ -80,6 +81,7 @@ class ClassLoader
 			return;
 		}
 		self::$IS_INITIALIZED = true;
+		self::$LOADED_CLASSES = array();
 
 		//	app専用のファイル
 		self::$APP_CONTROLLERS_DIR = phgm::$APP_DIR . DS . 'controllers'; //コントローラクラス
@@ -105,6 +107,9 @@ class ClassLoader
 	 */
 	public static function load($name)
 	{
+		if (false !== array_search($name, self::$LOADED_CLASSES)) {
+			return;
+		}
 		if (preg_match('/Controller$/', $name)) {
 			self::loadFrom($name, self::$APP_CONTROLLERS_DIR);
 		} else if (preg_match('/(Model|Form)$/', $name)) {
@@ -138,23 +143,24 @@ class ClassLoader
 				self::loadFrom($name, phgm::$LIB_TYPES_DIR);
 			}
 		}
+		self::$LOADED_CLASSES[] = $name;
 	}
 
-	public static function loadFrom($filename, $folder)
+	public static function loadFrom($className, $folder)
 	{
-		$path = self::path($folder, $filename);
+		$path = self::path($folder, $className);
 		if (!file_exists($path)) {
-			throw new Exception('ClassLoader::load -- ファイルは見つかりません: ' . $path);
+			throw new Exception('ClassLoader::load -- ファイルは見つかりません: [' . $path . ']');
 		}
 		require_once($path);
-		if (method_exists($filename, 'classInitialize')) {
-			call_user_func(array($filename, 'classInitialize'));
+		if (method_exists($className, 'classInitialize')) {
+			call_user_func(array($className, 'classInitialize'));
 		}
 	}
 
-	public static function path($type, $filename)
+	public static function path($folder, $className)
 	{
-		return $type . DS . preg_replace('/\.+/', DS, $filename) . '.php';
+		return $folder . DS . $className . '.php';
 	}
 
 	/**
@@ -190,7 +196,7 @@ class ClassLoader
 	public static function camelToUnderscores($string)
 	{
 		$toUnderscore = create_function('$c', 'return $c[1] . \'_\' . strtolower($c[2]);');
-		return strtolower(preg_replace_callback('/([a-z])([A-Z])/', $toUnderscore, $string));
+		return strtolower(preg_replace_callback('/([a-z0-9])([A-Z])/', $toUnderscore, $string));
 	}
 
 	/*
