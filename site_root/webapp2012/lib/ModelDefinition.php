@@ -125,7 +125,9 @@ class ModelDefinition
 		$dbModel = DbModel::getDbModel(get_class($object));
 		if (!is_null($dbModel)) {
 			$idName = $dbModel->getIdName();
-			$object->{$idName} = IntegerType::fromDb($object->{$idName});
+			if (property_exists($object, $idName) && !is_null($object->{$idName})) {
+				$object->{$idName} = IntegerType::fromDb($object->{$idName});
+			}
 		}
 	}
 
@@ -150,6 +152,9 @@ class ModelDefinition
 			return $value;
 		}
 		$type = $this->fields[$key]['type'];
+		if (!method_exists($type, 'toWeb')) {
+			throw new Exception('ModelDefinition:get() -- オブジェクトの ' . $key　. 'というキーは ' . $type .  ' タイプにになっていますが、見つかりません。');
+		}
 		$convertedValue = call_user_func(array($type, 'toWeb'), $value);
 		if ($convertedValue === BaseDataType::$INVALID) {
 			return $value;
@@ -157,19 +162,37 @@ class ModelDefinition
 		return $convertedValue;
 	}
 
-	public function set($object, $key, $value)
+	public function getDb($object, $key)
+	{
+		$value = $object->{$key};
+		if (is_null($value)) {
+			return $value;
+		}
+		$type = $this->fields[$key]['type'];
+		if (!method_exists($type, 'toWeb')) {
+			throw new Exception('ModelDefinition:get() -- オブジェクトの ' . $key　. 'というキーは ' . $type .  ' タイプにになっていますが、見つかりません。');
+		}
+		$convertedValue = call_user_func(array($type, 'toDb'), $value);
+		if ($convertedValue === BaseDataType::$INVALID) {
+			return $value;
+		}
+		return $convertedValue;
+	
+	}
+
+	public function set($object, $key, $value, $isChanged)
 	{
 		if (is_null($object) || is_null($key)) {
 			throw new Exception('ModelDefinition:set() -- オブジェクトまたはキーはナルです。');
 		}
 		if (is_array($key)) {
-			Logger::trace('ModelDefinition:set() -- array()');
+			//Logger::trace('ModelDefinition:set() -- array()');
 			$params = $key;
 			$setParams = array();
 			foreach ($this->fields as $name => $options) {
 				if (false !== array_search($name, $this->visibilityWhitelist) && array_key_exists($name, $params)) {
-					Logger::trace('ModelDefinition:set() -- visible, key/value ' . $name . '=' . $params[$name]);
-					$setParams[$name] = $this->simpleSet($object, $name, $params[$name]);
+					//Logger::trace('ModelDefinition:set() -- visible, key/value ' . $name . '=' . $params[$name]);
+					$setParams[$name] = $this->simpleSet($object, $name, $params[$name], $isChanged);
 				}
 			}
 			return $setParams;
@@ -177,12 +200,12 @@ class ModelDefinition
 			if (!array_key_exists($key, $this->fields)) {
 				throw new Exception('ModelDefinition:set() -- ' . $this->class . 'には「' . $key . '」というキーはないです。');
 			}
-			Logger::trace('ModelDefinition:set() -- key/value ' . $key . '=' . $value);
-			return $this->simpleSet($object, $key, $value);
+			//Logger::trace('ModelDefinition:set() -- key/value ' . $key . '=' . $value);
+			return $this->simpleSet($object, $key, $value, $isChanged);
 		}
 	}
 
-	private function simpleSet($object, $key, $value)
+	private function simpleSet($object, $key, $value, $isChanged)
 	{
 		foreach ($this->fields[$key]['converters'] as $converter) {
 			if (is_null($value)) {
@@ -201,30 +224,22 @@ class ModelDefinition
 			return $value;
 		}
 		$object->{$key} = $value;
-		$object->_change($key, $value);
-		return $value;
-	}
-
-	public function output($object, $key)
-	{
-		$value = $object->{$key};
-		foreach ($this->fields[$key]['converters'] as $converter) {
-			if (is_null($value)) {
-				break;
-			}
-			$value = call_user_func_array(array($converter[0], 'output'), array_merge((array)$value, $converter[1]));
+		if ($isChanged) {
+			$object->_change($key, $value);
 		}
 		return $value;
 	}
 
-	public function isValid($object)
+	public function isValid($object, $validationField)
 	{
 		$modelValid = true;
 		$errorMsg = true;
 		$errors = array();
 
+		$fields = is_null($validationField) ? $this->fields : array($validationField => $this->fields[$field]);
+
 		//	validate by data type
-		foreach ($this->fields as $name => $options) {
+		foreach ($fields as $name => $options) {
 			if (is_null($object->{$name})) {
 				continue;
 			}
@@ -242,6 +257,10 @@ class ModelDefinition
 			$obj = $validation[1];
 			$method = $validation[2];
 			$args = $validation[3];
+
+			if (!is_null($validationField) && $name !== $validationField) {
+				continue; //only validate the requested fields
+			}
 
 			array_unshift($args, $object->{$name});
 			if (is_null($obj)) {

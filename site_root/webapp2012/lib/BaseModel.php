@@ -18,11 +18,11 @@ class BaseModel
 
 	public function BaseModel($values = null)
 	{
-		$this->changedFields = null;
+		$this->changedFields = array();
 		$modelDefinition = self::getClassModelDefinition(get_class($this));
 		$modelDefinition->initializeObject($this);
 		if (!is_null($values)) {
-			$modelDefinition->set($this, $values);
+			$modelDefinition->set($this, $values, null, false);
 		}
 		$this->changedFields = array();
 		$this->validationErrors = array();
@@ -36,15 +36,18 @@ class BaseModel
 		self::$CLASS_MODEL_DEFINITIONS = array();
 	}
 
-	public static function initializeSubclass($class)
+	public static function initializeSubclass($className)
 	{
-		$reflector = new ReflectionClass($class);
+		if (isset(self::$CLASS_MODEL_DEFINITIONS[$className])) {
+			return null;
+		}
+		$reflector = new ReflectionClass($className);
 		if (false !== array_search('MODEL_DEFINITION', $reflector->getStaticProperties())) {
 			return;
 		}
-		$modelDefinition = new ModelDefinition($class);
+		$modelDefinition = new ModelDefinition($className);
 		$reflector->setStaticPropertyValue('MODEL_DEFINITION', $modelDefinition);
-		self::$CLASS_MODEL_DEFINITIONS[$class] = $modelDefinition;
+		self::$CLASS_MODEL_DEFINITIONS[$className] = $modelDefinition;
 		return $modelDefinition;
 	}
 
@@ -63,10 +66,10 @@ class BaseModel
 	 *	set($key, $value)
 	 *		ウェブからのデータを内部データ刑に変換する
 	 */
-	public function set($key, $value = null)
+	public function set($key, $value = null, $isChanged = true)
 	{
 		$modelDefinition = self::getClassModelDefinition(get_class($this));
-		return $modelDefinition->set($this, $key, $value);
+		return $modelDefinition->set($this, $key, $value, $isChanged);
 	}
 
 	/*
@@ -77,6 +80,12 @@ class BaseModel
 	{
 		$modelDefinition = self::getClassModelDefinition(get_class($this));
 		return $modelDefinition->get($this, $key);
+	}
+
+	public function getDb($key)
+	{
+		$modelDefinition = self::getClassModelDefinition(get_class($this));
+		return $modelDefinition->getDb($this, $key);
 	}
 
 	/*
@@ -101,16 +110,28 @@ class BaseModel
 		}
 	}
 
+	public function getVisibleFieldsList()
+	{
+		$modelDefinition = self::getClassModelDefinition(get_class($this));
+		return $modelDefinition->getFieldList(false);
+	}
+
 	public function getFieldsList()
 	{
 		$modelDefinition = self::getClassModelDefinition(get_class($this));
-		return array_keys($modelDefinition->getFields());
+		return $modelDefinition->getFieldList(true);
 	}
 
 	public function getLabel($key)
 	{
 		$modelDefinition = self::getClassModelDefinition(get_class($this));
 		return $modelDefinition->getLabel($key);
+	}
+
+	public function getType($key)
+	{
+		$modelDefinition = self::getClassModelDefinition(get_class($this));
+		return $modelDefinition->getType($key);
 	}
 
 	public function isChanged($field)
@@ -130,6 +151,14 @@ class BaseModel
 		}
 	}
 
+	//	作成されてから変わった項目の変更を基準の価値として使う。DBに保存するときに使われる。
+	public function storeChanges()
+	{
+		$this->changedFields = array();
+		$this->validationErrors = array();
+	}
+
+	//	オブジェクトが作成されてから変わった項目を、作成の時の価値へ戻す。バリデーションエラーも空にする
 	public function resetChanges()
 	{
 		foreach ($this->changedFields as $key => $value) {
@@ -153,15 +182,15 @@ class BaseModel
 		$this->validationErrors[$field] = $message;
 	}
 
-	public function setValidationErrors($errors)
+	public function resetValidationErrors()
 	{
-		$this->validationErrors = $errors;
+		$this->validationErrors = array();
 	}
 
-	public function isValid()
+	public function isValid($field = null)
 	{
 		$modelDefinition = self::getClassModelDefinition(get_class($this));
-		$modelDefinition->isValid($this);
+		$modelDefinition->isValid($this, $field);
 		return !$this->hasErrors();
 	}
 
