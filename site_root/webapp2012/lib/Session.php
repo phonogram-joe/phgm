@@ -195,7 +195,6 @@ class Session
 		//	キーは「キー::名前」になってるので、分ける
 		$parts = explode('::', $testNonce);
 		if (count($parts) !== 2) {
-			Logger::trace('Session:isValidNonce() -- nonce is NOT valid: does not follow "nonce::name" pattern.');
 			return false;
 		}
 		$testNonce = $parts[0];
@@ -204,14 +203,12 @@ class Session
 		//	キーはセッションに保存されてるか確認する
 		$nonces = $this->get(self::NONCE_KEY);
 		if (is_null($nonces) || false === strpos($nonces, $testNonce)) {
-			Logger::trace('Session:isValidNonce() -- nonce is NOT valid: value not in session.');
 			return false;
 		}
 
 		//	渡されたキーの名前により再びキーを作成する。渡されたキーと同じであることを確認。
 		$realNonce = $this->makeNonce($name);
 		if ($realNonce !== $testNonce) {
-			Logger::trace('Session:isValidNonce() -- nonce is NOT valid: differs from expected value. ' . $realNonce . ' ' . $testNonce);
 			return false;
 		}
 
