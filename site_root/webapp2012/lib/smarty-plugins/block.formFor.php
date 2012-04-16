@@ -39,6 +39,7 @@ function smarty_block_formFor($params, $content, Smarty_Internal_Template $templ
 		if (is_null($url)) {
 			throw new Exception('smarty_block_formFor() -- 「' . $name . '」ルートにはパラムが無効。 ' . implode(', ', $params));
 		}
+		$url = Router::getRouter()->routableToUri($url);
 
 		$http_method = strtoupper(is_null($http_method) ? $route->getHttpVerb() : $http_method);
 		if (!HttpRequest::isHttpMethod($http_method)) {
