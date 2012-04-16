@@ -27,30 +27,43 @@ function smarty_block_formFor($params, $content, Smarty_Internal_Template $templ
 		unset($params['html_id']);
 		$html_class = array_key_exists('html_class', $params) ? $params['html_class'] : null;
 		unset($params['html_class']);
-		$http_method = array_key_exists('http_method', $params) ? $params['http_method'] : 'POST';
+		$http_method = array_key_exists('http_method', $params) ? $params['http_method'] : null;
 		unset($params['http_method']);
 
-		$http_method = strtoupper($http_method);
+		$route = Router::getRouter()->getNamedRoute($name);
+		if (is_null($route)) {
+			throw new Exception('smarty_block_formFor() -- 「' . $name . '」ルートは見つかりません。');
+		}
+
+		$url = $route->attemptCreateUrl($params);
+		if (is_null($url)) {
+			throw new Exception('smarty_block_formFor() -- 「' . $name . '」ルートにはパラムが無効。 ' . implode(', ', $params));
+		}
+
+		$http_method = strtoupper(is_null($http_method) ? $route->getHttpVerb() : $http_method);
 		if (!HttpRequest::isHttpMethod($http_method)) {
 			throw new Exception('smarty_block_formFor() -- 「' . $http_method . '」はHTTPメソッドではありません。');
 		}
 
-		$url = Router::getRouter()->urlForName($name, $params);
-		if (is_null($url)) {
-			throw new Exception('smarty_block_formFor() -- 「' . $name . '」ルートは見つかりません。');
-		}
-
+		$formSafeKey = null;
+		$formMethodKey = null;
 		if ($http_method !== HttpRequest::GET) {
 			$session = $template->getTemplateVars(SmartyRenderer::SESSION_VAR_NAME);
 			$formSafeKey = Config::get(Config::FORM_SAFE_KEY);
 			$formSafeValue = $session->generateNonce($name);
-		} else {
-			$formSafeKey = null;
+			if ($http_method !== HttpRequest::POST) {
+				$formMethodKey = Config::get(Config::HTTP_METHOD_PARAM);
+				$formMethodValue = $http_method;
+				$http_method = HttpRequest::POST;
+			}
 		}
 
 		$html  = '<form name="' . $name . '" method="' . $http_method . '" action="' . $url . '" id="' . htmlspecialchars($html_id) . '" class="' . htmlspecialchars($html_class) . '">';
 		if (!is_null($formSafeKey)) {
 			$html .= '<input type="hidden" name="' . htmlspecialchars($formSafeKey) . '" value="' . htmlspecialchars($formSafeValue) . '" />';
+		}
+		if (!is_null($formMethodKey)) {
+			$html .= '<input type="hidden" name="' . htmlspecialchars($formMethodKey) . '" value="' . htmlspecialchars($formMethodValue) . '" />';
 		}
 	} else {
 		$html = $content . '</form>';
