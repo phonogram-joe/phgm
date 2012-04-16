@@ -4,15 +4,14 @@
  *	Licensed Under the MIT license http://www.opensource.org/licenses/mit-license.php
  */
 
-class JoinStatement
+class JoinStatement extends SqlStatement
 {
-	private $sql;
 	private $baseClass;
 	private $baseClassIdName;
 	private $baseClassIdColumn;
 	private $columnsToProperties;
 
-	public function JoinStatement($baseClass, $joinParams)
+	public function __construct($baseClass, $joinParams)
 	{
 		$this->baseClass = $baseClass;
 		$baseDbModel = DbModel::getDbModel($baseClass);
@@ -44,9 +43,10 @@ class JoinStatement
 		//	base model fields
 		$this->baseClassIdName = $baseDbModel->getIdName();
 		$this->baseClassIdColumn = $baseClassPrefix . '__' . $this->baseClassIdName;
-		$columnsToProperties[$this->baseClassIdColumn] = array(null, $this->baseClassIdName, null);
-		foreach (BaseModel::getClassModelDefinition($baseClass)->getFields() as $field => $fieldProps) {
-			$columnsToProperties[$baseClassPrefix . '__' . $field] = array(null, $field, null);
+		$columnsToProperties[$this->baseClassIdColumn] = array(null, $this->baseClassIdName, null, null);
+		$modelDefinition = BaseModel::getClassModelDefinition($baseClass);
+		foreach ($modelDefinition->getFields() as $field => $fieldProps) {
+			$columnsToProperties[$baseClassPrefix . '__' . $field] = array(null, $field, null, $modelDefinition->getType($field));
 		}
 		foreach ($joinParams as $joinName => $joinDetail) {
 			$joinDetail = explode(':', $joinDetail);
@@ -57,14 +57,16 @@ class JoinStatement
 			$baseColumn = $joinDetail[0];
 			$joinClass = $joinDetail[1];
 			$joinColumn = $joinDetail[2];
-			$joinDbModel = DbModel::getDbModel($joinClass);
 
 			ClassLoader::load($joinClass);
 
+			$joinDbModel = DbModel::getDbModel($joinClass);
+			$modelDefinition = BaseModel::getClassModelDefinition($joinClass);
+
 			//	join fields
-			$columnsToProperties[$joinName . '__' . $joinDbModel->getIdName()] = array($joinName, $joinDbModel->getIdName(), $joinClass);
+			$columnsToProperties[$joinName . '__' . $joinDbModel->getIdName()] = array($joinName, $joinDbModel->getIdName(), $joinClass, null);
 			foreach (BaseModel::getClassModelDefinition($joinClass)->getFields() as $field => $fieldProps) {
-				$columnsToProperties[$joinName . '__' . $field] = array($joinName, $field, null);
+				$columnsToProperties[$joinName . '__' . $field] = array($joinName, $field, null, $modelDefinition->getType($field));
 			}
 			$joins[] = ' LEFT JOIN ' . $joinDbModel->getTableName() . ' AS ' . $joinName . ' ON ' . $baseClassPrefix . '.' . $baseColumn . ' = ' . $joinName . '.' . $joinColumn;
 		}
@@ -76,13 +78,8 @@ class JoinStatement
 		$sql .= ' FROM ' . $baseDbModel->getTableName() . ' AS ' . $baseClassPrefix;
 		$sql .= implode(' ', $joins);
 
-		$this->sql = $sql;
 		$this->columnsToProperties = $columnsToProperties;
-	}
-
-	public function getSql()
-	{
-		return $this->sql;
+		parent::__construct($sql);
 	}
 
 	public function processResults($results)
@@ -95,7 +92,7 @@ class JoinStatement
 		$currentObject = null;
 		$previousObject = null;
 		foreach ($results as $result) {
-			if (!is_null($previousObject) && $previousObject->get($baseClassIdName) === $result[$baseClassIdColumn]) {
+			if (!is_null($previousObject) && $previousObject->{$baseClassIdName} === $result[$baseClassIdColumn]) {
 				throw new Exception('JoinStatement:processResults() -- １：Nとジョインはできません。別のクエリでデータを取得してください。');
 			} else {
 				$currentObject = new $baseClass();
@@ -104,19 +101,33 @@ class JoinStatement
 				$key = $properties[0];
 				$field = $properties[1];
 				$klass = $properties[2];
+				$dataType = $properties[3];
+				$value = $result[$column];
 				if (is_null($key)) {
 					//base class property
-					$currentObject->{$field} = $result[$column];
+					if ($column === $baseClassIdColumn) {
+						$currentObject->{$field} = IntegerType::fromDb($result[$column]);
+					} else {
+						if (is_null($value)) {
+							$currentObject->val($field, null);
+						} else {
+							$currentObject->val($field, call_user_func(array($dataType, 'fromDb'), $value));
+						}
+					}
 				} else if (!is_null($klass)) {
 					//join object ID
 					$joinObject = new $klass();
-					if (!is_null($result[$column])) {
-						$joinObject->{$field} = $result[$column];
+					if (!is_null($value)) {
+						$joinObject->{$field} = IntegerType::fromDb($value);
 					}
 					$currentObject->{$key} = $joinObject;
 				} else if (!is_null($currentObject->{$key})) {
 					//join object property
-					$currentObject->{$key}->{$field} = $result[$column];
+					if (is_null($value)) {
+						$currentObject->{$key}->val($field, null);
+					} else {
+						$currentObject->{$key}->val($field, call_user_func(array($dataType, 'fromDB'), $value));
+					}
 				}
 			}
 			$resultObjects[] = $currentObject;

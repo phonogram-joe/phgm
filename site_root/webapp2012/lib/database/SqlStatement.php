@@ -7,19 +7,26 @@
 class SqlStatement
 {
 	private $sql;
+	private $mainClause;
+	private $whereClauses;
+	private $pagingClause;
+	private $orderByClause;
 	private $values;
 	private $data;
 
-	public function SqlStatement($sqlString, $valueSubstitutions = array())
+	public function __construct($sqlString, $valueSubstitutions = array())
 	{
-		$this->sql = $sqlString;
 		$this->values = $valueSubstitutions;
 		$this->data = array();
+		$this->sql = null;
+		$this->whereClauses = array();
+		$this->pagingClause = null;
+		$this->orderByClause = null;
 
-		$this->sql = preg_replace_callback('/:(\w+)/', array($this, 'substitute'), $this->sql);
+		$this->mainClause = preg_replace_callback('/:(\w+)/', array($this, '__substitute'), $sqlString);
 	}
 
-	public function substitute($matches)
+	public function __substitute($matches)
 	{
 		$this->data[] = $this->values[$matches[1]];
 		return '?';
@@ -27,6 +34,19 @@ class SqlStatement
 
 	public function getSql()
 	{
+		if (is_null($this->sql)) {
+			$sql = $this->mainClause;
+			if (count($this->whereClauses) > 0) {
+				$sql .= ' WHERE (' . implode(' AND ', $this->whereClauses) . ')';
+			}
+			if (!is_null($this->orderByClause)) {
+				$sql .= $this->orderByClause;
+			}
+			if (!is_null($this->pagingClause)) {
+				$sql .= $this->pagingClause;
+			}
+			$this->sql = $sql;
+		}
 		return $this->sql;
 	}
 
@@ -37,25 +57,31 @@ class SqlStatement
 
 	public function where($conditions, $values)
 	{
-		$where = new SqlStatement($conditions, $values);
-		$this->sql .= ' WHERE ' . $where->getSql();
-		$this->data = array_merge($this->data, $where->getData());
+		if (is_array($values)) {
+			$where = new SqlStatement($conditions, $values);
+			$this->whereClauses[]= $where->getSql();
+			$this->data = array_merge($this->data, $where->getData());
+		} else {
+			$this->whereClauses[] = $conditions;
+			$this->data = array_merge($this->data, array($values));
+		}
 	}
 
 	public function orderBy($orderBy)
 	{
 		if (!is_null($orderBy)) {
-			$this->sql .= ' ORDER BY ' . $orderBy;
+			$this->orderByClause = ' ORDER BY ' . $orderBy;
 		}
 	}
 
 	public function paging($perPage, $pageIndex)
 	{
 		if (!is_null($perPage)) {
-			$this->sql .= ' LIMIT ' . intval($perPage);
+			$sql = ' LIMIT ' . intval($perPage);
 			if (!is_null($pageIndex)) {
-				$this->sql .= ' OFFSET ' . (intval($perPage) * intval($pageIndex));
+				$sql .= ' OFFSET ' . (intval($perPage) * intval($pageIndex));
 			}
+			$this->pagingClause = $sql;
 		}
 	}
 }

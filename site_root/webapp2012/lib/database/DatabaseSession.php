@@ -10,6 +10,7 @@ class DatabaseSession
 	private $allowUpdates;
 	private $trackedObjects;
 	private $deletedObjects;
+	private $flushStatements;
 
 	public function DatabaseSession($dbHandle)
 	{
@@ -17,6 +18,7 @@ class DatabaseSession
 		$this->allowUpdates = false;
 		$this->trackedObjects = array();
 		$this->deletedObjects = array();
+		$this->flushStatements = array();
 	}
 
 	public function setAllowUpdates($allow)
@@ -30,6 +32,22 @@ class DatabaseSession
 	public function getAllowUpdates()
 	{
 		return $this->allowUpdates;
+	}
+
+	public function findOneWhere($className, $conditions, $values)
+	{
+		$table = DbModel::getDbModel($className);
+		$sqlStatement = $table->getSelectSql();
+		$sqlStatement->where($conditions, $values);
+		$sql = $sqlStatement->getSql();
+		$data = $sqlStatement->getData();
+		Logger::info('DatabaseSession:query -- << ' . $sql . ' >> using ' . implode(', ', $data));
+		$statement = $this->dbHandle->prepare($sql);
+		$statement->setFetchMode(PDO::FETCH_CLASS, $className);
+		$result = $statement->execute($data);
+		$result = $statement->fetch();
+		$statement->closeCursor();
+		return $result !== false ? $result : null;
 	}
 
 	public function findOneBy($className, $column, $value)
@@ -77,7 +95,22 @@ class DatabaseSession
 
 		Logger::info('DatabaseSession:query -- << ' . $sql . ' >> using ' . implode(', ', $data));
 		$statement = $this->dbHandle->prepare($sql);
-		$result = $statement->execute();
+		$result = $statement->execute($data);
+		if (is_null($result) || false === $result) {
+			return 0;
+		}
+		return intval($statement->fetchColumn());
+	}
+
+	public function findCountSql($sql, $values)
+	{
+		$sqlStatement = new SqlStatement($sql, $values);
+		$sql = $sqlStatement->getSql();
+		$data = $sqlStatement->getData();
+
+		Logger::info('DatabaseSession:query -- << ' . $sql . ' >> using ' . implode(', ', $data));
+		$statement = $this->dbHandle->prepare($sql);
+		$result = $statement->execute($data);
 		if (is_null($result) || false === $result) {
 			return 0;
 		}
@@ -86,20 +119,16 @@ class DatabaseSession
 
 	public function findAllJoin($baseClassName, $joinArray, $conditions, $values, $perPage = null, $pageIndex = null, $orderBy = null)
 	{
-		$join = new JoinStatement($baseClassName, $joinArray);
-		$sql = $join->getSql();
-		$where = new SqlStatement($conditions, $values);
-		$sql .= ' WHERE ' . $where->getSql();
-		$data = $where->getData();
-		if (!is_null($orderBy)) {
-			$sql .= ' ORDER BY ' . $orderBy;
-		}
-		if (!is_null($perPage)) {
-			$sql .= ' LIMIT ' . intval($perPage);
-			if (!is_null($pageIndex) && intval($pageIndex) > 0) {
-				$sql .= ' OFFSET ' . (intval($perPage) * intval($pageIndex));
-			}
-		}
+		$joinStatement = new JoinStatement($baseClassName, $joinArray);
+		$joinStatement->where($conditions, $values);
+		$joinStatement->orderBy($orderBy);
+		$joinStatement->paging($perPage, $pageIndex);
+		return $this->findAllJoinStatement($joinStatement);
+	}
+	public function findAllJoinStatement($joinStatement)
+	{
+		$sql = $joinStatement->getSql();
+		$data = $joinStatement->getData();
 		Logger::info('DatabaseSession:query -- << ' . $sql . ' >> using ' . implode(', ', $data));
 		$statement = $this->dbHandle->prepare($sql);
 		$statement->setFetchMode(PDO::FETCH_ASSOC);
@@ -109,7 +138,7 @@ class DatabaseSession
 			Logger::info('DatabaseSession:findAllJoin() -- no resuls.');
 			return null;
 		}
-		$results = $join->processResults($results);
+		$results = $joinStatement->processResults($results);
 		$statement->closeCursor();
 		return $results;
 	}
@@ -132,22 +161,14 @@ class DatabaseSession
 		$sqlStatement->where($conditions, $values);
 		$sqlStatement->orderBy($orderBy);
 		$sqlStatement->paging($perPage, $pageIndex);
-		$sql = $sqlStatement->getSql();
-		$data = $sqlStatement->getData();
-		Logger::info('DatabaseSession:query -- << ' . $sql . ' >> using ' . implode(', ', $data));
-		$statement = $this->dbHandle->prepare($sql);
-		$statement->setFetchMode(PDO::FETCH_CLASS, $className);
-		$result = $statement->execute($data);
-		$results = $statement->fetchAll();
-		$statement->closeCursor();
-		return $results !== false && is_array($results) && count($results) > 0 ? $results : null;
+		return $this->findAllSqlStatement($sqlStatement, $className);
 	}
 
 	/*
 	 *	findAllWithSql($sql, $values[, $perPage, $pageIndex, $orderBy])
 	 *		SQLクエリを流して結果をStdClassのオブジェクトとして返す。
 	 *
-	 *	例：　findAllWithSql('select id, count(order_id) as count_orders samples where order_date < :date', array('date' => date()))
+	 *	例：　findAllWithSql('select id, count(order_id) as count_orders samples where order_date < :date group by id', array('date' => date()))
 	 *		=> array(
 	 *			StdClass({id => 1, count_orders => 3}),
 	 *			StdClass({id => 2, count_orders => 11})
@@ -158,6 +179,11 @@ class DatabaseSession
 		$sqlStatement = new SqlStatement($sql, $values);
 		$sqlStatement->orderBy($orderBy);
 		$sqlStatement->paging($perPage, $pageIndex);
+
+		return $this->findAllSqlStatement($sqlStatement, $className);
+	}
+	public function findAllSqlStatement($sqlStatement, $className = null)
+	{
 		$sql = $sqlStatement->getSql();
 		$data = $sqlStatement->getData();
 		Logger::info('DatabaseSession:query -- << ' . $sql . ' >> using ' . implode(', ', $data));
@@ -195,6 +221,11 @@ class DatabaseSession
 			throw new Exception('DatabaseSession:delete() -- オブジェクトは変更・登録リストに追加(track)されています。');
 		}
 	}
+	public function trackSql($sql, $data)
+	{
+		$sqlStatement = new SqlStatement($sql, $data);
+		$this->flushStatements[] = $sqlStatement;
+	}
 
 	public function flush()
 	{
@@ -228,6 +259,9 @@ class DatabaseSession
 					throw new Exception('DatabaseSession:flush() -- object does NOT have id, cannot delete');
 				}
 			}
+			foreach ($this->flushStatements as $sqlStatement) {
+				$this->flushSql($sqlStatement);
+			}
 
 			Logger::trace('DatabaseSession:flush() -- commit');
 			$this->dbHandle->commit();
@@ -241,6 +275,18 @@ class DatabaseSession
 		}
 	}
 
+	private function flushSql($sqlStatement)
+	{
+		$sql = $sqlStatement->getSql();
+		$data = $sqlStatement->getData();
+		Logger::info('DatabaseSession:query -- flush sql ' . get_class($object) . ' with: << ' . $sql . ' >> using ' . implode(', ', $data));
+		$statement = $this->dbHandle->prepare($sql);
+		$results = $statement->execute($data);
+		if (true !== $results) {
+			throw new Exception('DatabaseSession:flushSql() -- SQLをながすのに失敗しました。');
+		}
+	}
+
 	private function insertObject($object)
 	{
 		$dbModel = DbModel::getDbModel(get_class($object));
@@ -251,8 +297,13 @@ class DatabaseSession
 		$data = $insert->getData();
 		Logger::info('DatabaseSession:query -- insert class ' . get_class($object) . ' with: << ' . $sql . ' >> using ' . implode(', ', $data));
 		$statement = $this->dbHandle->prepare($sql);
-		$statement->execute($data);
-		$dbModel->setId($object, $this->dbHandle->lastInsertId());
+		$statement->setFetchMode(PDO::FETCH_ASSOC);
+		$result = $statement->execute($data);
+		if (true !== $result) {
+			throw new Exception('DatabaseSession:insertObject() -- INSERTに失敗しました。');
+		}
+		$id = $this->dbHandle->lastInsertId();
+		$dbModel->setId($object, $id);
 	}
 
 	private function updateObject($object)
@@ -269,7 +320,10 @@ class DatabaseSession
 		$data = $update->getData();
 		Logger::info('DatabaseSession:query -- update class ' . get_class($object) . ' with: << ' . $sql . ' >> using ' . implode(', ', $data));
 		$statement = $this->dbHandle->prepare($sql);
-		$statement->execute($data);
+		$result = $statement->execute($data);
+		if (true !== $result) {
+			throw new Exception('DatabaseSession:insertObject() -- UPDATEに失敗しました。');
+		}
 		return $statement->rowCount();
 	}
 
@@ -282,15 +336,20 @@ class DatabaseSession
 		$data = $delete->getData();
 		Logger::info('DatabaseSession:query -- delete class ' . get_class($object) . ' with: << ' . $sql . ' >> using ' . implode(', ', $data));
 		$statement = $this->dbHandle->prepare($sql);
-		$statement->execute($data);
+		$result = $statement->execute($data);
+		if (true !== $result) {
+			throw new Exception('DatabaseSession:insertObject() -- DELETEに失敗しました。');
+		}
 		return $statement->rowCount();
 	}
 
 	private function cleanupFlush()
 	{
 		foreach ($this->trackedObjects as $object) {
-			$object->resetChanges();
+			$object->storeChanges();
 		}
 		$this->trackedObjects = array();
+		$this->deleteObject = array();
+		$this->flushStatements = array();
 	}
 }

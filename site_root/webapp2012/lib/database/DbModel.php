@@ -4,6 +4,8 @@
  *	Licensed Under the MIT license http://www.opensource.org/licenses/mit-license.php
  */
 
+ClassLoader::load('IntegerType');
+
 class DbModel extends BaseModel
 {
 	private static $DB_MODELS;
@@ -38,7 +40,7 @@ class DbModel extends BaseModel
 
 	private function createInsertSql()
 	{
-		Logger::info('DbModel:createInsertSql() -- creating insert SQL for table: ' . $this->tableName);
+		//Logger::info('DbModel:createInsertSql() -- creating insert SQL for table: ' . $this->tableName);
 		$sql = 'INSERT INTO ' . $this->tableName;
 		$sql .= ' (' . implode(', ', $this->columns) . ')';
 		$values = array();
@@ -46,7 +48,7 @@ class DbModel extends BaseModel
 			$values[] = ':' . $column;
 		}
 		$sql .= ' VALUES (' . implode(',', $values) . ')';
-		Logger::info('DbModel:createInsertSql() -- creating insert SQL for table: ' . $this->tableName . ': ' . $sql);
+		//Logger::info('DbModel:createInsertSql() -- creating insert SQL for table: ' . $this->tableName . ': ' . $sql);
 		$this->insertSql = $sql;
 	}
 
@@ -107,7 +109,7 @@ class DbModel extends BaseModel
 
 	public function setId($object, $id)
 	{
-		$object->{$this->idName} = $id;
+		$object->{$this->idName} = IntegerType::fromDb($id);
 	}
 
 	public function getSelectSql()
@@ -118,8 +120,10 @@ class DbModel extends BaseModel
 	public function getInsert($object)
 	{
 		$data = array();
+		$fieldValue;
+		$modelDefinition = BaseModel::getClassModelDefinition(get_class($object));
 		foreach ($this->columns as $column) {
-			$data[$column] = $object->get($column);
+			$data[$column] = $modelDefinition->getDb($object, $column);
 		}
 		return new SqlStatement($this->insertSql, $data);
 	}
@@ -128,10 +132,12 @@ class DbModel extends BaseModel
 	{
 		$data = array();
 		$set = array();
+		$fieldValue;
+		$modelDefinition = BaseModel::getClassModelDefinition(get_class($object));
 		foreach ($this->columns as $column) {
 			if ($object->isChanged($column) || $forceUpdate) {
 				$set[] = ' ' . $column . ' = :' . $column;
-				$data[$column] = $object->get($column);
+				$data[$column] = $modelDefinition->getDb($object, $column);
 			}
 		}
 		if (count($data) === 0) {
@@ -140,15 +146,16 @@ class DbModel extends BaseModel
 		$sql = 'UPDATE ' . $this->tableName;
 		$sql .= ' SET ' . implode(', ', $set);
 		$sql .= ' WHERE ' . $this->idName . ' = :' . $this->idName;
-		$data[$this->idName] = $object->get($this->idName);
+		$data[$this->idName] = $object->{$this->idName};
 		return new SqlStatement($sql, $data);
 	}
 
 	public function getDelete($object)
 	{
+		$data = array();
 		$sql = 'DELETE FROM ' . $this->tableName;
-		$sql .= ' WHERE ' . $this->idName . ' = ?';
-		$data = array($object->get($this->idName));
+		$sql .= ' WHERE ' . $this->idName . ' = :' . $this->idName;
+		$data[$this->idName] = $object->{$this->idName};
 		return new SqlStatement($sql, $data);
 	}
 
@@ -163,6 +170,9 @@ class DbModel extends BaseModel
 
 	public static function initializeSubclass($className)
 	{
+		if (isset(self::$DB_MODELS[$className])) {
+			return null;
+		}
 		$modelDefinition = BaseModel::getClassModelDefinition($className);
 		if (is_null($modelDefinition)) {
 			throw new Exception('DbModel::initializeSubclass() -- BaseModel::initializeSubclass()を先にコールしてください。');
@@ -184,10 +194,5 @@ class DbModel extends BaseModel
 	{
 		$dbModel = self::getDbModel(get_class($object));
 		return isset($object->{$dbModel->getIdName()});
-	}
-
-	public static function datetime($epoch)
-	{
-		return date('Y-m-d H:i:s', $epoch);
 	}
 }
