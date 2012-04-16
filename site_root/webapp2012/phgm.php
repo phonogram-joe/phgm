@@ -76,19 +76,16 @@ class phgm
 			$httpHandler->handleRequest($routeName, $routeParams);
 		} catch (Exception $e) {
 			try {
-				Logger::fatal($e);
-				/*TODO: show fatal errors in dev/test
+				print '<!doctype html><html lang="ja"><head><meta charset="utf-8"></head><body>';
+				print '<p>' . Config::get(Config::FATAL_ERROR_MESSAGE) . '</p>';
 				$environment = Config::get(Config::ENVIRONMENT);
 				if ($environment === Config::ENVIRONMENT_DEVELOPMENT || $environment === Config::ENVIRONMENT_TEST) {
-				*/
 					print '<p>' . $e->getMessage() . '</p>';
 					print '<p>' . nl2br($e->getTraceAsString()) . '</p>';
-				/*
 				}
-				*/
-				print '<p>' . Config::get(Config::FATAL_ERROR_MESSAGE) . '</p>';
+				print '</body></html>';
 			} catch (Exception $e) {
-				Logger::fatal($e);
+				
 			}
 		}
 	}
@@ -129,22 +126,24 @@ class phgm
 	{
 		//	サイトの動きに関する設定
 		require_once(self::$CONFIG_DIR . DS . 'app_all.php'); //appの設定
-		Config::readEnvironment(); //環境設定によりコンフィグする
-		$environment = Config::get(Config::ENVIRONMENT);
-		if ($environment === Config::ENVIRONMENT_PRODUCTION) {
-			require_once(self::$CONFIG_DIR . DS . 'app_' . Config::ENVIRONMENT_PRODUCTION . '.php'); //公開環境のみの設定
-		} else if ($environment === Config::ENVIRONMENT_DEVELOPMENT) {
-			require_once(self::$CONFIG_DIR . DS . 'app_' . Config::ENVIRONMENT_DEVELOPMENT . '.php'); //開発環境のみの設定
-		} else if ($environment === Config::ENVIRONMENT_TEST) {
-			require_once(self::$CONFIG_DIR . DS . 'app_' . Config::ENVIRONMENT_TEST . '.php'); //開発環境のみの設定
+		$environment = Config::readEnvironment();
+		if (is_null($environment) || !is_string($environment)) {
+			throw new Exception('phgm::loadConfig() -- 環境設定は無効です。');
 		}
+		$environmentFile = self::$CONFIG_DIR . DS . 'app_' . $environment . '.php';
+		if (!file_exists($environmentFile)) {
+			throw new Exception('phgm::loadConfig() -- 環境設定ファイルは見つかりません。 ' . $environmentFile);
+		}
+		require_once($environmentFile);
 		
 		//	サイトのURLー＞コントローラ・アクション設定
 		require_once(self::$CONFIG_DIR . DS . 'routes.php');
 		defineRoutes(Router::getRouter());
 
 		//	データベースの接続情報を設定する
-		require_once(self::$CONFIG_DIR . DS . 'database.php');
-		defineDatabases();
+		if (Config::get(Config::DATABASE_ENABLED)) {
+			require_once(self::$CONFIG_DIR . DS . 'database.php');
+			defineDatabases();
+		}
 	}
 }

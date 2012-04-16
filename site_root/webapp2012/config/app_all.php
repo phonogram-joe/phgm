@@ -26,19 +26,10 @@ function appConfigAll()
 	ini_set('mbstring.encoding_translation', 'On');
 	ini_set('mbstring.substitute_character', 'none');
 
-	//	有効のログレベル
-	Logger::setLevel(Logger::TRACE);
-	Logger::setFile(phgm::$LOG_DIR . DS . 'system.log');
-
 	//	処理できないエラーの場合に返すメッセージ
 	Config::set(Config::FATAL_ERROR_MESSAGE, 'エラーが発生しました。');
 
-	//	エラー処理の設定
-	ini_set('display_errors', true);
-	error_reporting(E_ERROR | E_PARSE | E_DEPRECATED | E_STRICT | E_WARNING);
-
-	//	有効の環境。設定がこれによって変わる
-	Config::set(Config::ENVIRONMENT, Config::ENVIRONMENT_DEVELOPMENT);
+	Config::set(Config::DATABASE_ENABLED, true);
 
 	//	Smarty3の設定
 	Config::set(Config::SMARTY_LEFT_DELIMITER, '{{');
@@ -53,7 +44,7 @@ function appConfigAll()
 	//		HttpResponseFormat::registerFormat(HttpResponseFormat::$HTML, 'text/html', 'shift_jis', 'SJIS');
 	HttpResponseFormat::registerFormat(HttpResponseFormat::$TEXT, 'text/txt', 'utf-8', 'UTF8');
 	HttpResponseFormat::registerFormat(HttpResponseFormat::$JSON, 'application/json', 'utf-8', 'UTF8');
-	HttpResponseFormat::registerFormat(HttpResponseFormat::$CSV, 'text/csv', 'Shift_JIS', 'SJIS');
+	HttpResponseFormat::registerFormat(HttpResponseFormat::$CSV, 'text/csv', 'Shift_JIS', 'SJIS-win');
 
 	//	デフォルトとして使うデータ刑を設定する
 	//	フレームワークのタイプを使う場合は：
@@ -67,6 +58,8 @@ function appConfigAll()
 	//	HTTP応答のデータ刑に合わせて、コントローラの変数をそのデータ刑に変換するクラスを設定する
 	BaseRenderer::registerRenderer(HttpResponseFormat::$HTML, 'SmartyRenderer', '.html');
 	BaseRenderer::registerRenderer(HttpResponseFormat::$TEXT, 'SmartyRenderer', '.tpl');
+	BaseRenderer::registerRenderer(HttpResponseFormat::$CSV, 'CsvRenderer', '.csv');
+	BaseRenderer::registerRenderer(HttpResponseFormat::$JSON, 'JsonRenderer', '.json');
 
 }
 appConfigAll();

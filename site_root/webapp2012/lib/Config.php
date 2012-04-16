@@ -11,6 +11,8 @@ class Config
 	const ENVIRONMENT_TEST = 'test';
 	const ENVIRONMENT_PRODUCTION = 'prod';
 
+	const DATABASE_ENABLED = 'database.enabled';
+
 	const SESSIONS_ENABLED = 'session.enabled';
 	const SESSION_NAME = 'session.name';
 	const SESSIONS_MAX_NONCE_COUNT = 'session.max_nonce_count';
@@ -35,6 +37,7 @@ class Config
 	const DEFAULT_SESSIONS_MAX_NONCE_COUNT = 0;
 	const DEFAULT_SESSIONS_NONCE_SECRET = '';
 	const DEFAULT_SESSION_TIMEOUT = 72000; //20分
+	const DEFAULT_DATABASE_ENABLED = false;
 
 	private static $SETTINGS = null;
 	private static $IS_INITIALIZED = false;
@@ -59,29 +62,40 @@ class Config
 		self::$SETTINGS[self::SESSIONS_MAX_NONCE_COUNT] = self::DEFAULT_SESSIONS_MAX_NONCE_COUNT;
 		self::$SETTINGS[self::SESSIONS_NONCE_SECRET] = self::DEFAULT_SESSIONS_NONCE_SECRET;
 		self::$SETTINGS[self::SESSION_TIMEOUT] = self::DEFAULT_SESSION_TIMEOUT;
+		self::$SETTINGS[self::DATABASE_ENABLED] = self::DEFAULT_DATABASE_ENABLED;
+		self::$SETTINGS[self::ENVIRONMENT] = null;
 	}
 
 	public static function readEnvironment()
 	{
 		if (isset($_ENV['PHGM_ENVIRONMENT'])) {
 			$env = $_ENV['PHGM_ENVIRONMENT'];
-			switch ($env) {
-				case self::ENVIRONMENT_PRODUCTION:
-					self::$SETTINGS[self::ENVIRONMENT] = self::ENVIRONMENT_PRODUCTION;
-					break;
-				case self::ENVIRONMENT_TEST:
-					self::$SETTINGS[self::ENVIRONMENT] = self::ENVIRONMENT_TEST;
-					break;
-				case self::ENVIRONMENT_DEVELOPMENT:
-					self::$SETTINGS[self::ENVIRONMENT] = self::ENVIRONMENT_DEVELOPMENT;
-					break;
+		} else {
+			$env = apache_getenv('PHGM_ENVIRONMENT');
+			if (false === $env) {
+				$env = null;
 			}
+		}
+		if (!is_null($env) && is_string($env)) {
+			if (false === preg_match('/^[a-zA-Z][-_a-zA-Z0-9]*$/', $env)) {
+				throw new Exception('Config::readEnvironment() -- 環境設定は無効です。');
+			}
+			self::$SETTINGS[self::ENVIRONMENT] = $env;
+			return $env;
+		} else {
+			throw new Exception('Config::readEnvironment() -- 環境は設定してありません。');
 		}
 	}
 
 	public static function getAll()
 	{
-		return self::$SETTINGS;
+		$settings = array();
+		foreach (self::$SETTINGS as $key => $value) {
+			if ($key !== self::SESSIONS_NONCE_SECRET && $key !== self::SESSION_NAME) {
+				$settings[$key] = $value;
+			}
+		}
+		return $settings;
 	}
 
 	public static function toString()
