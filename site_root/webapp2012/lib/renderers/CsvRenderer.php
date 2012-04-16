@@ -24,14 +24,24 @@ class CsvRenderer extends BaseRenderer
 
 			$header = array();
 			foreach ($fields as $key) {
-				$header[] = $data[0]->getLabel($key);
+				//	IDなどの指定しないコラムは「@id」としてCSVに入れることはできます。ヘッダーは「id」となります。
+				if (strpos($key, '@') === 0) {
+					$header[] = substr($key, 1);
+				} else {
+					$header[] = $data[0]->getLabel($key);
+				}
 			}
 			fputcsv($csv, $header);
 
 			foreach ($data as $model) {
 				$row = array();
 				foreach ($fields as $key) {
-					$row[] = $model->get($key);
+					//	IDなどの指定しないコラムは「@id」としてCSVに入れることはできます。
+					if (strpos($key, '@') === 0) {
+						$row[] = $model->{substr($key, 1)};
+					} else {
+						$row[] = $model->get($key);
+					}
 				}
 				fputcsv($csv, $row);
 			}
@@ -72,7 +82,8 @@ class CsvRenderer extends BaseRenderer
 
 	public function customHttpResponse($data, $httpRequest, $httpResponse)
 	{
-
+		$httpResponse->setHeader('Pragma: public');
+		$httpResponse->setHeader('Content-Disposition: attachment; filename=' . basename($this->templatePath) . '_' . basename(strftime('%Y-%m-%d_%H-%M-%S', TimeUtils::now()) . '.csv'));
 	}
 
 	public function initialize()
