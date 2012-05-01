@@ -15,6 +15,10 @@ class DbModel extends BaseModel
 	const BEFORE_UPDATE = 1; //UPDATEのみ
 	const BEFORE_SAVE = 2; //INSERTとUPDATEの両方
 	const BEFORE_DELETE = 3; //DELETEのみ
+	const AFTER_DELTE = 4;
+	const AFTER_SAVE = 5;
+	const AFTER_UPDATE = 6;
+	const AFTER_INSERT = 7;
 
 	private $tableName;
 	private $idName;
@@ -61,7 +65,16 @@ class DbModel extends BaseModel
 
 	public function addCallback($type, $methodName)
 	{
-		if (!array_search($type, array(self::BEFORE_DELETE, self::BEFORE_UPDATE, self::BEFORE_INSERT, self::BEFORE_SAVE))) {
+		if (!array_search($type, array(
+			self::BEFORE_DELETE, 
+			self::BEFORE_UPDATE, 
+			self::BEFORE_INSERT, 
+			self::BEFORE_SAVE,
+			self::AFTER_DELTE,
+			self::AFTER_UPDATE,
+			self::AFTER_INSERT,
+			self::AFTER_SAVE
+		))) {
 			throw new Exception('DbModel:addCallback() -- コールバックコードは無効です。');
 		}
 		$this->callbacks[$type] = $methodName;

@@ -39,15 +39,22 @@ class DatabaseSession
 		$table = DbModel::getDbModel($className);
 		$sqlStatement = $table->getSelectSql();
 		$sqlStatement->where($conditions, $values);
+		$sqlStatement->paging(1,null);
 		$sql = $sqlStatement->getSql();
 		$data = $sqlStatement->getData();
 		Logger::info('DatabaseSession:query -- << ' . $sql . ' >> using ' . implode(', ', $data));
+		$profileId = Profiler::getProfiler()->startDbQuery($sql, $data);
 		$statement = $this->dbHandle->prepare($sql);
 		$statement->setFetchMode(PDO::FETCH_CLASS, $className);
 		$result = $statement->execute($data);
-		$result = $statement->fetch();
+		if (is_null($result) || false === $result) {
+			$result = null;
+		} else {
+			$result = $statement->fetch();
+		}
 		$statement->closeCursor();
-		return $result !== false ? $result : null;
+		Profiler::getProfiler()->stopDbQuery($profileId);
+		return $result;
 	}
 
 	public function findOneBy($className, $column, $value)
@@ -59,12 +66,18 @@ class DatabaseSession
 		$sql = $sqlStatement->getSql();
 		$data = $sqlStatement->getData();
 		Logger::info('DatabaseSession:query -- << ' . $sql . ' >> using ' . implode(', ', $data));
+		$profileId = Profiler::getProfiler()->startDbQuery($sql, $data);
 		$statement = $this->dbHandle->prepare($sql);
 		$statement->setFetchMode(PDO::FETCH_CLASS, $className);
 		$result = $statement->execute($data);
-		$result = $statement->fetch();
+		if (is_null($result) || false === $result) {
+			$result = null;
+		} else {
+			$result = $statement->fetch();
+		}
 		$statement->closeCursor();
-		return $result !== false ? $result : null;
+		Profiler::getProfiler()->stopDbQuery($profileId);
+		return $result;
 	}
 
 	public function findOne($className, $id)
@@ -77,12 +90,18 @@ class DatabaseSession
 		$data = $sqlStatement->getData();
 
 		Logger::info('DatabaseSession:query -- << ' . $sql . ' >> using ' . implode(', ', $data));
+		$profileId = Profiler::getProfiler()->startDbQuery($sql, $data);
 		$statement = $this->dbHandle->prepare($sql);
 		$statement->setFetchMode(PDO::FETCH_CLASS, $className);
 		$result = $statement->execute($data);
-		$result = $statement->fetch();
+		if (is_null($result) || false === $result) {
+			$result = null;
+		} else {
+			$result = $statement->fetch();
+		}
 		$statement->closeCursor();
-		return $result !== false ? $result : null;
+		Profiler::getProfiler()->stopDbQuery($profileId);
+		return $result;
 	}
 
 	public function findCount($className, $conditions, $values)
@@ -94,12 +113,17 @@ class DatabaseSession
 		$data = $sqlStatement->getData();
 
 		Logger::info('DatabaseSession:query -- << ' . $sql . ' >> using ' . implode(', ', $data));
+		$profileId = Profiler::getProfiler()->startDbQuery($sql, $data);
 		$statement = $this->dbHandle->prepare($sql);
 		$result = $statement->execute($data);
 		if (is_null($result) || false === $result) {
-			return 0;
+			$result = 0;
+		} else {
+			$result = intval($statement->fetchColumn());
 		}
-		return intval($statement->fetchColumn());
+		$statement->closeCursor();
+		Profiler::getProfiler()->stopDbQuery($profileId);
+		return $result;
 	}
 
 	public function findCountSql($sql, $values)
@@ -109,12 +133,17 @@ class DatabaseSession
 		$data = $sqlStatement->getData();
 
 		Logger::info('DatabaseSession:query -- << ' . $sql . ' >> using ' . implode(', ', $data));
+		$profileId = Profiler::getProfiler()->startDbQuery($sql, $data);
 		$statement = $this->dbHandle->prepare($sql);
 		$result = $statement->execute($data);
 		if (is_null($result) || false === $result) {
-			return 0;
+			$result = 0;
+		} else {
+			$result = intval($statement->fetchColumn());
 		}
-		return intval($statement->fetchColumn());
+		$statement->closeCursor();
+		Profiler::getProfiler()->stopDbQuery($profileId);
+		return $result;
 	}
 
 	public function findAllJoin($baseClassName, $joinArray, $conditions, $values, $perPage = null, $pageIndex = null, $orderBy = null)
@@ -125,21 +154,25 @@ class DatabaseSession
 		$joinStatement->paging($perPage, $pageIndex);
 		return $this->findAllJoinStatement($joinStatement);
 	}
+
 	public function findAllJoinStatement($joinStatement)
 	{
 		$sql = $joinStatement->getSql();
 		$data = $joinStatement->getData();
 		Logger::info('DatabaseSession:query -- << ' . $sql . ' >> using ' . implode(', ', $data));
+		$profileId = Profiler::getProfiler()->startDbQuery($sql, $data);
 		$statement = $this->dbHandle->prepare($sql);
 		$statement->setFetchMode(PDO::FETCH_ASSOC);
 		$result = $statement->execute($data);
 		$results = $statement->fetchAll();
-		if ($results === false || !is_array($results) || count($results) <= 0) {
-			Logger::info('DatabaseSession:findAllJoin() -- no resuls.');
-			return null;
+		if (is_null($result) || $result === false || !is_array($results) || count($results) <= 0) {
+			Logger::info('DatabaseSession:findAllJoin() -- no results.');
+			$results = null;
+		} else {
+			$results = $joinStatement->processResults($results);
 		}
-		$results = $joinStatement->processResults($results);
 		$statement->closeCursor();
+		Profiler::getProfiler()->stopDbQuery($profileId);
 		return $results;
 	}
 
@@ -182,11 +215,13 @@ class DatabaseSession
 
 		return $this->findAllSqlStatement($sqlStatement, $className);
 	}
+
 	public function findAllSqlStatement($sqlStatement, $className = null)
 	{
 		$sql = $sqlStatement->getSql();
 		$data = $sqlStatement->getData();
 		Logger::info('DatabaseSession:query -- << ' . $sql . ' >> using ' . implode(', ', $data));
+		$profileId = Profiler::getProfiler()->startDbQuery($sql, $data);
 		$statement = $this->dbHandle->prepare($sql);
 		if (is_null($className)) {
 			$statement->setFetchMode(PDO::FETCH_OBJ);
@@ -196,23 +231,41 @@ class DatabaseSession
 		$result = $statement->execute($data);
 		$results = $statement->fetchAll();
 		$statement->closeCursor();
+		Profiler::getProfiler()->stopDbQuery($profileId);
 		return $results !== false && is_array($results) && count($results) > 0 ? $results : null;
+	}
+
+	public function findAllAsResultSet($sqlStatement, $className = null)
+	{
+		$results = $this->findAllSqlStatement($sqlStatement, $className);
+		$totalResultCount = $this->dbHandle->lastPreparedRowCount();
+		$resultSet = new SqlResultSet($results, $totalResultCount, $sqlStatement);
+		return $resultSet;
+	}
+
+	public function lastFindAllRowCount()
+	{
+		return $this->dbHandle->lastPreparedRowCount();
 	}
 
 	public function track($object)
 	{
-		if (!in_array($object, $this->deletedObjects, true)) {
+		if (is_null($object) || !is_object($object)) {
+			throw new Exception('DatabaseSession:track() -- ナルやオブジェクト以外のものはtrack()できません。');
+		} else if (!in_array($object, $this->deletedObjects, true)) {
 			if (!in_array($object, $this->trackedObjects, true)) {
 				Logger::trace('DatabaseSession:track() -- tracking ' . $object);
 				$this->trackedObjects[] = $object;
 			}
 		} else {
-			throw new Exception('DatabaseSession:track() -- オブジェクトの削除リストに追加(delete)されています。');
+			throw new Exception('DatabaseSession:track() -- オブジェクトは削除リストに追加(delete)されています。');
 		}
 	}
 	public function delete($object)
 	{
-		if (!in_array($object, $this->trackedObjects, true)) {
+		if (is_null($object) || !is_object($object)) {
+			throw new Exception('DatabaseSession:track() -- ナルやオブジェクト以外のものはdelete()できません。');
+		} else if (!in_array($object, $this->trackedObjects, true)) {
 			if (!in_array($object, $this->deletedObjects, true)) {
 				Logger::trace('DatabaseSession:delete() -- deleting ' . $object);
 				$this->deletedObjects[] = $object;
@@ -231,17 +284,21 @@ class DatabaseSession
 	{
 		if (!$this->allowUpdates) {
 			//	DBに書き込むする場合はHTTPのGETリクエストは非常危険なので、POST・PUT・DELETEHTTPメソッドを使ってください。
-			throw new Exception('DatabaseSession:flush() -- リクエストの形によりDBの書き込みは禁止されています。');
+			throw new Exception('DatabaseSession:flush() -- HTTPリクエストの形によりDBの書き込みは禁止されています。');
 		}
-		if (count($this->trackedObjects) === 0 && count($this->deletedObjects) === 0) {
+		if (count($this->trackedObjects) === 0 && count($this->deletedObjects) === 0 && count($this->flushStatements) === 0) {
 			return null;
 		}
 		try {
 			Logger::trace('DatabaseSession:flush() -- beginTransaction');
+			$profileId = Profiler::getProfiler()->startDbQuery('transaction_' + uniqid(), array());
 			$this->dbHandle->beginTransaction();
 
 			foreach ($this->trackedObjects as $object) {
 				if (!$object->isValid()) {
+					foreach ($object->getValidationErrors() as $key => $value) {
+						Logger::trace('DatabaseSession::flush() -- 無効な項目：　' . get_class($object) . ' ' . $key . ' ' . $value);
+					}
 					throw new Exception('DatabaseSession:flush() -- オブジェクトは有効ではありません。');
 				}
 				if (DbModel::hasId($object)) {
@@ -265,10 +322,12 @@ class DatabaseSession
 
 			Logger::trace('DatabaseSession:flush() -- commit');
 			$this->dbHandle->commit();
+			Profiler::getProfiler()->stopDbQuery($profileId);
 			$this->cleanupFlush();
 			return true;
 		} catch (Exception $e) {
 			$this->dbHandle->rollback();
+			Profiler::getProfiler()->stopDbQuery($profileId);
 			Logger::trace('DatabaseSession:flush() -- rollback');
 			throw $e;
 			return false;
@@ -280,8 +339,10 @@ class DatabaseSession
 		$sql = $sqlStatement->getSql();
 		$data = $sqlStatement->getData();
 		Logger::info('DatabaseSession:query -- flush sql ' . get_class($object) . ' with: << ' . $sql . ' >> using ' . implode(', ', $data));
+		$profileId = Profiler::getProfiler()->startDbQuery($sql, $data);
 		$statement = $this->dbHandle->prepare($sql);
 		$results = $statement->execute($data);
+		Profiler::getProfiler()->stopDbQuery($profileId);
 		if (true !== $results) {
 			throw new Exception('DatabaseSession:flushSql() -- SQLをながすのに失敗しました。');
 		}
@@ -296,14 +357,19 @@ class DatabaseSession
 		$sql = $insert->getSql();
 		$data = $insert->getData();
 		Logger::info('DatabaseSession:query -- insert class ' . get_class($object) . ' with: << ' . $sql . ' >> using ' . implode(', ', $data));
+		$profileId = Profiler::getProfiler()->startDbQuery($sql, $data);
 		$statement = $this->dbHandle->prepare($sql);
 		$statement->setFetchMode(PDO::FETCH_ASSOC);
 		$result = $statement->execute($data);
+		Profiler::getProfiler()->stopDbQuery($profileId);
 		if (true !== $result) {
 			throw new Exception('DatabaseSession:insertObject() -- INSERTに失敗しました。');
 		}
 		$id = $this->dbHandle->lastInsertId();
 		$dbModel->setId($object, $id);
+		$dbModel->doCallback(DbModel::AFTER_SAVE, $object);
+		$dbModel->doCallback(DbModel::AFTER_INSERT, $object);
+		return $statement->rowCount();
 	}
 
 	private function updateObject($object)
@@ -319,11 +385,15 @@ class DatabaseSession
 		$sql = $update->getSql();
 		$data = $update->getData();
 		Logger::info('DatabaseSession:query -- update class ' . get_class($object) . ' with: << ' . $sql . ' >> using ' . implode(', ', $data));
+		$profileId = Profiler::getProfiler()->startDbQuery($sql, $data);
 		$statement = $this->dbHandle->prepare($sql);
 		$result = $statement->execute($data);
+		Profiler::getProfiler()->stopDbQuery($profileId);
 		if (true !== $result) {
 			throw new Exception('DatabaseSession:insertObject() -- UPDATEに失敗しました。');
 		}
+		$dbModel->doCallback(DbModel::AFTER_SAVE, $object);
+		$dbModel->doCallback(DbModel::AFTER_UPDATE, $object);
 		return $statement->rowCount();
 	}
 
@@ -335,11 +405,14 @@ class DatabaseSession
 		$sql = $delete->getSql();
 		$data = $delete->getData();
 		Logger::info('DatabaseSession:query -- delete class ' . get_class($object) . ' with: << ' . $sql . ' >> using ' . implode(', ', $data));
+		$profileId = Profiler::getProfiler()->startDbQuery($sql, $data);
 		$statement = $this->dbHandle->prepare($sql);
 		$result = $statement->execute($data);
+		Profiler::getProfiler()->stopDbQuery($profileId);
 		if (true !== $result) {
 			throw new Exception('DatabaseSession:insertObject() -- DELETEに失敗しました。');
 		}
+		$dbModel->doCallback(DbModel::AFTER_DELETE, $object);
 		return $statement->rowCount();
 	}
 

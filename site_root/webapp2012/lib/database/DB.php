@@ -43,7 +43,7 @@ class DB
 			$dbh = self::$CONNECTIONS[$dbname];
 		} else {
 			$definition = self::$CONNECTION_DEFINITIONS[$dbname];
-			$dbh = new PDO($definition[0], $definition[1], $definition[2], $definition[3]);
+			$dbh = new PhgmPDO($definition[0], $definition[1], $definition[2], $definition[3]);
 			$dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 			self::$CONNECTIONS[$dbname] = $dbh;
 		}

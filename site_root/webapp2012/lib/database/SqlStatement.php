@@ -9,6 +9,8 @@ class SqlStatement
 	private $sql;
 	private $mainClause;
 	private $whereClauses;
+	private $pageIndex;
+	private $pageItemCount;
 	private $pagingClause;
 	private $orderByClause;
 	private $values;
@@ -22,6 +24,8 @@ class SqlStatement
 		$this->whereClauses = array();
 		$this->pagingClause = null;
 		$this->orderByClause = null;
+		$this->pageIndex = null;
+		$this->pageItemCount = null;
 
 		$this->mainClause = preg_replace_callback('/:(\w+)/', array($this, '__substitute'), $sqlString);
 	}
@@ -77,11 +81,23 @@ class SqlStatement
 	public function paging($perPage, $pageIndex)
 	{
 		if (!is_null($perPage)) {
-			$sql = ' LIMIT ' . intval($perPage);
+			$this->pageItemCount = intval($perPage);
+			$sql = ' LIMIT ' . $this->pageItemCount;
 			if (!is_null($pageIndex)) {
-				$sql .= ' OFFSET ' . (intval($perPage) * intval($pageIndex));
+				$this->pageIndex = intval($pageIndex);
+				$sql .= ' OFFSET ' . ($this->pageIndex * $this->pageItemCount);
 			}
 			$this->pagingClause = $sql;
 		}
+	}
+
+	public function getPageIndex()
+	{
+		return $this->pageIndex;
+	}
+
+	public function getPageItemCount()
+	{
+		return $this->pageItemCount;
 	}
 }
