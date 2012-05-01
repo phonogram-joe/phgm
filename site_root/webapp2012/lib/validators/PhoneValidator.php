@@ -14,7 +14,7 @@ class PhoneValidator
 		if (mb_strlen($value) === 0 || preg_match('/^\d{1,5}-?\d{1,5}-?\d{1,5}$/', $value)) {
 			return null;
 		} else {
-			return '無効な電話番号です';
+			return '無効な電話番号です。';
 		}
 	}
 }

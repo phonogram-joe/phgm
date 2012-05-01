@@ -8,6 +8,6 @@ class RequiredValidator
 {
 	public static function required($value)
 	{
-		return (is_null($value) || (is_string($value) && mb_strlen(trim($value)) === 0)) ? '入力してください' : null;
+		return (is_null($value) || (is_string($value) && mb_strlen(trim($value)) === 0)) ? '未入力です。' : null;
 	}
 }

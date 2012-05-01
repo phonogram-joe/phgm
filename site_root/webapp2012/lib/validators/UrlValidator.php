@@ -10,7 +10,7 @@ class UrlValidator
 		if (mb_strlen($value) === 0 || preg_match('/^(https?|ftp)(:\/\/[-_.!~*\'()a-zA-Z0-9;\/?:\@&=+\$,%#]+)$/', $value)) {
 			return null;
 		} else {
-			return '無効なURLです';
+			return '無効なURLです。';
 		}
 	}
 }

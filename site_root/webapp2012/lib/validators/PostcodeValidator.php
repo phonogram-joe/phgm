@@ -10,7 +10,7 @@ class PostcodeValidator
 		if (mb_strlen($value) === 0 || preg_match('/^\d{3}-?\d{4}$/', $value)) {
 			return null;
 		} else {
-			return '無効な郵便番号です';
+			return '無効な郵便番号です。';
 		}
 	}
 }
