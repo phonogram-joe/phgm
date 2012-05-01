@@ -6,7 +6,7 @@
 
 class HttpResponseFormat
 {
-	//	HTTP応答内容のデータ刑
+	//	HTTP応答内容のデータ形
 	public static $HTML = 'html';
 	public static $JSON = 'json';
 	public static $XML = 'xml';
@@ -14,6 +14,7 @@ class HttpResponseFormat
 	public static $CSV = 'csv';
 	public static $EXCEL_CSV = 'xls.csv';
 	public static $HTTP_HEADER_ONLY = 'HTTP';
+	public static $FILE = 'FILE';
 
 	private static $MIME_TYPES;
 	private static $CHARSETS;
@@ -54,7 +55,7 @@ class HttpResponseFormat
 
 	/*
 	 *	mimeType($type)
-	 *		HTTPヘッダーで使えるエンコードの略を返す。データ刑のMIMEタイプです。
+	 *		HTTPヘッダーで使えるエンコードの略を返す。データ形のMIMEタイプです。
 	 */
 	public static function mimeType($typeName)
 	{

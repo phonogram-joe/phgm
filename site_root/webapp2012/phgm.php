@@ -36,6 +36,7 @@ class phgm
 	public static $SESSION_DIR;
 	public static $TEMPLATES_COMPILE_DIR;
 	public static $TEMPLATES_CACHE_DIR;
+	public static $UPLOAD_FILES_DIR;
 
 	public static function classInitialize()
 	{
@@ -63,6 +64,7 @@ class phgm
 		self::$SESSION_DIR = self::$TMP_DIR . DS . 'session';
 		self::$TEMPLATES_COMPILE_DIR = self::$TMP_DIR . DS . 'templates_compile';
 		self::$TEMPLATES_CACHE_DIR = self::$TMP_DIR . DS . 'templates_cache';
+		self::$UPLOAD_FILES_DIR = self::$TMP_DIR . DS . 'uploads';
 	}
 
 	public static function go($routeName = null, $routeParams = null)

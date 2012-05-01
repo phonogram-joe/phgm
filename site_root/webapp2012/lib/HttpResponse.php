@@ -10,6 +10,7 @@ class HttpResponse
 	public static $STATE_HEADERS = 1;
 	public static $STATE_RESPONSE = 2;
 	public static $STATE_CLOSED = 3;
+	public static $STATE_SKIP_ALL = 4;
 
 	private $state;
 	private $headers;
@@ -35,7 +36,7 @@ class HttpResponse
 
 	public function isClosed()
 	{
-		return $this->state === self::$STATE_CLOSED;
+		return $this->state === self::$STATE_CLOSED || $this->state === self::$STATE_SKIP_ALL;
 	}
 
 	public function isEditable()
@@ -67,7 +68,7 @@ class HttpResponse
 		if ($this->isEditable()) {
 			$this->headers[] = 'Content-type: ' . $mimeType . '; charset=' . $charset;
 		} else {
-			throw new Exception('HttpResponse:redirect -- HTTP応答は返し中なので、応答のデータ刑を変更することはできません。');
+			throw new Exception('HttpResponse:redirect -- HTTP応答は返し中なので、応答のデータ形を変更することはできません。');
 		}
 	}
 
@@ -76,7 +77,7 @@ class HttpResponse
 		if ($this->isEditable()) {
 			$this->headers[] = $header;
 		} else {
-			throw new Exception('HttpResponse:redirect -- HTTP応答は返し中なので、応答のデータ刑を変更することはできません。');
+			throw new Exception('HttpResponse:redirect -- HTTP応答は返し中なので、応答のデータ形を変更することはできません。');
 		}
 	}
 
@@ -128,6 +129,11 @@ class HttpResponse
 		$this->responseBody = null;
 	}
 
+	public function skipAll()
+	{
+		$this->state = self::$STATE_SKIP_ALL;
+	}
+
 	public function close()
 	{
 		$this->headers = null;
@@ -137,8 +143,10 @@ class HttpResponse
 
 	public function respondAndClose()
 	{
-		$this->writeHeaders();
-		$this->writeResponse();
-		$this->close();
+		if (!$this->isClosed()) {
+			$this->writeHeaders();
+			$this->writeResponse();
+			$this->close();
+		}
 	}
 }
