@@ -48,13 +48,6 @@ class BaseRenderer
 		return $renderer;
 	}
 
-	public static function renderPath($format, $templatePath, $data)
-	{
-		$renderer = self::getRenderer($format, $templatePath);
-		$renderer->initialize();
-		return $renderer->renderFetch($data);
-	}
-
 	public function BaseRenderer($format, $templatePath)
 	{
 		$this->templatePath = $templatePath;

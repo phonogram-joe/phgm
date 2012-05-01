@@ -67,7 +67,7 @@ class BaseController
 	public function execute($params)
 	{
 		$this->initialize();
-		//	アクション名や応答データ刑がナルの場合はデフォルトに設定する
+		//	アクション名や応答データ形がナルの場合はデフォルトに設定する
 		if (is_null($this->_phgmRenderFormat)) {
 			$this->_phgmRenderFormat = HttpResponseFormat::getDefaultFormat();
 		}
@@ -225,8 +225,8 @@ class BaseController
 	/*--------------------------------------------------------------
 	 *	普段の場合：
 	 *		テンプレート：	アクション名 (editSave -> edit_save)
-	 *		データ刑：		コントローラのデフォルトのデータ刑
-	 *		データ刑：		コントローラのインスタンスデータプロパティー
+	 *		データ形：		コントローラのデフォルトのデータ形
+	 *		データ形：		コントローラのインスタンスデータプロパティー
 	 */
 	public function doRender()
 	{
@@ -245,9 +245,9 @@ class BaseController
 
 	/*
 	 *	doRenderDataAs([$data[, $format[, $actionName]]])
-	 *		指定のデータとデータ刑を使ってHTTP応答の内容を決める。
+	 *		指定のデータとデータ形を使ってHTTP応答の内容を決める。
 	 *	@param $data Array レンダーするデータ。任意：デフォルトはコントローラのインスタンスパラム
-	 *	@param $format String応答のデータ刑。任意：コントローラのデフォルトデータ刑
+	 *	@param $format String応答のデータ形。任意：コントローラのデフォルトデータ形
 	 +	@param $actionName String 任意。テンプレートが必要の場合現在と違うアクションを指定できる。デフォルトは現在のアクション
 	 */
 	public function doRenderDataAs($data, $format = null, $actionName = null)
@@ -278,16 +278,6 @@ class BaseController
 	public function getRenderAction()
 	{
 		return $this->_phgmRenderActionName;
-	}
-
-	public function getTemplatePath($actionName = null)
-	{
-		if (is_null($actionName)) {
-			$actionName = $this->getRenderAction();
-		}
-		$controllerNamePrefix = ClassLoader::classNamePrefix(get_class($this));
-		$actionName = ClassLoader::camelToUnderscores($actionName);
-		return ClassLoader::$APP_VIEWS_DIR . DS . $controllerNamePrefix . DS . $actionName;
 	}
 
 	/*--------------------------------------------------------------

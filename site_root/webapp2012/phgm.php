@@ -120,6 +120,7 @@ class phgm
 		//	データベースのクラス
 		ClassLoader::loadFrom('SqlStatement', self::$LIB_DATABASE_DIR);
 		ClassLoader::loadFrom('DatabaseSession', self::$LIB_DATABASE_DIR);
+		ClassLoader::loadFrom('PhgmPDO', self::$LIB_DATABASE_DIR);
 		ClassLoader::loadFrom('DB', self::$LIB_DATABASE_DIR);
 		ClassLoader::loadFrom('DbModel', self::$LIB_DATABASE_DIR);
 		ClassLoader::loadFrom('JoinStatement', self::$LIB_DATABASE_DIR);

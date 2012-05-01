@@ -66,6 +66,12 @@ class Config
 		self::$SETTINGS[self::ENVIRONMENT] = null;
 	}
 
+	public static function isDevTest()
+	{
+		$env = self::$SETTINGS[self::ENVIRONMENT];
+		return $env === self::ENVIRONMENT_DEVELOPMENT || $env === self::ENVIRONMENT_TEST;
+	}
+
 	public static function readEnvironment()
 	{
 		if (isset($_ENV['PHGM_ENVIRONMENT'])) {

@@ -148,7 +148,7 @@ class Session
 		return $value;
 	}
 
-	private function makeNonce($data)
+	public static function makeNonce($data)
 	{
 		return hash_hmac('sha512', implode('::', array($data, $_SERVER['REMOTE_ADDR'], session_id())), Config::get(Config::SESSIONS_NONCE_SECRET));
 	}
@@ -177,7 +177,7 @@ class Session
 		}
 		//	名前にランダムなストリングを加えてキーを作成。
 		$name = substr(md5($name . uniqid(mt_rand(), true)), 0, 32);
-		$newNonce = $this->makeNonce($name);
+		$newNonce = self::makeNonce($name);
 		$nonces[] = $newNonce;
 		$this->set(self::NONCE_KEY, implode('::', $nonces));
 		//	セッションに保存するのはキーのみ、返すのはキーと元の名前
@@ -207,7 +207,7 @@ class Session
 		}
 
 		//	渡されたキーの名前により再びキーを作成する。渡されたキーと同じであることを確認。
-		$realNonce = $this->makeNonce($name);
+		$realNonce = self::makeNonce($name);
 		if ($realNonce !== $testNonce) {
 			return false;
 		}

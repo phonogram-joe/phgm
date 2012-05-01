@@ -46,14 +46,14 @@ class ClassLoader
 	const VALIDATOR = 'Validator';
 
 	/**
-	 *	データ刑を変換するクラス
+	 *	データ形を変換するクラス
 	 */
 	const CONVERTER = 'Converter';
 
 	const DATATYPE = 'Type';
 
 	/**
-	 *	レンダラクラスのフラグ。コントローラのデータをあるデータ刑に変換するクラス
+	 *	レンダラクラスのフラグ。コントローラのデータをあるデータ形に変換するクラス
 	 */
 	const RENDERER = 'Renderer';
 
@@ -68,7 +68,7 @@ class ClassLoader
 
 	//	app専用の共通クラス
 	public static $APP_LIB_DIR; //共通のクラスやビュープラグイン
-	public static $APP_VALIDATORS_DIR; //モデルのデータがデータ刑や規則にあってるか確認するクラス。
+	public static $APP_VALIDATORS_DIR; //モデルのデータがデータ形や規則にあってるか確認するクラス。
 	public static $APP_CONVERTERS_DIR; //モデルにset()する時にデータを変換するクラス
 	public static $APP_RENDERERS_DIR; //カスタムなレンダラクラス。Smartyのようにデータをテンプレートに埋め込むクラスです。
 	public static $APP_TYPES_DIR;
@@ -91,7 +91,7 @@ class ClassLoader
 
 		//	app専用の共通クラス
 		self::$APP_LIB_DIR = phgm::$APP_DIR . DS . 'lib'; //共通のクラスやビュープラグイン
-		self::$APP_VALIDATORS_DIR = self::$APP_LIB_DIR . DS . 'validators'; //モデルのデータがデータ刑や規則にあってるか確認するクラス。
+		self::$APP_VALIDATORS_DIR = self::$APP_LIB_DIR . DS . 'validators'; //モデルのデータがデータ形や規則にあってるか確認するクラス。
 		self::$APP_CONVERTERS_DIR = self::$APP_LIB_DIR . DS . 'converters'; 
 		self::$APP_RENDERERS_DIR = self::$APP_LIB_DIR . DS . 'renderers'; //カスタムなレンダラクラス。Smartyのようにデータをテンプレートに埋め込むクラスです。
 		self::$APP_TYPES_DIR = self::$APP_LIB_DIR . DS . 'datatypes';

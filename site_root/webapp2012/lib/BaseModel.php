@@ -64,7 +64,7 @@ class BaseModel
 
 	/*
 	 *	set($key, $value)
-	 *		ウェブからのデータを内部データ刑に変換する
+	 *		ウェブからのデータを内部データ形に変換する
 	 */
 	public function set($key, $value = null, $isChanged = true)
 	{
@@ -74,7 +74,7 @@ class BaseModel
 
 	/*
 	 *	get()
-	 *		内部のデータ刑をウェブようの価値に変換した価値を返す。HTMLに埋め込めるデータ刑なる
+	 *		内部のデータ形をウェブようの価値に変換した価値を返す。HTMLに埋め込めるデータ形なる
 	 */
 	public function get($key)
 	{
@@ -90,7 +90,7 @@ class BaseModel
 
 	/*
 	 *	val($key[, $value])
-	 *		内部データ刑で(変換せずに）価値を取得・設定する
+	 *		内部データ形で(変換せずに）価値を取得・設定する
 	 */
 	public function val($key, $value = null)
 	{
@@ -179,6 +179,7 @@ class BaseModel
 		if (!$modelDefinition->hasField($field)) {
 			throw new Exception('BaseModel:addValidationError() -- ' . get_class($this) . 'クラスには' . $field . 'というキーはありません。');
 		}
+		Logger::trace(get_class($this) . '::addValidationError() -- [' . $field . ']' . $message);
 		$this->validationErrors[$field] = $message;
 	}
 

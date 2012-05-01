@@ -147,13 +147,16 @@ class ModelDefinition
 
 	public function get($object, $key)
 	{
+		if (!array_key_exists($key, $this->fields) || !property_exists($object, $key)) {
+			throw new Exception("ModelDefinition:get() -- {get_class($object)}クラスには{$key}プロパティーがありません。");
+		}
 		$value = $object->{$key};
 		if (is_null($value)) {
 			return $value;
 		}
 		$type = $this->fields[$key]['type'];
 		if (!method_exists($type, 'toWeb')) {
-			throw new Exception('ModelDefinition:get() -- オブジェクトの ' . $key　. 'というキーは ' . $type .  ' タイプにになっていますが、見つかりません。');
+			throw new Exception('ModelDefinition:get() -- ' . get_class($object) . 'オブジェクトの ' . $key　. 'というキーは ' . $type .  ' タイプにになっていますが、見つかりません。');
 		}
 		$convertedValue = call_user_func(array($type, 'toWeb'), $value);
 		if ($convertedValue === BaseDataType::$INVALID) {
@@ -191,7 +194,6 @@ class ModelDefinition
 			$setParams = array();
 			foreach ($this->fields as $name => $options) {
 				if (false !== array_search($name, $this->visibilityWhitelist) && array_key_exists($name, $params)) {
-					//Logger::trace('ModelDefinition:set() -- visible, key/value ' . $name . '=' . $params[$name]);
 					$setParams[$name] = $this->simpleSet($object, $name, $params[$name], $isChanged);
 				}
 			}
@@ -200,7 +202,6 @@ class ModelDefinition
 			if (!array_key_exists($key, $this->fields)) {
 				throw new Exception('ModelDefinition:set() -- ' . $this->class . 'には「' . $key . '」というキーはないです。');
 			}
-			//Logger::trace('ModelDefinition:set() -- key/value ' . $key . '=' . $value);
 			return $this->simpleSet($object, $key, $value, $isChanged);
 		}
 	}
@@ -211,7 +212,7 @@ class ModelDefinition
 			if (is_null($value)) {
 				break;
 			}
-			$value = call_user_func_array(array($converter[0], 'input'), array_merge((array)$value, $converter[1]));
+			$value = call_user_func_array(array($converter[0], 'input'), array($value, $converter[1]));
 		}
 		if (!is_null($value)) {
 			$type = $this->fields[$key]['type'];
