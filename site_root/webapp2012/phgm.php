@@ -3,7 +3,7 @@
  *	Copyright (C) Phonogram Inc 2012
  *	Licensed Under the MIT license http://www.opensource.org/licenses/mit-license.php
  *
- *	bootstrap.php
+ *	phgm.php
  *		フレームワークの必要なファイルをrequireして、初期化する
  */
 
@@ -99,8 +99,8 @@ class phgm
 		//	フレームワークの基本クラス
 		ClassLoader::loadFrom('Config', self::$LIB_DIR);
 		ClassLoader::loadFrom('Logger', self::$LIB_DIR);
+		ClassLoader::loadFrom('Profiler', self::$LIB_DIR);
 		ClassLoader::loadFrom('TimeUtils', self::$LIB_DIR);
-		ClassLoader::loadFrom('StringUtils', self::$LIB_DIR);
 		ClassLoader::loadFrom('BaseDataType', self::$LIB_TYPES_DIR);
 		ClassLoader::loadFrom('ModelDefinition', self::$LIB_DIR);
 		ClassLoader::loadFrom('BaseModel', self::$LIB_DIR);
@@ -138,7 +138,12 @@ class phgm
 			throw new Exception('phgm::loadConfig() -- 環境設定ファイルは見つかりません。 ' . $environmentFile);
 		}
 		require_once($environmentFile);
-		
+
+		//	メモリー・ファイル・DBクエリの解析を有効にする。(開発とテストの環境のみ)
+		if (Config::isDevTest()) {
+			Profiler::getProfiler()->start(PHGM_START_TIME);
+		}
+
 		//	サイトのURLー＞コントローラ・アクション設定
 		require_once(self::$CONFIG_DIR . DS . 'routes.php');
 		defineRoutes(Router::getRouter());

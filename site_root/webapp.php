@@ -12,6 +12,7 @@
  */
 
 // アプリケーション設定
+define('PHGM_START_TIME', microtime(true));
 require_once(dirname(__FILE__) . DIRECTORY_SEPARATOR . 'webapp2012' . DIRECTORY_SEPARATOR . 'phgm.php');
 
 phgm::go();

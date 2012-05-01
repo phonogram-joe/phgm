@@ -37,6 +37,7 @@ class HttpHandler
 	public function handleRequest($routeName = null, $routeParams = null)
 	{
 		try {
+			Profiler::getProfiler()->startSnapshot('handleRequest');
 			if (is_null($routeName)) {
 				$this->determineControllerActionFromRoute();
 			} else {
@@ -45,12 +46,10 @@ class HttpHandler
 			
 			$httpMethod = strtoupper($this->request->getVerb());
 			if (false !== array_search($httpMethod, array(HttpRequest::POST, HttpRequest::PUT, HttpRequest::DELETE))) {
-				if (Config::get(Config::DATABASE_ENABLED)) {
-					$db = DB::getSession();
-					if (!is_null($db)) {
-						//	POST・PUT・DELETEのリクエストに対してDBの変更・購入・削除を有効にする
-						$db->setAllowUpdates(true);
-					}
+				$db = DB::getSession();
+				if (!is_null($db)) {
+					//	POST・PUT・DELETEのリクエストに対してDBの変更・購入・削除を有効にする
+					$db->setAllowUpdates(true);
 				}
 
 				if (!$this->request->isFormSafe()) {
@@ -66,6 +65,7 @@ class HttpHandler
 				$this->response->respondAndClose();
 				return;
 			} else {
+				Profiler::getProfiler()->stopSnapshot('handleRequest');
 				$this->renderResponse();
 				return;
 			}
@@ -96,7 +96,9 @@ class HttpHandler
 	private function determineControllerActionFromRoute()
 	{
 		$router = Router::getRouter();
+		Profiler::getProfiler()->startSnapshot('routing');
 		$match = $router->routeRequest($this->request);
+		Profiler::getProfiler()->stopSnapshot('routing');
 		if ($match == null) {
 			throw new Exception('HttpHandler -- 「' . $this->request->toString() . '」URLに一致するルートはありません。');
 		}
@@ -109,10 +111,14 @@ class HttpHandler
 	{
 		$actionName = $this->actionName;
 		$controllerClass = $this->controllerClass;
+		Profiler::getProfiler()->startSnapshot('loadController');
 		ClassLoader::load($controllerClass);
+		Profiler::getProfiler()->stopSnapshot('loadController');
 
+		Profiler::getProfiler()->startSnapshot('controller');
 		$this->controller = new $controllerClass($this->request, $this->response, $actionName);
 		$this->controller->execute($this->request->getParams());
+		Profiler::getProfiler()->stopSnapshot('controller');
 	}
 
 	private function executeErrorController($error)
@@ -133,8 +139,9 @@ class HttpHandler
 		$renderAction = ClassLoader::camelToUnderscores($this->controller->getRenderAction());
 		$this->templatePath = ClassLoader::$APP_VIEWS_DIR . DS . $controllerNamePrefix . DS . $renderAction;
 
-		//	コントローラのデータを最終的なデータ刑に変換する。Smartyなどにより。
+		//	コントローラのデータを最終的なデータ形に変換する。Smartyなどにより。
 		$renderer = BaseRenderer::getRenderer($this->controller->getRenderFormat(), $this->templatePath);
+		Profiler::getProfiler()->startSnapshot('rendering');
 		$renderer->renderHttpResponse($this->controller->getRenderData(), $this->request, $this->response);
 		$this->response->respondAndClose();
 	}
