@@ -77,24 +77,20 @@
 	var DatetimeInput;
 
 	DatetimeInput = function($el) {
-		this.$el = $el;
-		this.$inputYear = this.$el.find('.datetime-yyyymm-input [name=year]');
-		this.$inputMonth = this.$el.find('.datetime-yyyymm-input [name=month]');
-		this.$inputHour = this.$el.find('.datetime-time [name=hour]');
-		this.$inputMinute = this.$el.find('.datetime-time [name=minute]');
-		this.$yearMonthLabel = this.$el.find('.datetime-yyyymm-label');
-		this.$currentInput = null;
-		this.activeDate = null;
-		this.init();
+		this.initialize($el);
+		$.fn.hoverpanel.Constructor.prototype.initialize($el, false);
 	}
 
-	DatetimeInput.html = '<div class="datetime-input modal hide"> <div class="modal-header"> <a class="close" data-dismiss="modal" title="キャンセル">×</a> <h3>日時入力</h3> </div> <div class="modal-body"> <table class="table table-bordered x-table-condensed datetime-date"> <thead> <tr> <th class="prev"><a href="#" class="datetime-prev" title="前の月へ"><i class="icon-arrow-left"></i></a></th> <th class="year-month" colspan="5"><a href="#" title="年月の選択" class="btn datetime-yyyymm-label">2012年4月</a> <span class="datetime-yyyymm-input"> <input type="text" size="4" name="year" value="2012"> <input type="text" size="2" name="month" value="4"> <a href="#" class="btn datetime-yyyymm-save">年月へ飛ぶ</a> </span> </th> <th class="next"><a href="#" class="datetime-next" title="次の月へ"><i class="icon-arrow-right"></i></a></th> </tr> <tr> <th class="day">日</th> <th class="day">月</th> <th class="day">火</th> <th class="day">水</th> <th class="day">木</th> <th class="day">金</th> <th class="day">土</th> </tr> </thead> <tbody> </tbody> </table> <table class="table datetime-time"> <thead> <tr> <th>時</th> <th>分</th> </tr> </thead> <tbody> <tr> <td><select name="hour"> <option value="10">10時</option> <option value="11">11時</option> <option value="12">12時</option> <option value="13">13時</option> <option value="14">14時</option> <option value="15">15時</option> <option value="16">16時</option> </select></td> <td><select name="minute"> <option value="00">0分</option> <option value="30">30分</option> </select></td> </tr> </tbody> </table> </div> <div class="modal-footer"> <p class="pull-left"> <a href="#" class="btn datetime-now"><i class="icon-time"></i> 現在の日時</a> </p> <a href="#" class="btn btn-primary datetime-close"><i class="icon-ok-sign icon-white"></i> 保存する</a> </div> </div>';
+	DatetimeInput.html = '<div class="datetime-input hoverpanel hide"> <div class="hoverpanel-header"> <a class="close" data-dismiss="hoverpanel" title="キャンセル">×</a> <h3>日時入力</h3> </div> <div class="hoverpanel-body"> <table class="table table-bordered x-table-condensed datetime-date"> <thead> <tr> <th class="prev"><a href="#" class="datetime-prev" title="前の月へ"><i class="icon-arrow-left"></i></a></th> <th class="year-month" colspan="5"><a href="#" title="年月の選択" class="btn datetime-yyyymm-label">2012年4月</a> <span class="datetime-yyyymm-input"> <input type="text" size="4" name="year" value="2012"> <input type="text" size="2" name="month" value="4"> <a href="#" class="btn datetime-yyyymm-save">年月へ飛ぶ</a> </span> </th> <th class="next"><a href="#" class="datetime-next" title="次の月へ"><i class="icon-arrow-right"></i></a></th> </tr> <tr> <th class="day">日</th> <th class="day">月</th> <th class="day">火</th> <th class="day">水</th> <th class="day">木</th> <th class="day">金</th> <th class="day">土</th> </tr> </thead> <tbody> </tbody> </table> <table class="table datetime-time"> <thead> <tr> <th>時</th> <th>分</th> </tr> </thead> <tbody> <tr> <td><select name="hour"> <option value="10">10時</option> <option value="11">11時</option> <option value="12">12時</option> <option value="13">13時</option> <option value="14">14時</option> <option value="15">15時</option> <option value="16">16時</option> </select></td> <td><select name="minute"> <option value="00">0分</option> <option value="30">30分</option> </select></td> </tr> </tbody> </table> </div> <div class="hoverpanel-footer"> <p class="pull-left"> <a href="#" class="btn datetime-now"><i class="icon-time"></i> 現在の日時</a> </p> <a href="#" class="btn btn-primary datetime-close"><i class="icon-ok-sign icon-white"></i> 保存する</a> </div> </div>';
 
 	DatetimeInput.instance = null;
 
 	DatetimeInput.FORMAT_DATA_ATTR = 'datetime-format';
 	DatetimeInput.FORMAT_DATETIME = 'datetime';
 	DatetimeInput.FORMAT_DATE = 'date';
+	DatetimeInput.HOUR_MINUTE_OPTIONS_ALL = 'all';
+	DatetimeInput.DEFAULT_HOUR_OPTIONS = ['08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18'];
+	DatetimeInput.DEFAULT_MINUTE_OPTIONS = ['00', '30'];
 
 	DatetimeInput.datetimeFormat = /^\s*(\d{4})-(\d{2})-(\d{2}) (\d{2}):(\d{2}):(\d{2})\s*$/;
 	DatetimeInput.dateFormat = /^\s*(\d{4})-(\d{2})-(\d{2})\s*$/;
@@ -105,7 +101,6 @@
 		var $base;
 		if (DatetimeInput.instance === null) {
 			$base = $(DatetimeInput.html);
-			$('body').append($base);
 			DatetimeInput.instance = new DatetimeInput($base);
 		}
 		return DatetimeInput.instance;
@@ -143,8 +138,19 @@
 		return date.getFullYear() + '年' + (date.getMonth()+1) + '月';
 	}
 
-	DatetimeInput.prototype = {
+	DatetimeInput.prototype = $.extend({}, $.fn.hoverpanel.Constructor.prototype, {
 		constructor: DatetimeInput
+
+		, initialize: function($el) {
+			this.$el = $el;
+			this.$inputYear = this.$el.find('.datetime-yyyymm-input [name=year]');
+			this.$inputMonth = this.$el.find('.datetime-yyyymm-input [name=month]');
+			this.$inputHour = this.$el.find('.datetime-time [name=hour]');
+			this.$inputMinute = this.$el.find('.datetime-time [name=minute]');
+			this.$yearMonthLabel = this.$el.find('.datetime-yyyymm-label');
+			this.$currentInput = null;
+			this.activeDate = null;
+		}
 
 		, init: function() {
 			this.$el.on('click.dt', '.datetime-yyyymm-label', $.proxy(this.openYearMonth, this));
@@ -190,6 +196,7 @@
 				return;
 			}
 			this.goDate(date);
+			this.close();
 		}
 
 		, updateTime: function() {
@@ -203,11 +210,30 @@
 		}
 
 		, setTime: function(date) {
-			this.$inputHour.find('option[value=' + date.getHours() + ']').prop('selected', true);
-			if (date.getMinutes() < 30) {
-				this.$inputMinute.find('option[value=00]').prop('selected', true);
+			var $matchingItem;
+
+			$matchingItem = this.$inputHour.find('option[value=' + date.getHours() + ']');
+			if ($matchingItem.size()) {
+				$matchingItem.prop('selected', true);
 			} else {
-				this.$inputMinute.find('option[value=30]').prop('selected', true);
+				$matchingItem = this.$inputHour.find('option:first');
+				if ($matchingItem.size() && parseInt($matchingItem.attr('value'),10) > date.getHours()) {
+					$matchingItem.prop('selected');
+				} else {
+					$matchingItem = this.$inputHour.find('option:last').prop('selected', true);
+				}
+			}
+
+			$matchingItem = this.$inputMinute.find('option[value=' + date.getMinutes() + ']');
+			if ($matchingItem.size()) {
+				$matchingItem.prop('selected', true);
+			} else {
+				this.$inputMinute.find('option').each(function() {
+					var $option = $(this);
+					if (parseInt($option.attr('value'), 10) < date.getMinutes()) {
+						$option.prop('selected', true);
+					}
+				});
 			}
 		}
 
@@ -239,12 +265,9 @@
 			this.activeDate = date;
 			this.updateTime();
 			this.$yearMonthLabel.text(DatetimeInput.formatDateLabel(this.activeDate));
-			this.$inputHour.find('option[value=' + this.activeDate.getHours() + ']').prop('selected', true);
-			if (this.activeDate.getMinutes() < 30) {
-				this.$inputMinute.find('option[value=00]').prop('selected', true);
-			} else {
-				this.$inputMinute.find('option[value=30]').prop('selected', true);
-			}
+
+			this.setTime(date);
+
 			while (currentWeekIndex < weekCount) {
 				currentDayIndex = 0;
 				bodyHtml += '<tr>';
@@ -287,6 +310,49 @@
 			return null;
 		}
 
+		, _parseTimeOptions: function($input) {
+			var hoursOptions,
+				minuteOptions,
+				optionIndex,
+				self;
+			self = this;
+			//	何時の選択肢
+			//	data-datetime-hours="10,11,12,13,14,15,16,17,18"
+			hoursOptions = $input.data('datetime-hours') || DatetimeInput.DEFAULT_HOUR_OPTIONS;
+			if (hoursOptions === DatetimeInput.HOUR_MINUTE_OPTIONS_ALL) {
+				hoursOptions = [];
+				for (optionIndex = 0; optionIndex < 24; optionIndex++) {
+					hoursOptions.push(optionIndex < 10 ? '0' + optionIndex : '' + optionIndex);
+				}
+			}
+			if (typeof hoursOptions === 'string') {
+				hoursOptions = hoursOptions.split(',');
+			}
+			this.$hourInput = this.$el.find('[name=hour]');
+			this.$hourInput.empty();
+			$.each(hoursOptions, function(index, item) {
+				self.$hourInput.append($('<option></option').attr('value', item).text(item + '時'));
+			});
+
+			//	何分の選択肢
+			//	date-datetime-minutes="00,15,30,45"
+			minuteOptions = $input.data('datetime-minutes') || DatetimeInput.DEFAULT_MINUTE_OPTIONS;
+			if (minuteOptions === DatetimeInput.HOUR_MINUTE_OPTIONS_ALL) {
+				minuteOptions = [];
+				for (optionIndex = 0; optionIndex < 60; optionIndex++) {
+					minuteOptions.push(optionIndex < 10 ? '0' + optionIndex : '' + optionIndex);
+				}
+			}
+			if (typeof minuteOptions === 'string') {
+				minuteOptions = minuteOptions.split(',');
+			}
+			this.$minuteInput = this.$el.find('[name=minute]');
+			this.$minuteInput.empty();
+			$.each(minuteOptions, function(index, item) {
+				self.$minuteInput.append($('<option></option>').attr('value', item).text(item + '分'));
+			});	
+		}
+
 		, _isDatetimeInput: function() {
 			return this.$currentInput.data(DatetimeInput.FORMAT_DATA_ATTR) !== DatetimeInput.FORMAT_DATE;
 		}
@@ -296,27 +362,34 @@
 		}
 
 		, close: function() {
-			this.$el.modal('hide');
 			this.$currentInput.val(this._formatDate(this.activeDate));
 			this.$currentInput.trigger('change');
+			this.uninit();
 			this.activeDate = null;
 			this.$currentInput = null;
+			$.fn.hoverpanel.Constructor.prototype.close.call(this);
 		}
 
 		, openFor: function($input) {
 			var date;
 			this.$currentInput = $input;
+
+			//	インプットから日時を取得する。空である場合は現在日時にする
 			date = this._parseDate($input.val());
 			if (date === null) {
 				date = new Date();
 			}
+
+			this._parseTimeOptions($input);
+
+			//	インプット・日時を設定したうえで、UIを初期させる
+			this.init();
 			this._isDatetimeInput() ? this.$el.find('.datetime-time').show() : this.$el.find('.datetime-time').hide();
 			this.setTime(date);
 			this.goDate(date);
-			this.$el.modal('show');
+			$.fn.hoverpanel.Constructor.prototype.open.call(this, $input);
 		}
-
-	};
+	});
 
 	$(function() {
 		$('body').on('click', 'input.datetime', function() {

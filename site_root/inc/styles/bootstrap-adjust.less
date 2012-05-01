@@ -11,29 +11,48 @@
 @import "/inc/styles/bootstrap/wells.less";
 
 /* 	----------------------------------------------------------------------
+	ウェブ・フォントを使う
+   	----------------------------------------------------------------------*/
+.navbar, footer, h1, h2, h3, h4, h5, h6, .btn {
+	font-family: @uiFontFamily;
+	font-weight: normal;
+}
+
+/* 	----------------------------------------------------------------------
 	ヘッダーバーはposition:fixed;なので、そのスペースを空けておく
    	----------------------------------------------------------------------*/
 body {
 	padding-top: 60px;
 	padding-bottom: 40px;
+	/*
+	background-image: url(/inc/images/bg_pattern_light.png);
+	background-size: 127px 127px;
+	background-repeat: repeat;
+	*/
 }
 
 /* 	----------------------------------------------------------------------
 	上のナビ―バーの右側の部分
    	----------------------------------------------------------------------*/
 .navbar .pull-right {
-	background-color: #ffffff;
-	color: #2C2C2C;
+	background-color: @white;
+	color: @grayLight;
 	margin-top: 5px;
 	.border-radius(3px);
 }
 .navbar .pull-right > li > a {
 	padding: 5px 10px 5px;
-	color: #2C2C2C;
+	color: @grayLight;
 	text-shadow: none;
 }
 .navbar .pull-right > li > a:hover {
-	color: #000000;
+	color: @black;
+}
+.navbar .pull-right > li.active > a:hover,
+.navbar .pull-right > li.active > a {
+	background-color: @white;
+	color: @black;
+	font-weight: bold;
 }
 
 /* 	----------------------------------------------------------------------
@@ -41,18 +60,30 @@ body {
    	----------------------------------------------------------------------*/
 /* セクションのヘッダー */
 .titled-section-title {
+	/*
 	background: #8c8c8c;
 	background: -moz-linear-gradient(top, #8c8c8c, #7a7979);
 	background: -webkit-gradient(linear, left top, left bottom, from(#8c8c8c), to(#7a7979));
 	color: #ffffff;
 	.border-radius(4px 4px 0 0);
 	padding: 0 0 0 9px;
+	*/
+	border-bottom: 1px solid #ddd;
+	margin-bottom: 8px;
+	padding: 4px 0 4px 9px;
 }
 
 /*	セクション自体 */
 .titled-section {
-	.well;
+	//.well;
+	margin-bottom: 20px;
 	padding: 0;
+	background-color: @white;
+	background-color: rgba(255,255,255,0.8);
+	background-color: #f5f5f5;
+	.box-shadow(inset 0 1px 1px rgba(0,0,0,.05));
+	border: 1px solid @grayLighter;
+	.border-radius(4px);
 
 	h3 {
 		.titled-section-title;
@@ -72,9 +103,20 @@ body {
 	font-weight: bold;
 	color: black;
 }
+.nav-list .alert {
+	margin-bottom: 0;
+}
+.nav-list .disabled {
+	cursor: default;
+	.opacity(50);
+}
 .sidebar-actions {
 	.titled-section;
 	padding: 9px;
+}
+.sidebar-actions .btn {
+	margin-right: 5px;
+	margin-bottom: 5px;
 }
 
 /* 
@@ -100,6 +142,10 @@ body {
 		.titled-section-child;
 	}
 
+	& > p {
+		.titled-section-child;
+	}
+
 	thead {
 		.titled-section-title;
 	}
@@ -109,7 +155,7 @@ body {
 .extra-info {
 	.titled-section;
 
-	address {
+	p, ul, dl, address {
 		.titled-section-child;
 	}
 }
@@ -124,7 +170,7 @@ body {
 	background-repeat: no-repeat;
 	background-attachment: initial;
 	background-position-x: 0%;
-	background-position-y: 0%;
+	background-position-y: 50%;
 	background-origin: initial;
 	background-clip: initial;
 	background-color: inherit;
@@ -183,17 +229,68 @@ body {
 	.iconed-title;
 }
 .requests h1 {
-	background-image: url(http://kahn-asp.phonogram.tv/inc-OLD/images/common/h1/h1_request.gif);
+	background-image: url(http://kahn-asp.phonogram.tv/inc/images/h1_request.gif);
 }
 .clients h1 {
-	background-image: url(http://kahn-asp.phonogram.tv/inc-OLD/images/common/h1/h1_request.gif);
+	background-image: url(http://kahn-asp.phonogram.tv/inc/images/h1_customers.gif);
+}
+.points h1 {
+	background-image: url(http://kahn-asp.phonogram.tv/inc/images/h1_point.gif);
+}
+.contact h1 {
+	background-image: url(http://kahn-asp.phonogram.tv/inc/images//h1_info.gif);
+}
+.help h1 {
+	background-image: url(http://kahn-asp.phonogram.tv/inc/images//h1_info.gif);
 }
 
 .admin h2,
 .client h2 {
 	padding-left: 18px;
 	.iconed-title;
-	background-image: url(http://kahn-asp.phonogram.tv/inc-OLD/images/common/bg_h2.gif);
+	background-image: url(http://kahn-asp.phonogram.tv/inc/images/h2_bg.gif);
+}
+
+@media (max-width: 1280px) {
+	.clients h1,h2 {
+		font-size: 18px;
+	}
+}
+
+
+/* 	----------------------------------------------------------------------
+	クライアント用のトップページ専用
+   	----------------------------------------------------------------------*/
+.top h1 {
+	padding-left: 0;
+}
+.top h2 {
+	padding-left: 0;
+	background-image: none;
+}
+.top .top-section {
+	.titled-section();
+	padding: 9px;
+}
+.top .top-section .btn {
+	margin-right: 5px;
+	margin-bottom: 5px;
+}
+.top .top-container {
+	max-width: 940px;
+	margin: 0 auto;
+}
+
+/* 	----------------------------------------------------------------------
+	hero unitのトップページ向けのバーナー
+   	----------------------------------------------------------------------*/
+@media (max-width: 767px) {
+	.top .hero-unit {
+		padding: 10px;
+	}
+	.top .hero-unit h1 {
+		font-size: 32px;
+	}
 }
 
 
@@ -212,6 +309,9 @@ body {
  */
 table .info-status {
 	text-align: center;
+}
+table .alert a {
+	color: @warningText;
 }
 @media (max-width: 480px) {
 	table .info-secondary {
@@ -276,13 +376,65 @@ table .info-status {
 	}
 }
 
+/*
+ *	ページ内容の上に浮かぶようなダイアログ
+ */
+.hoverpanel {
+	position: absolute;
+	top: 0;
+	left: 0;
+	z-index: @zindexPopover;
+	padding: 5px;
+	background-color: @white;
+	border: 1px solid #999;
+	border: 1px solid rgba(0,0,0,.3);
+	*border: 1px solid #999; /* IE6-7 */
+	.border-radius(6px);
+	.box-shadow(0 3px 7px rgba(0,0,0,0.3));
+	.background-clip(padding-box);
+
+	.hoverpanel-header {
+		padding: 9px 15px;
+		border-bottom: 1px solid #eee;
+		// Close icon
+		.close { margin-top: 2px; }
+	}
+
+	.hoverpanel-body {
+		overflow-y: auto;
+		max-height: 400px;
+		padding: 15px;
+	}
+
+	.hoverpanel-footer {
+		padding: 14px 15px 15px;
+		margin-bottom: 0;
+		text-align: right; // right align buttons
+		background-color: #f5f5f5;
+		border-top: 1px solid #ddd;
+		.border-radius(0 0 6px 6px);
+		.box-shadow(inset 0 1px 0 @white);
+		.clearfix(); // clear it in case folks use .pull-* classes on buttons
+
+		// Properly space out buttons
+		.btn + .btn {
+			margin-left: 5px;
+			margin-bottom: 0; // account for input[type="submit"] which gets the bottom margin like all other inputs
+		}
+
+		// but override that for button groups
+		.btn-group .btn + .btn {
+			margin-left: -1px;
+		}
+	}
+}
 
 /*
  *	日時入力用
  *	inc/scripts/bootstrap-datetime.jsをご参考に。
  */
 .datetime-input {
-	max-width: 300px;
+	width: 300px;
 
 	table th,
 	table td {

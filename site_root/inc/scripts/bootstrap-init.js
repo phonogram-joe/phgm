@@ -30,6 +30,23 @@
 		}
 	}
 
+	var showMoreButtonInit = function() {
+		var $targets = $('.show-more-item.' + $(this).data('show-more'));
+		if (!$targets.size()) {
+			return;
+		}
+		$targets.each(function() {
+			if ($(this).find('input[value!=""]').size()) {
+				$(this).show();
+			} else {
+				$(this).hide();
+			}
+		});
+		if (!$targets.filter(':hidden').size()) {
+			$(this).hide();
+		}
+	}
+
 	var indexFormSubmit = function(e) {
 		var $el = $(e.target),
 			$form;
@@ -43,6 +60,8 @@
 		$('.js-conditional').fadeIn();
 		//	項目が複数ある場合の「もっと表示」ボタン
 		$('body').on('click', 'button[data-show-more]', showMore);
+		$('button[data-show-more]').each(showMoreButtonInit);
+		//$('.show-more-item').each(showMoreItemInit);
 
 		//	一覧画面の絞り込む条件が変わる際にフォームを投稿する
 		$('.index-form').on('change', 'select, .datetime', indexFormSubmit);

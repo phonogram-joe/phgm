@@ -2,6 +2,18 @@
 // Variables to customize the look and feel of Bootstrap
 // -----------------------------------------------------
 
+// ウェブ・フォント。フォノグラムカスタム
+@font-face {
+    font-family: 'm1c';
+    src: url('/inc/fonts/mplus-1c-regular.eot');
+    src: url('/inc/fonts/mplus-1c-regular.eot?#iefix') format('embedded-opentype'),
+         url('/inc/fonts/mplus-1c-regular.woff') format('woff'),
+         url('/inc/fonts/mplus-1c-regular.ttf') format('truetype'),
+         url('/inc/fonts/mplus-1c-regular.svg#M1cregular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
 
 
 // GLOBAL VALUES
@@ -46,11 +58,13 @@
 // Typography
 // -------------------------
 @baseFontSize:          13px;
-@baseFontFamily:        "Helvetica Neue", Helvetica, Arial, sans-serif;
+@baseFontFamily:        "ヒラギノ角ゴ Pro W3", "Hiragino Kaku Gothic Pro", "メイリオ", Meiryo, Osaka, "ＭＳ Ｐゴシック", "MS PGothic", sans-serif;
 @baseLineHeight:        18px;
-@altFontFamily:         Georgia, "Times New Roman", Times, serif;
+@altFontFamily:         @baseFontFamily;
 
-@headingsFontFamily:    inherit; // empty to use BS default, @baseFontFamily
+@uiFontFamily:			"m1c", @baseFontFamily; // UIの部分（固定のテキスト。ユーザ・データ・時間と問わず表示できる内容のみ）
+
+@headingsFontFamily:    @uiFontFamily; // empty to use BS default, @baseFontFamily
 @headingsFontWeight:    bold;    // instead of browser default, bold
 @headingsColor:         inherit; // empty to use BS default, @textColor
 
