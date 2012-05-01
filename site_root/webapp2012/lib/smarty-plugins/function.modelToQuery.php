@@ -1,4 +1,8 @@
 <?php
+/*
+ *	Copyright (C) Phonogram Inc 2012
+ *	Licensed Under the MIT license http://www.opensource.org/licenses/mit-license.php
+ */
 
 function smarty_function_modelToQuery($params, Smarty_Internal_Template $template)
 {
