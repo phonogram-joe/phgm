@@ -39,7 +39,6 @@ function smarty_block_formFor($params, $content, Smarty_Internal_Template $templ
 		if (is_null($url)) {
 			throw new Exception('smarty_block_formFor() -- 「' . $name . '」ルートにはパラムが無効。 ' . implode(', ', $params));
 		}
-		$url = Router::getRouter()->routableToUri($url);
 
 		$http_method = strtoupper(is_null($http_method) ? $route->getHttpVerb() : $http_method);
 		if (!HttpRequest::isHttpMethod($http_method)) {
@@ -59,12 +58,12 @@ function smarty_block_formFor($params, $content, Smarty_Internal_Template $templ
 			}
 		}
 
-		$html  = '<form name="' . $name . '" method="' . $http_method . '" action="' . $url . '" id="' . htmlspecialchars($html_id) . '" class="' . htmlspecialchars($html_class) . '">';
+		$html  = '<form enctype="multipart/form-data" name="' . $name . '" method="' . $http_method . '" action="' . $url . '" id="' . htmlentities($html_id) . '" class="' . htmlentities($html_class) . '">';
 		if (!is_null($formSafeKey)) {
-			$html .= '<input type="hidden" name="' . htmlspecialchars($formSafeKey) . '" value="' . htmlspecialchars($formSafeValue) . '" />';
+			$html .= '<input type="hidden" name="' . htmlentities($formSafeKey) . '" value="' . htmlentities($formSafeValue) . '" />';
 		}
 		if (!is_null($formMethodKey)) {
-			$html .= '<input type="hidden" name="' . htmlspecialchars($formMethodKey) . '" value="' . htmlspecialchars($formMethodValue) . '" />';
+			$html .= '<input type="hidden" name="' . htmlentities($formMethodKey) . '" value="' . htmlentities($formMethodValue) . '" />';
 		}
 	} else {
 		$html = $content . '</form>';

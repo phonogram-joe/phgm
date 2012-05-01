@@ -3,63 +3,87 @@
   {{assign var="type" value=$model->getType($field)}}
 {{/if}}
 {{if !isset($htmlClass)}}
-  {{assign var="html_class" value=""}}
+  {{assign var="htmlClass" value=""}}
 {{/if}}
-<div class="control-group {{if $model->hasError($field)}}error{{/if}}">
-  <label class="control-label" for="f_{{$id}}">{{$model->getLabel($field)|escape}}</label>
+{{if !isset($controlHtmlClass)}}
+  {{assign var="controlHtmlClass" value=""}}
+{{/if}}
+<div class="control-group {{if $model->hasError($field)}}error{{/if}} {{$controlHtmlClass}}">
+  <label class="control-label" for="f_{{$id}}">{{$model->getLabel($field)}}</label>
   <div class="controls">
   {{if $type === 'StringType'}}
-    <input type="text" class="{{$htmlClass|escape}}" id="f_{{$id}}" name="{{$field|escape}}" value="{{$model->get($field)|escape}}">
+    <input type="text" class="{{$htmlClass}}" id="f_{{$id}}" name="{{$field}}" value="{{$model->get($field)}}">
   {{elseif $type === 'DatetimeType'}}
     <div class="input-append">
-      <input type="datetime" class="datetime {{$htmlClass|escape}}" id="f_{{$id}}" name="{{$field|escape}}" value="{{$model->get($field)|escape}}" size="16" data-date-format="yyyy-mm-dd"><span class="add-on">日にち</span>
+      <input type="datetime" class="datetime {{$htmlClass}}" data-datetime-format="datetime" id="f_{{$id}}" name="{{$field}}" value="{{$model->get($field)}}" size="16" data-date-format="yyyy-mm-dd"><span class="add-on">日にち</span>
+    </div>
+  {{elseif $type === 'DateType'}}
+    <div class="input-append">
+      <input type="datetime" class="datetime {{$htmlClass}}" data-datetime-format="date" id="f_{{$id}}" name="{{$field}}" value="{{$model->get($field)}}" size="16" data-date-format="yyyy-mm-dd"><span class="add-on">日にち</span>
     </div>
   {{elseif $type === 'BooleanType'}}
-    {{foreach $labels as $label => $value}}
-    {{assign var="id" value=uniqid()}}
-    <label class="radio" for="f_{{$id}}">
-      <input type="radio" class="{{$htmlClass|escape}}" name="{{$field|escape}}" id="f_{{$id}}" value="{{BooleanType::toWeb($value)}}" {{if $model->val($field) === $value}}checked{{/if}}> {{$label|escape}}
-    </label>
-    {{/foreach}}
+    {{if count($labels) === 1}}
+      {{foreach $labels as $label => $value}}
+      <label class="checkbox" for="f_{{$id}}">
+        <input type="checkbox" class="{{$htmlClass}}" name="{{$field}}" id="f_{{$id}}" value="{{BooleanType::toWeb($value)}}" {{if $model->val($field) === $value}}checked{{/if}}> {{$label}}
+      </label>
+      {{/foreach}}
+    {{else}}
+      {{foreach $labels as $label => $value}}
+      {{assign var="id" value=uniqid()}}
+      <label class="radio" for="f_{{$id}}">
+        <input type="radio" class="{{$htmlClass}}" name="{{$field}}" id="f_{{$id}}" value="{{BooleanType::toWeb($value)}}" {{if $model->val($field) === $value}}checked{{/if}}> {{$label}}
+      </label>
+      {{/foreach}}
+    {{/if}}
   {{elseif $type === 'IntegerType' or $type === 'DecimalType'}}
-    <input type="number" class="{{$htmlClass|escape}}" id="f_{{$id}}" name="{{$field|escape}}" value="{{$model->get($field)|escape}}">
+    <input type="number" class="{{$htmlClass}}" id="f_{{$id}}" name="{{$field}}" value="{{$model->get($field)}}">
   {{elseif $type === 'MultiLineStringType'}}
-    <textarea id="f_{{$id}}" class="{{$htmlClass|escape}}" name="{{$field|escape}}" rows="3">{{$model->get($field)|escape}}</textarea> 
+    <textarea id="f_{{$id}}" class="{{$htmlClass}}" name="{{$field}}" rows="3">{{$model->get($field)}}</textarea> 
   {{elseif $type === 'PasswordType'}}
-    <input type="password" class="{{$htmlClass|escape}}" id="f_{{$id}}" name="{{$field|escape}}" value="{{$model->get($field)|escape}}">
+    <input type="password" class="{{$htmlClass}}" id="f_{{$id}}" name="{{$field}}" value="{{$model->get($field)}}">
   {{elseif $type === 'EmailType'}}
     <div class="input-append">
-      <input type="email" class="{{$htmlClass|escape}}" id="f_{{$id}}" name="{{$field|escape}}" value="{{$model->get($field)|escape}}" size="16"><span class="add-on"><i class="icon-envelope"></i></span>
+      <input type="email" class="{{$htmlClass}}" id="f_{{$id}}" name="{{$field}}" value="{{$model->get($field)}}" size="16"><span class="add-on"><i class="icon-envelope"></i></span>
     </div>
   {{elseif $type === 'PhoneType'}}
-    <input type="tel" class="{{$htmlClass|escape}}" id="f_{{$id}}" name="{{$field|escape}}" value="{{$model->get($field)|escape}}">
+    <input type="tel" class="{{$htmlClass}}" id="f_{{$id}}" name="{{$field}}" value="{{$model->get($field)}}">
   {{elseif $type === 'PostcodeType'}}
     <div class="input-append">
-      <input type="text" class="{{$htmlClass|escape}}" id="f_{{$id}}" name="{{$field|escape}}" value="{{$model->get($field)|escape}}" size="16"><span class="add-on">〒</span>
+      <input type="text" class="{{$htmlClass}}" id="f_{{$id}}" name="{{$field}}" value="{{$model->get($field)}}" size="16"><span class="add-on">〒</span>
     </div>
   {{elseif $type === 'ForeignKeyType'}}
-    <select class="{{$htmlClass|escape}}" id="f_{{$id}}" name="{{$field|escape}}">
+    <select class="{{$htmlClass}}" id="f_{{$id}}" name="{{$field}}">
       <option value="">選択して下さい</option>
     {{foreach $options as $optionModel}}
-      <option value="{{$optionModel->id|escape}}" {{if $model->val($field) === $optionModel->id}}selected{{/if}}>{{$optionModel->get($optionsLabel)|escape}}</option>
+      <option value="{{$optionModel->id}}" {{if $model->val($field) === $optionModel->id}}selected{{/if}}>{{$optionModel->get($optionsLabel)}}</option>
     {{/foreach}}
     </select>
   {{elseif $type === 'SelectType'}}
-    <select class="{{$htmlClass|escape}}" id="f_{{$id}}" name="{{$field|escape}}">
+    <select class="{{$htmlClass}}" id="f_{{$id}}" name="{{$field}}">
       <option value="">選択して下さい</option>
     {{foreach $options as $label => $value}}
-      <option value="{{$value|escape}}" {{if $model->val($field) === $value}}selected{{/if}}>{{$label|escape}}</option>
+      <option value="{{$value}}" {{if $model->val($field) === $value}}selected{{/if}}>{{$label}}</option>
     {{/foreach}}
     </select>
+  {{elseif $type === 'FileUploadType'}}
+    {{assign var="file" value=$model->val($field)}}
+    {{if $file && $file->isUploaded()}}
+      <span class="uneditable-input">{{$file->getOriginalName()}}</span>
+      <input type="hidden" name="{{$field}}[name]" value="{{$file->getOriginalName()}}">
+      <input type="hidden" name="{{$field}}[upload_code]" value="{{$file->getUploadValidationCode()}}">
+    {{else}}
+      <input class="input-file" id="f_{{$id}}" type="file" name="{{$field}}" value="">
+    {{/if}}
   {{elseif $type === 'hidden'}}
-    <span class="uneditable-input">{{$model->get($field)|escape}}</span>
-    <input type="hidden" name="{{$field|escape}}" value="{{$model->get($field)|escape}}">
+    <span class="uneditable-input">{{$model->get($field)}}</span>
+    <input type="hidden" name="{{$field}}" value="{{$model->get($field)}}">
   {{/if}}
   {{if $model->hasError($field)}}
-    <p class="help-block"><i class="icon-exclamation-sign"></i> {{$model->getError($field)|escape}}</p>
+    <p class="help-block"><i class="icon-exclamation-sign"></i> {{$model->getError($field)}}</p>
   {{/if}}
   {{if isset($hint)}}
-    <p class="help-block"><i class="icon-info-sign"></i> {{$hint|escape}}</p>
+    <p class="help-block"><i class="icon-info-sign"></i> {{$hint}}</p>
   {{/if}}
   </div>
 </div>

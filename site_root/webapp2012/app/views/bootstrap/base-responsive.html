@@ -5,10 +5,10 @@
 <!--[if gt IE 8]><!--> <html class="no-js" lang="ja"> <!--<![endif]-->
   <head>
     <meta charset="utf-8">
-    <title>カーンサポートシステム　｜　{{$pageTitle|escape}}</title>
+    <title>カーンサポートシステム　｜　{{$pageTitle}}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="{{$pageDescription|escape}}">
-    <meta name="author" content="{{$pageAuthor|escape}}">
+    <meta name="description" content="{{$pageDescription}}">
+    <meta name="author" content="{{$pageAuthor}}">
 
     <!-- Twitter Bootstrapを基本としてスタイル設定 ( http://twitter.github.com/bootstrap/ ) -->
     <link href="/webapp2012/inc/styles/bootstrap/bootstrap.less" rel="stylesheet/less">
@@ -45,6 +45,7 @@
     <!-- --------------------------------------------------------------- -->
     <!-- jQuery -->
     <script src="/webapp2012/inc/scripts/jquery-1.7.2.min.js"></script>
+    <script src="/webapp2012/inc/scripts/jquery.ui.position.js"></script>
     <!-- Twitter Bootstrapのスクリプト ( http://twitter.github.com/bootstrap/javascript.html ) -->
     <script src="/webapp2012/inc/scripts/bootstrap/bootstrap-transition.js"></script>
     <script src="/webapp2012/inc/scripts/bootstrap/bootstrap-alert.js"></script>
@@ -60,10 +61,29 @@
     <script src="/webapp2012/inc/scripts/bootstrap/bootstrap-typeahead.js"></script>
     <!-- フォノグラムのカスタムなスクリプト -->
     <script src="/webapp2012/inc/scripts/bootstrap-iconify.js"></script>
+    <script src="/webapp2012/inc/scripts/bootstrap-hoverpanel.js"></script>
     <script src="/webapp2012/inc/scripts/bootstrap-datetime.js"></script>
+    <script src="/webapp2012/inc/scripts/bootstrap-filebutton.js"></script>
     <script src="/webapp2012/inc/scripts/bootstrap-init.js"></script>
 
     {{block name='page-scripts'}}{{/block}}
+
+    {{if Config::isDevTest()}}
+    <script type="text/javascript">
+    (function() {
+        var p, s;
+        p = document.createElement('script');
+        p.type = 'text/javascript';
+        p.async = true;
+        p.src = '/webapp2012/inc/scripts/phgm-profiler.js';
+        s = document.getElementsByTagName('script')[0];
+        s.parentNode.insertBefore(p, s);
+    })();
+    </script> 
+    <script type="text/x-data" id="phgm-profiler">
+        {{Profiler::getProfiler()->toJSON() nofilter}}
+    </script>
+    {{/if}}
 
   </body>
 </html>

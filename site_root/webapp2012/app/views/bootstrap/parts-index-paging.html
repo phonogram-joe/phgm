@@ -1,0 +1,18 @@
+{{assign var="start" value=$search->getPageIndex()-2}}
+{{assign var="end" value=$search->getPageIndex()+2}}
+<div class="pagination pagination-centered">
+	<input type="hidden" name="search[page_item_count]" value="{{$search->getPageItemCount()}}">
+	<ul>
+		{{if $start > 0}}
+		<li><input type="submit" class="btn" name="search[page_index][0]" value="最初"></li>
+		{{/if}}
+		{{for $pageIndex=$start to $end}}
+		{{if $search->hasPageIndex($pageIndex)}}
+		<li><input type="submit" class="btn {{if $search->getPageIndex() === $pageIndex}}btn-primary{{/if}}" name="search[page_index][{{$pageIndex}}]" value="{{$pageIndex+1}}"></li>
+		{{/if}}
+		{{/for}}
+		{{if $end +1 < $search->getPageTotal()}}
+		<li><input type="submit" class="btn" name="search[page_index][{{$search->getPageTotal()-1}}]" value="最後"></li>
+		{{/if}}
+	</ul>
+</div>

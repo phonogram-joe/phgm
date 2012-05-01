@@ -16,7 +16,7 @@ function smarty_block_linkFor($params, $content, Smarty_Internal_Template $templ
 
 		$url = Router::getRouter()->urlForName($name, $params);
 
-		$html  = '<a name="' . $name . '" href="' . $url . '" id="' . htmlspecialchars($html_id) . '" class="' . htmlspecialchars($html_class) . '">';
+		$html  = '<a name="' . $name . '" href="' . $url . '" id="' . htmlentities($html_id) . '" class="' . htmlentities($html_class) . '">';
 	} else {
 		$html = $content . '</a>';
 	}
