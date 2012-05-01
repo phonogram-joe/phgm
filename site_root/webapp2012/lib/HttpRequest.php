@@ -69,11 +69,7 @@ class HttpRequest
 		}
 
 		foreach ($_FILES as $key => $value) {
-			if (is_array($value)) {
-				$params[$key] = new RequestFileUpload($value);
-			} else {
-				$params[$key] = $value;
-			}
+			$params[$key] = $value;
 		}
 		$this->params = $params;
 	}

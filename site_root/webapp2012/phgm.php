@@ -109,6 +109,7 @@ class phgm
 		ClassLoader::loadFrom('Router', self::$LIB_DIR);
 		ClassLoader::loadFrom('Session', self::$LIB_DIR);
 		ClassLoader::loadFrom('SessionUser', self::$LIB_DIR);
+		ClassLoader::loadFrom('FileUpload', self::$LIB_DIR);
 		ClassLoader::loadFrom('HttpRequest', self::$LIB_DIR);
 		ClassLoader::loadFrom('HttpResponse', self::$LIB_DIR);
 		ClassLoader::loadFrom('HttpResponseFormat', self::$LIB_DIR);
