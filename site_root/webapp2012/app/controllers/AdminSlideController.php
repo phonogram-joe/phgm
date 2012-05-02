@@ -13,13 +13,18 @@ class AdminSlideController extends AdminController
 
 	public function slides($params)
 	{
-		$this->pageTitle = 'プレゼンテーション作成';
+		$this->pageTitle = 'プレゼン作成';
 		$this->presentation = PresentationModel::loadId($params['id']);
 		$lastSlide = is_null($this->presentation->slides) ? null : end($this->presentation->slides);
 		$nextOrderBy = is_null($lastSlide) ? 0 : $lastSlide->val('order_by') + 1;
 		$this->newSlide = PresentationSlideModel::createFor($this->presentation->id);
 		$this->newSlide->val('order_by', $nextOrderBy);
 		return $this->doRender();
+	}
+
+	public function slidePreview($params)
+	{
+		return $this->doRenderDataAs(array('slide' => $params['slide']));
 	}
 
 	public function editSlides($params)
@@ -64,7 +69,7 @@ class AdminSlideController extends AdminController
 	{
 		$this->presentation = PresentationModel::loadId($params['id']);
 		if (is_null($this->presentation)) {
-			return $this->doError('プレゼンテーションが見つかりません。');
+			return $this->doError('プレゼンが見つかりません。');
 		}
 		$this->newSlide = PresentationSlideModel::createFor($this->presentation->id);
 		

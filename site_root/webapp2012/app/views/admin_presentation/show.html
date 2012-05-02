@@ -1,9 +1,9 @@
 {{extends file='bootstrap/layout-2column.html'}}
-{{block name='nav'}}{{/block}}
+{{block name='nav'}}{{include file='bootstrap/nav.html'}}{{/block}}
 {{block name='left-col'}}
 	<p class="sidebar-actions">
 		{{linkFor name='admin:presentation_edit_form' id=$presentation->id html_class='btn btn-primary btn-large'}}編集{{/linkFor}}
-		{{linkFor name='admin:presentation_slides' id=$presentation->id html_class='btn btn-info btn-large'}}プレゼンテーション作成{{/linkFor}}
+		{{linkFor name='admin:presentation_slides' id=$presentation->id html_class='btn btn-info btn-large'}}プレゼン作成{{/linkFor}}
 	</p>
 {{/block}}
 {{block name='main-col'}}

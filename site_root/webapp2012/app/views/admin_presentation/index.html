@@ -1,8 +1,8 @@
 {{extends file='bootstrap/layout-2column-2header.html'}}
-{{block name='nav'}}{{/block}}
+{{block name='nav'}}{{include file='bootstrap/nav.html'}}{{/block}}
 {{block name='left-col'}}
 	<p class="sidebar-actions">
-		{{linkFor name='admin:presentation_new_form' html_class='btn btn-primary btn-large'}}新規プレゼンテーション登録{{/linkFor}}
+		{{linkFor name='admin:presentation_new_form' html_class='btn btn-primary btn-large'}}新規プレゼン登録{{/linkFor}}
 	</p>
 	<aside class="sidebar-form">
 		<h3>検索</h3>

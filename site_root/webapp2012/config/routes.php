@@ -22,6 +22,7 @@ function defineRoutes($router)
 	$router->map('admin:presentation_slides', 'GET /admin/presentations/#id/slides', 'AdminSlideController', 'slides');
 	$router->map('admin:presentation_slide_edit', 'POST /admin/presentations/#id/slides/edit', 'AdminSlideController', 'editSlides');
 	$router->map('admin:presentation_slide_new', 'POST /admin/presentations/#id/slides/new', 'AdminSlideController', 'newSlide');
+	$router->map('admin:presentation_slide_preview', 'POST /admin/presentations/#id/slide_preview', 'AdminSlideController', 'slidePreview');
 
 
 

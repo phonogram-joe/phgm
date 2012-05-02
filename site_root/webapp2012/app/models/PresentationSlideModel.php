@@ -12,7 +12,7 @@ class PresentationSlideModel extends BaseModel
 		if (is_null($modelDefinition)) {
 			return;
 		}
-		$modelDefinition->defineField('presentation_id', 'プレゼンテーション', 'foreign_key', array('required', 'validatePresentationId'), array('null_blank'), true);
+		$modelDefinition->defineField('presentation_id', 'プレゼン', 'foreign_key', array('required', 'validatePresentationId'), array('null_blank'), true);
 		$modelDefinition->defineField('order_by', '順番', 'integer', array('required', 'validateOrderBy'), array('null_blank'), true);
 		$modelDefinition->defineField('content', 'スライド内容', 'multi_line_string', array('required'), array('null_blank'), true);
 		$modelDefinition->defineField('create_at', '作成日時', 'datetime', array(), null, false);
@@ -37,7 +37,7 @@ class PresentationSlideModel extends BaseModel
 			'PresentationModel', 
 			'id = :id', array('id' => $id)
 		);
-		return $count === 1 ? null : 'プレゼンテーションが見つかりません。';
+		return $count === 1 ? null : 'プレゼンが見つかりません。';
 	}
 
 	public function validateOrderBy($orderBy)

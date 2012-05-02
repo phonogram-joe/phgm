@@ -1,15 +1,15 @@
 {{extends file='bootstrap/layout-1column-middle.html'}}
-{{block name='nav'}}{{/block}}
+{{block name='nav'}}{{include file='bootstrap/nav.html'}}{{/block}}
 {{block name='main-col'}}
 	{{formFor name='admin:presentation_new_save' html_class='main form form-horizontal'}}
-		<h3>プレゼンテーション詳細</h3>
+		<h3>プレゼン詳細</h3>
 		<fieldset>
 			{{include file='bootstrap/parts-form-field.html' model=$presentation field='title'}}
 			{{include file='bootstrap/parts-form-field.html' model=$presentation field='summary'}}
 		</fieldset>
 		<fieldset>
 			<div class="form-actions">
-				<input type="submit" class="btn btn-primary" name="save" value="プレゼンテーションを登録する">
+				<input type="submit" class="btn btn-primary" name="save" value="プレゼンを登録する">
 				<a href="{{urlFor name='admin:presentation_index'}}" class="btn">キャンセル</a>
 			</div>
 		</fieldset>

@@ -177,6 +177,16 @@ class BaseController
 		$this->_phgmIsReturned = true;
 	}
 
+	public function getTemplatePath($actionName = null)
+	{
+		if (is_null($actionName)) {
+			$actionName = $this->getRenderAction();
+		}
+		$controllerNamePrefix = ClassLoader::classNamePrefix(get_class($this));
+		$actionName = ClassLoader::camelToUnderscores($actionName);
+		return ClassLoader::$APP_VIEWS_DIR . DS . $controllerNamePrefix . DS . $actionName;
+	}
+
 	/*--------------------------------------------------------------
 	 *	リダイレクトの場合
 	 */

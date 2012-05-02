@@ -1,20 +1,20 @@
-{{extends file='bootstrap/layout-2column.html'}}
+{{extends file='bootstrap/layout-3column.html'}}
 {{block name='page-scripts'}}
 	<script src="/webapp2012/inc/scripts/underscore-min.js"></script>
 	<script src="/webapp2012/inc/scripts/jquery-ui-1.8.20.custom.min.js"></script>
 	<script src="/webapp2012/inc/scripts/pages/admin-slides-editor.js"></script>
 {{/block}}
-{{block name='nav'}}{{/block}}
+{{block name='nav'}}{{include file='bootstrap/nav.html'}}{{/block}}
 {{block name='left-col'}}
 	<aside class="sidebar-form">
 		<h3>新規スライド</h3>
 		{{formFor name='admin:presentation_slide_new' id=$presentation->id html_class='slides-new-form form form-vertical'}}
 			<fieldset>
 				{{include file='bootstrap/parts-form-field.html' model=$newSlide field='content'}}
-				{{include file='bootstrap/parts-form-field.html' model=$newSlide field='order_by' type='hidden'}}
+				{{include file='bootstrap/parts-form-field.html' model=$newSlide field='order_by' type='hidden' controlHtmlClass='hide'}}
 			</fieldset>
 			<fieldset>
-				<input type="submit" class="btn btn-primary" name="save" value="スライドを追加する">
+				<input type="submit" class="btn btn-primary" data-iconify="icon-white icon-plus" name="save" value="スライドを追加する">
 			</fieldset>
 		{{/formFor}}
 	</aside>
@@ -23,13 +23,23 @@
 		<p>スライドを削除するには、スライドをこの箱に移動するだけです。</p>
 	</aside>
 {{/block}}
+{{block name='right-col'}}
+	<aside class="extra-info">
+		<h3>プレビュー</h3>
+		{{formFor name='admin:presentation_slide_preview' id=$presentation->id html_class='slides-preview-form hide'}}
+			<input type="hidden" name="slide" value=""/>
+		{{/formFor}}
+		<div class="slides-edit-preview">
+		</div>
+	</aside>
+{{/block}}
 {{block name='main-col'}}
 	{{formFor name='admin:presentation_slide_edit' id=$presentation->id html_class='slides-edit-form form form-horizontal'}}
 		<ul class="thumbnails" id="slides-list">
 			{{foreach $presentation->slides as $slide}}
 			<li class="span3" data-slide-id="{{$slide->id}}">
-				<div class="thumbnail" contenteditable="true">
-					{{$slide->get('content')|markdown nofilter}}
+				<div class="thumbnail">
+					<textarea class="slides-editor">{{$slide->get('content')}}</textarea>
 				</div>
 				<div class="thumbnail-handle"><i class="icon-move"></i></div>
 				<input type="hidden" class="slides-field-orderby" name="slide[{{$slide->id}}][order_by]" value="{{$slide->get('order_by')}}">

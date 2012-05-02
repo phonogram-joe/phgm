@@ -9,11 +9,12 @@ class AdminPresentationController extends AdminController
 	public function initialize()
 	{
 		parent::initialize();
+		$this->pageSection = 'presentations';
 	}
 
 	public function index($params)
 	{
-		$this->pageTitle = 'プレゼンテーション一覧';
+		$this->pageTitle = 'プレゼン一覧';
 		$this->search = PresentationIndexForm::create();
 		if (false !== array_key_exists('search', $params)) {
 			$this->search->set($params['search']);
@@ -28,30 +29,30 @@ class AdminPresentationController extends AdminController
 
 	public function show($params)
 	{
-		$this->pageTitle = 'プレゼンテーション詳細';
+		$this->pageTitle = 'プレゼン詳細';
 		$this->presentation = PresentationModel::loadId($params['id']);
 		if (is_null($this->presentation)) {
-			return $this->doError('プレゼンテーションが見つかりません。');
+			return $this->doError('プレゼンが見つかりません。');
 		}
 		return $this->doRender();
 	}
 
 	public function editForm($params)
 	{
-		$this->pageTitle = 'プレゼンテーション編集';
+		$this->pageTitle = 'プレゼン編集';
 		$this->presentation = PresentationModel::loadId($params['id']);
 		if (is_null($this->presentation)) {
-			return $this->doError('プレゼンテーションが見つかりません。');
+			return $this->doError('プレゼンが見つかりません。');
 		}
 		return $this->doRender();
 	}
 
 	public function editSave($params)
 	{
-		$this->pageTitle = 'プレゼンテーション編集';
+		$this->pageTitle = 'プレゼン編集';
 		$this->presentation = PresentationModel::loadId($params['id']);
 		if (is_null($this->presentation)) {
-			return $this->doError('プレゼンテーションが見つかりません。');
+			return $this->doError('プレゼンが見つかりません。');
 		}
 		$this->presentation->set($params);
 		if (!$this->presentation->isValid()) {
@@ -64,20 +65,20 @@ class AdminPresentationController extends AdminController
 			'admin:presentation_show',
 			array('id' => $this->presentation->id),
 			ApplicationController::MSG_ALERT,
-			'プレゼンテーションを保存しました'
+			'プレゼンを保存しました'
 		);
 	}
 
 	public function newForm($params)
 	{
-		$this->pageTitle = 'プレゼンテーション登録';
+		$this->pageTitle = 'プレゼン登録';
 		$this->presentation = PresentationModel::create();
 		return $this->doRender();
 	}
 
 	public function newSave($params)
 	{
-		$this->pageTitle = 'プレゼンテーション登録';
+		$this->pageTitle = 'プレゼン登録';
 		$this->presentation = PresentationModel::create();
 		$this->presentation->set($params);
 		if (!$this->presentation->isValid()) {
@@ -91,7 +92,7 @@ class AdminPresentationController extends AdminController
 			'admin:presentation_index',
 			array(),
 			ApplicationController::MSG_ALERT,
-			'プレゼンテーションを登録しました。'
+			'プレゼンを登録しました。'
 		);
 	}
 }

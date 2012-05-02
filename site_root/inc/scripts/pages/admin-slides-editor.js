@@ -9,15 +9,20 @@
 		onSaveChangeSuccess,
 		onSaveChangeError,
 		onStartEdit,
+		onEditChange,
 		onFinishEdit,
+		onPreviewSuccess,
 		$saveXhr = null,
+		$previewXhr = null,
 		$slidesForm,
+		$previewForm,
 		saveTimeoutId = null,
 		alertHtml = '<div class="alert fade in"><button class="close" data-dismiss="alert">×</button><span class="slides-edit-alert"></span></div>',
 		ALERT_DISPLAY_TIME = 2000;
 
 	init = function() {
 		$slidesForm = $('.slides-edit-form');
+		$previewForm = $('.slides-preview-form');
 		if (!$slidesForm.size()) {
 			return;
 		}
@@ -32,14 +37,15 @@
 			});
 			//.disableSelection();
 		$('#slides-list')
-			.on('focus', '[contenteditable=true]', onStartEdit)
-			.on('blur keyup paste', '[contenteditable=true]', onFinishEdit);
+			.on('focus', '.slides-editor', onStartEdit)
+			.on('focus keyup paste', '.slides-editor', _.debounce(onEditChange, 100))
+			.on('blur', '.slides-editor', onFinishEdit);
 		$('.slides-edit-deletebox')
 			.droppable({
 				'drop': onDeleteSlide,
 				'over': onDeleteOver,
 				'out': onDeleteOut
-			})
+			});
 	};
 
 	onDeleteSlide = function(event, $ui) {
@@ -92,38 +98,50 @@
 	onSaveChangeSuccess = function() {
 		var $alert = $slidesForm.find('.alert');
 		$alert.find('span').text('保存しました');
-		window.setTimeout(function() {
-			$alert.alert('close');
-		}, ALERT_DISPLAY_TIME);
-
 		$saveXhr = null;
 	};
 
 	onSaveChangeError = function() {
 		var $alert = $slidesForm.find('.alert');
 		$alert.find('span').text('保存に失敗しました');
-		window.setTimeout(function() {
-			$alert.alert('close');
-		}, ALERT_DISPLAY_TIME);
-
 		$saveXhr = null;
 	};
 
 	onStartEdit = function() {
 		document.designMode = 'on';
-		$(this).data('contenteditable', this.innerHTML);
+		$(this).data('slide-content', $(this).val());
 	};
 
 	onFinishEdit = function() {
 		var $item = $(this).parents('li[data-slide-id]'),
-			newValue = this.innerHTML;
+			newValue = $(this).val();
 		document.designMode = 'off';
-		if (newValue !== $(this).data('contenteditable')) {
-			$(this).data('contenteditable', newValue);
+		if (newValue !== $(this).data('slide-content')) {
+			$(this).data('slide-content', newValue);
 			$item.find('.slides-field-content').val(newValue);
 			queueSaveChanges();
 		}
 	};
+
+	onEditChange = function() {
+		var value = $(this).val();
+		$previewForm.find('input[name=slide]').val(value);
+		if ($previewXhr) {
+			$previewXhr.abort();
+		}
+		$previewXhr = $.ajax({
+			data: $previewForm.serialize(),
+			dataType: 'text',
+			success: onPreviewSuccess,
+			cache: false,
+			url: $previewForm.attr('action'),
+			type: ($previewForm.attr('method') || 'POST')
+		})
+	};
+
+	onPreviewSuccess = function(data) {
+		$('.slides-edit-preview').empty().append($(data));
+	}
 	
 	$(init);
 })(jQuery);
