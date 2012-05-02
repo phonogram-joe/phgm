@@ -97,33 +97,33 @@ class phgm
 		require_once(self::$LIB_DIR . DS . 'ClassLoader.php');
 		ClassLoader::classInitialize();
 		//	フレームワークの基本クラス
-		ClassLoader::loadFrom('Config', self::$LIB_DIR);
-		ClassLoader::loadFrom('Logger', self::$LIB_DIR);
-		ClassLoader::loadFrom('Profiler', self::$LIB_DIR);
-		ClassLoader::loadFrom('TimeUtils', self::$LIB_DIR);
-		ClassLoader::loadFrom('BaseDataType', self::$LIB_TYPES_DIR);
-		ClassLoader::loadFrom('ModelDefinition', self::$LIB_DIR);
-		ClassLoader::loadFrom('BaseModel', self::$LIB_DIR);
-		ClassLoader::loadFrom('BaseDecorator', self::$LIB_DIR);
-		ClassLoader::loadFrom('BaseController', self::$LIB_DIR);
-		ClassLoader::loadFrom('BaseRenderer', self::$LIB_DIR);
-		ClassLoader::loadFrom('ModelRenderFormat', self::$LIB_DIR);
-		ClassLoader::loadFrom('Router', self::$LIB_DIR);
-		ClassLoader::loadFrom('Session', self::$LIB_DIR);
-		ClassLoader::loadFrom('SessionUser', self::$LIB_DIR);
-		ClassLoader::loadFrom('FileUpload', self::$LIB_DIR);
-		ClassLoader::loadFrom('HttpRequest', self::$LIB_DIR);
-		ClassLoader::loadFrom('HttpResponse', self::$LIB_DIR);
-		ClassLoader::loadFrom('HttpResponseFormat', self::$LIB_DIR);
-		ClassLoader::loadFrom('HttpHandler', self::$LIB_DIR);
+		ClassLoader::loadFile('Config', self::$LIB_DIR, true);
+		ClassLoader::loadFile('Logger', self::$LIB_DIR, true);
+		ClassLoader::loadFile('Profiler', self::$LIB_DIR, true);
+		ClassLoader::loadFile('TimeUtils', self::$LIB_DIR, true);
+		ClassLoader::loadFile('BaseDataType', self::$LIB_TYPES_DIR, true);
+		ClassLoader::loadFile('ModelDefinition', self::$LIB_DIR);
+		ClassLoader::loadFile('BaseModel', self::$LIB_DIR, true);
+		ClassLoader::loadFile('BaseDecorator', self::$LIB_DIR);
+		ClassLoader::loadFile('BaseController', self::$LIB_DIR);
+		ClassLoader::loadFile('BaseRenderer', self::$LIB_DIR, true);
+		ClassLoader::loadFile('ModelRenderFormat', self::$LIB_DIR);
+		ClassLoader::loadFile('Router', self::$LIB_DIR);
+		ClassLoader::loadFile('Session', self::$LIB_DIR);
+		ClassLoader::loadFile('SessionUser', self::$LIB_DIR);
+		ClassLoader::loadFile('FileUpload', self::$LIB_DIR, true);
+		ClassLoader::loadFile('HttpRequest', self::$LIB_DIR);
+		ClassLoader::loadFile('HttpResponse', self::$LIB_DIR);
+		ClassLoader::loadFile('HttpResponseFormat', self::$LIB_DIR, true);
+		ClassLoader::loadFile('HttpHandler', self::$LIB_DIR);
 
 		//	データベースのクラス
-		ClassLoader::loadFrom('SqlStatement', self::$LIB_DATABASE_DIR);
-		ClassLoader::loadFrom('DatabaseSession', self::$LIB_DATABASE_DIR);
-		ClassLoader::loadFrom('PhgmPDO', self::$LIB_DATABASE_DIR);
-		ClassLoader::loadFrom('DB', self::$LIB_DATABASE_DIR);
-		ClassLoader::loadFrom('DbModel', self::$LIB_DATABASE_DIR);
-		ClassLoader::loadFrom('JoinStatement', self::$LIB_DATABASE_DIR);
+		ClassLoader::loadFile('SqlStatement', self::$LIB_DATABASE_DIR);
+		ClassLoader::loadFile('DatabaseSession', self::$LIB_DATABASE_DIR);
+		ClassLoader::loadFile('PhgmPDO', self::$LIB_DATABASE_DIR);
+		ClassLoader::loadFile('DB', self::$LIB_DATABASE_DIR, true);
+		ClassLoader::loadFile('DbModel', self::$LIB_DATABASE_DIR, true);
+		ClassLoader::loadFile('JoinStatement', self::$LIB_DATABASE_DIR);
 	}
 
 	private static function loadConfig()

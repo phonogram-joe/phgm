@@ -158,6 +158,15 @@ class ClassLoader
 		}
 	}
 
+	public static function loadFile($className, $folder, $isClassInitialize = false)
+	{
+		$path = self::path($folder, $className);
+		require_once($path);
+		if ($isClassInitialize) {
+			call_user_func(array($className, 'classInitialize'));
+		}
+	}
+
 	public static function path($folder, $className)
 	{
 		return $folder . DS . $className . '.php';
