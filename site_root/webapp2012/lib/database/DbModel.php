@@ -15,7 +15,7 @@ class DbModel extends BaseModel
 	const BEFORE_UPDATE = 1; //UPDATEのみ
 	const BEFORE_SAVE = 2; //INSERTとUPDATEの両方
 	const BEFORE_DELETE = 3; //DELETEのみ
-	const AFTER_DELTE = 4;
+	const AFTER_DELETE = 4;
 	const AFTER_SAVE = 5;
 	const AFTER_UPDATE = 6;
 	const AFTER_INSERT = 7;
@@ -70,7 +70,7 @@ class DbModel extends BaseModel
 			self::BEFORE_UPDATE, 
 			self::BEFORE_INSERT, 
 			self::BEFORE_SAVE,
-			self::AFTER_DELTE,
+			self::AFTER_DELETE,
 			self::AFTER_UPDATE,
 			self::AFTER_INSERT,
 			self::AFTER_SAVE
