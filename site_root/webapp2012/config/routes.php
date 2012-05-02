@@ -18,12 +18,15 @@ function defineRoutes($router)
 	$router->map('admin:presentation_edit_form', 'GET /admin/presentations/#id/edit', 'AdminPresentationController', 'editForm');
 	$router->map('admin:presentation_edit_save', 'POST /admin/presentations/#id/edit', 'AdminPresentationController', 'editSave');
 
-	//	プレゼンテーションのスライド
+	//	プレゼンテーションのスライド：作成・編集・削除・など
 	$router->map('admin:presentation_slides', 'GET /admin/presentations/#id/slides', 'AdminSlideController', 'slides');
 	$router->map('admin:presentation_slide_edit', 'POST /admin/presentations/#id/slides/edit', 'AdminSlideController', 'editSlides');
 	$router->map('admin:presentation_slide_new', 'POST /admin/presentations/#id/slides/new', 'AdminSlideController', 'newSlide');
 	$router->map('admin:presentation_slide_preview', 'POST /admin/presentations/#id/slide_preview', 'AdminSlideController', 'slidePreview');
 
+	//	プレゼンのビュアー
+	$router->map('presentation_view', 'GET /presentations/#id', 'SlideViewerController', 'show');
+	$router->map('presentation_play', 'GET /presentations/#id/play', 'SlideViewerController', 'play');
 
 
 

@@ -98,6 +98,9 @@
 	onSaveChangeSuccess = function() {
 		var $alert = $slidesForm.find('.alert');
 		$alert.find('span').text('保存しました');
+		window.setTimeout(function() {
+			$alert.find('span').text('全ての変更は保存してあります。');
+		}, ALERT_DISPLAY_TIME);
 		$saveXhr = null;
 	};
 
@@ -121,6 +124,7 @@
 			$item.find('.slides-field-content').val(newValue);
 			queueSaveChanges();
 		}
+		$('.slides-edit-preview').empty();
 	};
 
 	onEditChange = function() {

@@ -6,6 +6,9 @@
 {{/block}}
 {{block name='nav'}}{{include file='bootstrap/nav.html'}}{{/block}}
 {{block name='left-col'}}
+	<p class="sidebar-action">
+		<a class="btn btn-large" href="{{urlFor name='presentation_view' id=$presentation->id}}">プレゼンを見る</a>
+	</p>
 	<aside class="sidebar-form">
 		<h3>新規スライド</h3>
 		{{formFor name='admin:presentation_slide_new' id=$presentation->id html_class='slides-new-form form form-vertical'}}
