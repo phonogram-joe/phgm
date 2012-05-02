@@ -1,0 +1,42 @@
+{{extends file='bootstrap/layout-2column.html'}}
+{{block name='page-scripts'}}
+	<script src="/webapp2012/inc/scripts/underscore-min.js"></script>
+	<script src="/webapp2012/inc/scripts/jquery-ui-1.8.20.custom.min.js"></script>
+	<script src="/webapp2012/inc/scripts/pages/admin-slides-editor.js"></script>
+{{/block}}
+{{block name='nav'}}{{/block}}
+{{block name='left-col'}}
+	<aside class="sidebar-form">
+		<h3>新規スライド</h3>
+		{{formFor name='admin:presentation_slide_new' id=$presentation->id html_class='slides-new-form form form-vertical'}}
+			<fieldset>
+				{{include file='bootstrap/parts-form-field.html' model=$newSlide field='content'}}
+				{{include file='bootstrap/parts-form-field.html' model=$newSlide field='order_by' type='hidden'}}
+			</fieldset>
+			<fieldset>
+				<input type="submit" class="btn btn-primary" name="save" value="スライドを追加する">
+			</fieldset>
+		{{/formFor}}
+	</aside>
+	<aside class="slides-edit-deletebox">
+		<h3>ゴミ箱</h3>
+		<p>スライドを削除するには、スライドをこの箱に移動するだけです。</p>
+	</aside>
+{{/block}}
+{{block name='main-col'}}
+	{{formFor name='admin:presentation_slide_edit' id=$presentation->id html_class='slides-edit-form form form-horizontal'}}
+		<ul class="thumbnails" id="slides-list">
+			{{foreach $presentation->slides as $slide}}
+			<li class="span3" data-slide-id="{{$slide->id}}">
+				<div class="thumbnail" contenteditable="true">
+					{{$slide->get('content')|markdown nofilter}}
+				</div>
+				<div class="thumbnail-handle"><i class="icon-move"></i></div>
+				<input type="hidden" class="slides-field-orderby" name="slide[{{$slide->id}}][order_by]" value="{{$slide->get('order_by')}}">
+				<input type="hidden" class="slides-field-content" name="slide[{{$slide->id}}][content]" value="{{$slide->get('content')}}">
+				<input type="hidden" class="slides-field-delete" name="slide[{{$slide->id}}][delete]" value="0">
+			</li>
+			{{/foreach}}
+		</ul>
+	{{/formFor}}
+{{/block}}

@@ -6,3 +6,4 @@ site_root/webapp2012/config/database.php
 site_root/webapp2012/lib-vendor/phpdoc/
 site_root/webapp2012/docs/app/
 site_root/webapp2012/docs/lib/
+site_root/sftp-config.json

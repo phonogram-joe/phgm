@@ -122,10 +122,24 @@
 			totalTime = 0,
 			count = 0;
 		$.each(profile.dbQueries, function(id, query) {
-			var elapsed = query.elapsed * 1000,
-				memory = query.memory_end - query.memory_start,
-				abbrev = query.sql.substr(0, query.sql.length < 40 ? null : 40),
-				fromIndex = query.sql.indexOf('FROM');
+			var elapsed = 0,
+				memory = 0,
+				abbrev = '',
+				fromIndex = '';
+
+			if (!isNaN(query.elapsed)) {
+				elapsed = query.elapsed * 1000;
+			}
+
+			if (!isNaN(query.memory_end) && !isNaN(query.memory_start)) {
+				memory = query.memory_end - query.memory_start;
+			}
+
+			if (typeof query.sql !== 'string') {
+				return;
+			}
+			abbrev = query.sql.substr(0, query.sql.length < 40 ? null : 40),
+			fromIndex = query.sql.indexOf('FROM');
 
 			count++;
 			totalTime += elapsed;

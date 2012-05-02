@@ -1,0 +1,38 @@
+{{extends file='bootstrap/layout-2column-2header.html'}}
+{{block name='nav'}}{{/block}}
+{{block name='left-col'}}
+	<p class="sidebar-actions">
+		{{linkFor name='admin:presentation_new_form' html_class='btn btn-primary btn-large'}}新規プレゼンテーション登録{{/linkFor}}
+	</p>
+	<aside class="sidebar-form">
+		<h3>検索</h3>
+		{{formFor name='admin:presentation_index' http_method='GET' html_class='form form-vertical'}}
+			<label for="f_create_at">登録日</label>
+			<input type="datetime" name="search[create_at]" value="{{$search->get('create_at')}}" class="datetime" data-datetime-format="date" data-datetime-minutes="all" data-datetime-hours="all">
+			<label for="f_keyword">タイトル</label>
+			<input type="text" name="search[keyword]" value="{{$search->get('keyword')}}">
+			<label><input type="submit" name="search[submit]" value="検索" data-iconify="icon-search" class="btn"></label>
+		{{/formFor}}
+	</aside>
+{{/block}}
+{{block name='main-col'}}
+	<table class="main table table-bordered table-striped">
+	  <thead>
+	    <tr>
+		    <th>タイトル</th>
+		    <th>内容サマリー</th>
+		    <th>登録日</th>
+	    </tr>
+	  </thead>
+	  <tbody>
+		  {{foreach $presentations as $presentation}}
+		  <tr class="">
+			<td>{{linkFor name='admin:presentation_show' id=$presentation->id}}{{$presentation->get('title')}}{{/linkFor}}</td>
+			<td>{{$presentation->get('summary')|truncate:40}}</td>
+			<td>{{timeTag time=$presentation->val('create_at') twitter=true}}</td>
+		  </tr>
+		  {{/foreach}}
+	  </tbody>
+	</table>
+	{{include file="bootstrap/parts-index-paging.html" search=$search}}
+{{/block}}
