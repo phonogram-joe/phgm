@@ -20,7 +20,7 @@ class Logger
 	private $level;
 
     private function __construct() {
-    	$this->filepath = null;
+    	$this->filepath = phgm::$LOG_DIR . DS . 'system.log';
     	$this->level = self::ERROR;
     }
     private function __clone()
@@ -60,18 +60,15 @@ class Logger
 
 		$fp = fopen($this->filepath, 'a');
 		if ($fp === false) {
-			print $msg;
 			throw new Exception('ログファイルを開けませんでした。');
 		}
 
 		if (fwrite($fp, $msg) === false) {
 			@fclose($fp);
 			throw new Exception('');
-			return false;
 		}
 
 		if (fclose($fp) === false) {
-			print $msg;
 			throw new Exception('ログファイルを正しく閉じられませんでした。');
 		}
 

@@ -254,7 +254,6 @@ class DatabaseSession
 			throw new Exception('DatabaseSession:track() -- ナルやオブジェクト以外のものはtrack()できません。');
 		} else if (!in_array($object, $this->deletedObjects, true)) {
 			if (!in_array($object, $this->trackedObjects, true)) {
-				Logger::trace('DatabaseSession:track() -- tracking ' . $object);
 				$this->trackedObjects[] = $object;
 			}
 		} else {
@@ -267,7 +266,6 @@ class DatabaseSession
 			throw new Exception('DatabaseSession:track() -- ナルやオブジェクト以外のものはdelete()できません。');
 		} else if (!in_array($object, $this->trackedObjects, true)) {
 			if (!in_array($object, $this->deletedObjects, true)) {
-				Logger::trace('DatabaseSession:delete() -- deleting ' . $object);
 				$this->deletedObjects[] = $object;
 			}
 		} else {
@@ -283,7 +281,7 @@ class DatabaseSession
 	public function flush()
 	{
 		if (!$this->allowUpdates) {
-			//	DBに書き込むする場合はHTTPのGETリクエストは非常危険なので、POST・PUT・DELETEHTTPメソッドを使ってください。
+			//	DBに書き込むする場合はHTTPのGETリクエストは非常に危険なので、POST・PUT・DELETEHTTPメソッドを使ってください。
 			throw new Exception('DatabaseSession:flush() -- HTTPリクエストの形によりDBの書き込みは禁止されています。');
 		}
 		if (count($this->trackedObjects) === 0 && count($this->deletedObjects) === 0 && count($this->flushStatements) === 0) {
@@ -330,7 +328,6 @@ class DatabaseSession
 			Profiler::getProfiler()->stopDbQuery($profileId);
 			Logger::trace('DatabaseSession:flush() -- rollback');
 			throw $e;
-			return false;
 		}
 	}
 
@@ -390,7 +387,7 @@ class DatabaseSession
 		$result = $statement->execute($data);
 		Profiler::getProfiler()->stopDbQuery($profileId);
 		if (true !== $result) {
-			throw new Exception('DatabaseSession:insertObject() -- UPDATEに失敗しました。');
+			throw new Exception('DatabaseSession:updateObject() -- UPDATEに失敗しました。');
 		}
 		$dbModel->doCallback(DbModel::AFTER_SAVE, $object);
 		$dbModel->doCallback(DbModel::AFTER_UPDATE, $object);
@@ -410,7 +407,7 @@ class DatabaseSession
 		$result = $statement->execute($data);
 		Profiler::getProfiler()->stopDbQuery($profileId);
 		if (true !== $result) {
-			throw new Exception('DatabaseSession:insertObject() -- DELETEに失敗しました。');
+			throw new Exception('DatabaseSession:deleteObject() -- DELETEに失敗しました。');
 		}
 		$dbModel->doCallback(DbModel::AFTER_DELETE, $object);
 		return $statement->rowCount();
@@ -422,7 +419,7 @@ class DatabaseSession
 			$object->storeChanges();
 		}
 		$this->trackedObjects = array();
-		$this->deleteObject = array();
+		$this->deletedObjects = array();
 		$this->flushStatements = array();
 	}
 }
