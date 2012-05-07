@@ -39,6 +39,30 @@ class PresentationModel extends BaseModel
 		return $results;
 	}
 
+	public static function loadAllWithFirstSlide($searchForm)
+	{
+		$db = DB::getSession();
+		$sql = <<<SQL
+		SELECT 
+			presentation.id,
+			presentation.title,
+			presentation.summary,
+			ps.content as first_slide_content
+		FROM presentation AS presentation
+		LEFT JOIN presentation_slide ps
+		ON presentation.id = ps.presentation_id
+		LEFT OUTER JOIN presentation_slide AS ps2
+		ON presentation.id = ps2.presentation_id
+			AND ps2.order_by < ps.order_by
+SQL;
+		$sqlStatement = new SqlStatement($sql);
+		$searchForm->updateSqlStatement($sqlStatement);
+		$sqlStatement->where('ps2.presentation_id IS NULL', array());
+		$results = $db->findAllSqlStatement($sqlStatement, 'PresentationModel');
+		$searchForm->setResultTotal($db->lastFindAllRowCount());
+		return $results;
+	}
+
 	public static function loadId($id)
 	{
 		$db = DB::getSession();

@@ -13,10 +13,11 @@ class AdminSlideController extends AdminController
 
 	public function slides($params)
 	{
-		$this->pageTitle = 'プレゼン作成';
 		$this->presentation = PresentationModel::loadId($params['id']);
 		$lastSlide = is_null($this->presentation->slides) ? null : end($this->presentation->slides);
 		$nextOrderBy = is_null($lastSlide) ? 0 : $lastSlide->val('order_by') + 1;
+
+		$this->pageTitle = $this->presentation->val('title') . 'の作成';
 		$this->newSlide = PresentationSlideModel::createFor($this->presentation->id);
 		$this->newSlide->val('order_by', $nextOrderBy);
 		return $this->doRender();

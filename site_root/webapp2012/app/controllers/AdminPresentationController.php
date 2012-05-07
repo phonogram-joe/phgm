@@ -14,7 +14,7 @@ class AdminPresentationController extends AdminController
 
 	public function index($params)
 	{
-		$this->pageTitle = 'プレゼン一覧';
+		$this->pageTitle = 'プレゼン・ギャラリー';
 		$this->search = PresentationIndexForm::create();
 		if (false !== array_key_exists('search', $params)) {
 			$this->search->set($params['search']);
@@ -22,18 +22,8 @@ class AdminPresentationController extends AdminController
 		if (!$this->search->isValid()) {
 			$this->search = PresentationIndexForm::create();
 		}
-		$this->pageSubTitle = $this->search->hasConditions() ? '検索結果' : '全てのクライアント';
-		$this->presentations = PresentationModel::loadAll($this->search);
-		return $this->doRender();
-	}
-
-	public function show($params)
-	{
-		$this->pageTitle = 'プレゼン詳細';
-		$this->presentation = PresentationModel::loadId($params['id']);
-		if (is_null($this->presentation)) {
-			return $this->doError('プレゼンが見つかりません。');
-		}
+		$this->pageSubTitle = $this->search->hasConditions() ? '検索結果' : '全てのプレゼン';
+		$this->presentations = PresentationModel::loadAllWithFirstSlide($this->search);
 		return $this->doRender();
 	}
 
@@ -62,7 +52,7 @@ class AdminPresentationController extends AdminController
 		$db->track($this->presentation);
 		$db->flush();
 		return $this->doRedirectWithMessage(
-			'admin:presentation_show',
+			'admin:presentation_slides',
 			array('id' => $this->presentation->id),
 			ApplicationController::MSG_ALERT,
 			'プレゼンを保存しました'

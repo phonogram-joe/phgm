@@ -6,8 +6,9 @@
 {{/block}}
 {{block name='nav'}}{{include file='bootstrap/nav.html'}}{{/block}}
 {{block name='left-col'}}
-	<p class="sidebar-action">
-		<a class="btn btn-large" href="{{urlFor name='presentation_view' id=$presentation->id}}">プレゼンを見る</a>
+	<p class="sidebar-actions">
+		{{linkFor name='admin:presentation_edit_form' id=$presentation->id html_class='btn btn-large'}}<i class="icon-edit"></i> タイトルを編集{{/linkFor}}
+		{{linkFor name='presentation_play' id=$presentation->id html_class='btn btn-large slide-viewer-go'}}<i class="icon-play"></i> スライドショーを開始{{/linkFor}}
 	</p>
 	<aside class="sidebar-form">
 		<h3>新規スライド</h3>
@@ -33,6 +34,7 @@
 			<input type="hidden" name="slide" value=""/>
 		{{/formFor}}
 		<div class="slides-edit-preview">
+			<p>（スライドが未選択です。）</p>
 		</div>
 	</aside>
 {{/block}}

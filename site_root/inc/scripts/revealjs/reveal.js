@@ -81,10 +81,10 @@ var Reveal = (function(){
 		document.addEventListener('keydown', onDocumentKeyDown, false);
 		document.addEventListener('touchstart', onDocumentTouchStart, false);
 		window.addEventListener('hashchange', onWindowHashChange, false);
-		dom.controlsLeft.addEventListener('click', preventAndForward( navigateLeft ), false);
-		dom.controlsRight.addEventListener('click', preventAndForward( navigateRight ), false);
-		dom.controlsUp.addEventListener('click', preventAndForward( navigateUp ), false);
-		dom.controlsDown.addEventListener('click', preventAndForward( navigateDown ), false);
+		if (dom.controlsLeft) dom.controlsLeft.addEventListener('click', preventAndForward( navigateLeft ), false);
+		if (dom.controlsRight) dom.controlsRight.addEventListener('click', preventAndForward( navigateRight ), false);
+		if (dom.controlsUp) dom.controlsUp.addEventListener('click', preventAndForward( navigateUp ), false);
+		if (dom.controlsDown) dom.controlsDown.addEventListener('click', preventAndForward( navigateDown ), false);
 
 		// Copy options over to our config object
 		extend( config, options );
@@ -539,6 +539,7 @@ var Reveal = (function(){
 
 		// Remove the 'enabled' class from all directions
 		[ dom.controlsLeft, dom.controlsRight, dom.controlsUp, dom.controlsDown ].forEach( function( node ) {
+			if (!node) return;
 			node.classList.remove( 'enabled' );
 		} )
 

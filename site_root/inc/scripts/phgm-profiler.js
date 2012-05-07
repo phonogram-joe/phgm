@@ -32,10 +32,6 @@
 		$display = $display.replace('{PHP}', buildPhpDisplay(profile));
 		$display = $display.replace('{DB}', buildDbDisplay(profile));
 		$display = $($display);
-		$display.css({
-			'width': '70%',
-			'left': '40%'
-		});
 		$('body').append($display);
 	}
 

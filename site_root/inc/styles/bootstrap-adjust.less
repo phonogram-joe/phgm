@@ -121,8 +121,15 @@ body {
 .sidebar-form {
 	.titled-section;
 }
-.sidebar-form form {
-	padding: 9px;
+.sidebar-form {
+	form {
+		padding: 9px;
+	}
+	input,
+	textarea,
+	select {
+		width: 90%;
+	}
 }
 
 /* 
@@ -496,6 +503,9 @@ table .alert a {
 .thumbnails > li {
 	position: relative;
 }
+.thumbnail {
+	position: relative;
+}
 .thumbnail-handle {
 	position: absolute;
 	z-index: 1;
@@ -509,14 +519,30 @@ table .alert a {
 	.border-radius(0 4px 0 4px);
 	cursor: move;
 }
-.thumbnails .span2 div.thumbnail {
+.span2 div.thumbnail {
 	height: 120px;
 }
-.thumbnails .span3 div.thumbnail {
+.span3 div.thumbnail {
 	height: 180px;
 }
-.thumbnails .span4 div.thumbnail {
+.span4 div.thumbnail {
 	height: 268px;
+}
+.thumbnail img {
+	max-width: 100%;
+}
+.thumbnail .presentation-title {
+	position: absolute;
+	height: 48px;
+	overflow: hidden;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	padding: 4px;
+	background: @black;
+	.opacity(70);
+	color: @white;
+	.border-radius(0 0 4px 4px);
 }
 
 .slides-edit-form .thumbnail {
@@ -544,4 +570,7 @@ table .alert a {
 }
 .slides-edit-preview {
 	text-align: center;
+	img {
+		max-width: 100%;
+	}
 }

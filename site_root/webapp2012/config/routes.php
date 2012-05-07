@@ -12,7 +12,6 @@ function defineRoutes($router)
 
 	//	プレゼンテーション
 	$router->map('admin:presentation_index', 'GET /admin/presentations', 'AdminPresentationController', 'index');
-	$router->map('admin:presentation_show', 'GET /admin/presentations/#id', 'AdminPresentationController', 'show');
 	$router->map('admin:presentation_new_form', 'GET /admin/presentations/new', 'AdminPresentationController', 'newForm');
 	$router->map('admin:presentation_new_save', 'POST /admin/presentations/new', 'AdminPresentationController', 'newSave');
 	$router->map('admin:presentation_edit_form', 'GET /admin/presentations/#id/edit', 'AdminPresentationController', 'editForm');

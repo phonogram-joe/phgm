@@ -9,6 +9,8 @@
 		onSaveChangeSuccess,
 		onSaveChangeError,
 		onStartEdit,
+		onSortStart,
+		onSortStop,
 		onEditChange,
 		onFinishEdit,
 		onPreviewSuccess,
@@ -32,6 +34,8 @@
 		}, ALERT_DISPLAY_TIME);
 		$('#slides-list')
 			.sortable({
+				'start': onSortStart,
+				'stop': onSortStop,
 				'update': doSaveChanges,
 				'cancel': '.thumbnail'
 			});
@@ -45,8 +49,17 @@
 				'drop': onDeleteSlide,
 				'over': onDeleteOver,
 				'out': onDeleteOut
-			});
+			})
+			.hide();
 	};
+
+	onSortStart = function() {
+		$('.slides-edit-deletebox').show();
+	};
+
+	onSortStop = function() {
+		$('.slides-edit-deletebox').hide();
+	}
 
 	onDeleteSlide = function(event, $ui) {
 		var $slide = $ui.draggable;
@@ -124,7 +137,7 @@
 			$item.find('.slides-field-content').val(newValue);
 			queueSaveChanges();
 		}
-		$('.slides-edit-preview').empty();
+		$('.slides-edit-preview').empty().append('<p>（スライドが未選択です。）</p>');
 	};
 
 	onEditChange = function() {

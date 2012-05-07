@@ -13,7 +13,7 @@ class PresentationSlideModel extends BaseModel
 			return;
 		}
 		$modelDefinition->defineField('presentation_id', 'プレゼン', 'foreign_key', array('required', 'validatePresentationId'), array('null_blank'), true);
-		$modelDefinition->defineField('order_by', '順番', 'integer', array('required', 'validateOrderBy'), array('null_blank'), true);
+		$modelDefinition->defineField('order_by', '順番', 'integer', array('required'), array('null_blank'), true);
 		$modelDefinition->defineField('content', 'スライド内容', 'multi_line_string', array('required'), array('null_blank'), true);
 		$modelDefinition->defineField('create_at', '作成日時', 'datetime', array(), null, false);
 		$modelDefinition->defineField('update_at', '更新日時', 'datetime', array(), null, false);
@@ -35,11 +35,13 @@ class PresentationSlideModel extends BaseModel
 	{
 		$count = DB::getSession()->findCount(
 			'PresentationModel', 
-			'id = :id', array('id' => $id)
+			'id = :id', 
+			array('id' => $id)
 		);
 		return $count === 1 ? null : 'プレゼンが見つかりません。';
 	}
 
+	/*
 	public function validateOrderBy($orderBy)
 	{
 		$sql = 'presentation_id = :presentation_id AND order_by = :order_by';
@@ -51,8 +53,14 @@ class PresentationSlideModel extends BaseModel
 			$sql .= ' AND id != :id';
 			$data['id'] = $this->id;
 		}
-		return DB::getSession()->findCount('PresentationSlideModel', $sql, $count) === 0 ? null : '順番はユニークではありません。';
+		$count = DB::getSession()->findCount(
+			'PresentationSlideModel', 
+			$sql, 
+			$data
+		);
+		return $count === 0 ? null : '順番はユニークではありません。';
 	}
+	*/
 
 	public function onDbInsert()
 	{
