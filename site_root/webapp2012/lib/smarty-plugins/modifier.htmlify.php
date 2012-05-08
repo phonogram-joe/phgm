@@ -4,6 +4,7 @@ function smarty_modifier_htmlify($text) {
 	$text = preg_replace_callback(Htmlify::TAG_REGEX, array('Htmlify', 'replaceTags'), $text);
 	$text = preg_replace_callback(Htmlify::LINK_REGEX, array('Htmlify', 'replaceLinks'), $text);
 	$text = preg_replace_callback(Htmlify::IMAGE_REGEX, array('Htmlify', 'replaceImages'), $text);
+	$text = preg_replace_callback(Htmlify::HEADER_REGEX, array('Htmlify', 'replaceHeaders'), $text);
 	$text = nl2br($text);
 	return $text;
 }
@@ -12,6 +13,7 @@ class Htmlify {
 	const TAG_REGEX = '/([_*])([^_*]+)([_*])/';
 	const LINK_REGEX = '/\[([^\]]+)\s([^\]]+?)\]/';
 	const IMAGE_REGEX = '/img\(([^\)]+)\)/';
+	const HEADER_REGEX = '/(\#+)\s+(.*)/';
 
 	public static function replaceTags($matches)
 	{
@@ -44,5 +46,15 @@ class Htmlify {
 	{
 		$src = htmlspecialchars($matches[1], ENT_QUOTES);
 		return "<img src=\"$src\" />";
+	}
+
+	public static function replaceHeaders($matches)
+	{
+		$html = htmlspecialchars($matches[2]);
+		$count = mb_strlen($matches[1]);
+		if ($count < 1 || $count > 6) {
+			$count = 1;
+		}
+		return "<h$count>$html</h$count>";
 	}
 }
