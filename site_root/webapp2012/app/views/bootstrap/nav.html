@@ -10,6 +10,7 @@
       <div class="nav-collapse">
         <ul class="nav">
           <li {{if preg_match('/\bpresentations\b/', $pageSection)}}class="active"{{/if}}><a href="{{urlFor name='admin:presentation_index'}}">プレゼン</a></li>
+          <li {{if preg_match('/\bjquery\b/', $pageSection)}}class="active"{{/if}}><a href="{{urlFor name='jquery_index'}}">jQueryプラグイン</a></li>
         </ul>
         {{*
         <ul class="nav pull-right">

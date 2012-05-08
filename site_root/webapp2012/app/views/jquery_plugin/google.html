@@ -1,0 +1,43 @@
+{{extends file='bootstrap/layout-1column-middle.html'}}
+{{block name='page-scripts'}}
+	<script src="/webapp2012/inc/scripts/underscore-min.js"></script>
+	<link href="/webapp2012/inc/styles/jquery/maps.css" rel="stylesheet"></link>
+	<script src="/webapp2012/inc/scripts/jquery/googlemap.jquery.js" data-autoload="false" data-forcedynamic="false" data-forcestatic="false">
+		//#mapOne has class 'googlemap' so could eliminate this line with data-autoload="true"
+		$('#mapOne').googlemap();
+	</script>
+{{/block}}
+{{block name='nav'}}{{include file='bootstrap/nav.html'}}{{/block}}
+{{block name='main-col'}}
+		<div id="mapOne" class="googlemap" data-noscroll="noscroll" data-center="34.394299,132.457901" data-zoom="14" data-mapheight="400">
+			<ul>
+				<li data-geo="34.409506,132.450528" data-icon="/webapp2012/inc/images/jquery/train_icon-32.png" title="横川駅">
+					<div style="width: 250px; max-height: 200px; overflow: auto;">
+					<p><a href="http://ja.wikipedia.org/wiki/%E6%A8%AA%E5%B7%9D%E9%A7%85_(%E5%BA%83%E5%B3%B6%E7%9C%8C)"><b>横川駅</b></a></p>
+					<p>横川駅（よこがわえき）は、広島県広島市西区横川町三丁目にある、西日本旅客鉄道（JR西日本）・広島電鉄の駅・電停。広島電鉄では「駅」も正式電停名に入り、横川駅電停（よこがわえきでんてい）となる。</p>
+					<p>JRの乗車券には信越本線にある横川駅（こちらは「よこかわ」と読む）と区別するため、（陽）横川と表記している。</p>
+					</div>
+				</li>
+				<li data-autoopen="true" data-geo="34.398205,132.475824" data-icon="/webapp2012/inc/images/jquery/train_icon-32.png" title="広島駅">
+					<div style="width: 250px; max-height: 200px; overflow: auto;">
+					<p><a href="http://ja.wikipedia.org/wiki/%E5%BA%83%E5%B3%B6%E9%A7%85"><b>広島駅</b></a></p>
+					<p>広島駅（ひろしまえき）は、広島県広島市南区松原町にある、西日本旅客鉄道（JR西日本）の駅。</p>
+					<p>広島電鉄の電停名でもある（こちらは「駅」も正式電停名に入り広島駅電停（ひろしまえきでんてい）となる）。</p>
+					</div>
+				</li>
+			</ul>
+		</div>
+
+		<p class="map_controls">
+			<a href="#" onclick="$('#mapOne').googlemap('showMarker','広島駅');return false;">広島駅</a><br />
+			<a href="#" onclick="$('#mapOne').googlemap('showMarker','横川駅');return false;">横川駅</a><br />
+			<a href="#" onclick="$('#mapOne').googlemap('closeWindow');return false;">情報ウィンドーを閉じる</a><br />
+			<a href="#" onclick="$('#mapOne').googlemap('remove');return false;">マップを閉じる</a><br />
+			<a href="#" onclick="$('#mapOne').googlemap();return false;">マップに変換</a><br />
+			<a href="#" onclick="console.log($('#mapOne').googlemap('mapOptions'));return false;">マップのオプションをコンソールで表示する</a><br />
+		</p>
+
+		<p>
+			Train icon courtesy of Lokas Software, used under the Creative Commons license and available from <a href="http://www.iconarchive.com/show/vista-artistic-icons-by-awicons/3-Gray-Train-icon.html">http://www.iconarchive.com/show/vista-artistic-icons-by-awicons/3-Gray-Train-icon.html</a>.
+		</p>
+{{/block}}

@@ -27,6 +27,10 @@ function defineRoutes($router)
 	$router->map('presentation_view', 'GET /presentations/#id', 'SlideViewerController', 'show');
 	$router->map('presentation_play', 'GET /presentations/#id/play', 'SlideViewerController', 'play');
 
+	$router->map('jquery_index', 'GET /jquery', 'JqueryPluginController', 'index');
+	$router->map('jquery_google', 'GET /jquery/google', 'JqueryPluginController', 'google');
+	$router->map('jquery_tabs', 'GET /jquery/tabs', 'JqueryPluginController', 'tabs');
+
 
 
 	/*	上記の一行は、下記の８ルートとなります：

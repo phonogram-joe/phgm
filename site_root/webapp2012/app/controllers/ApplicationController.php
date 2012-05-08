@@ -39,6 +39,7 @@ class ApplicationController extends BaseController
 		$this->pageSection = null;
 		$this->pageAlert = null;
 		$this->pageError = null;
+		DB::getSession()->setAllowUpdates(false);
 	}
 
 	public function preProcess($params)

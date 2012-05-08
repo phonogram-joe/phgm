@@ -1,0 +1,42 @@
+/* 
+	tabs
+
+	TODO: no need for the outer .tab_group wrapper element in the core code
+		can set the tab list as ul.tabs and the wrapper for the tabs
+		as div.tabs_content
+*/
+.tab_group {
+	margin-bottom: 1em;
+	padding-bottom: 1em;
+	border: 1px solid #ccc;
+}
+.tab_group .tab_nav {
+	overflow: hidden;
+	margin: 0 0 10px 0;
+	padding: 0;
+	list-style: none;
+}
+.tab_group .tab_nav li {
+	float: left;
+	width: 100px;
+	margin: 0 10px 0 0;
+}
+.tab_group .tab_nav li.last {
+	margin-right: 0;
+}
+.tab_group .tab_nav a {
+	display: block;
+}
+.tab_group .tabs {
+	overflow: hidden;
+}
+.tab_group .inactive {
+	position: absolute;
+	top: -9999px;
+	left: -9999px;
+}
+.no-js .tab_group .inactive {
+	position: relative;
+	top: 0;
+	left: 0;
+}
