@@ -38,7 +38,7 @@ class Smarty_Internal_Write_File {
         }
 
         // write to tmp file, then move to overt file lock race condition
-        $_tmp_file = $_dirpath . DS . uniqid('wrt');
+        $_tmp_file = $_dirpath . DS . uniqid('wrt', true);
         if (!file_put_contents($_tmp_file, $_contents)) {
             error_reporting($_error_reporting);
             throw new SmartyException("unable to write file {$_tmp_file}");
@@ -46,7 +46,7 @@ class Smarty_Internal_Write_File {
         }
 
         // remove original file
-        unlink($_filepath);
+        @unlink($_filepath);
 
         // rename tmp file
         $success = rename($_tmp_file, $_filepath);
