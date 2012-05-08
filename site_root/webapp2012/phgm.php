@@ -70,6 +70,7 @@ class phgm
 	public static function go($routeName = null, $routeParams = null)
 	{
 		try {
+			set_error_handler(array('phgm', 'handleError'), E_ERROR | E_RECOVERABLE_ERROR);
 			self::classInitialize();
 			self::loadBase();
 			self::loadConfig();
@@ -78,18 +79,34 @@ class phgm
 			$httpHandler->handleRequest($routeName, $routeParams);
 		} catch (Exception $e) {
 			try {
-				print '<!doctype html><html lang="ja"><head><meta charset="utf-8"></head><body>';
-				print '<p>' . Config::get(Config::FATAL_ERROR_MESSAGE) . '</p>';
-				$environment = Config::get(Config::ENVIRONMENT);
-				if ($environment === Config::ENVIRONMENT_DEVELOPMENT || $environment === Config::ENVIRONMENT_TEST) {
-					print '<p>' . $e->getMessage() . '</p>';
-					print '<p>' . nl2br($e->getTraceAsString()) . '</p>';
+				$message = '<p>' . htmlspecialchars($e->getMessage()) . '</p>';
+				$traces = explode("\n", $e->getTraceAsString());
+				$message .= '<p>';
+				foreach ($traces as $line) {
+					$message .= htmlspecialchars($line) . '<br>';
 				}
-				print '</body></html>';
+				$message .= '</p>';
+
+				self::handleError('不明', $message, $e->getFile(), $e->getLine());
 			} catch (Exception $e) {
 				
 			}
 		}
+	}
+
+	public static function handleError($errorNumber, $errorMessage = null, $errorFile = null, $errorLine = null, $errorContext = array())
+	{
+		$errorFile = is_null($errorFile) ? '' : $errorFile;
+		$errorLine = is_null($errorLine) ? '' : $errorLine;
+		print '<!doctype html><html lang="ja"><head><meta charset="utf-8"></head><body>';
+		print '<p>' . Config::get(Config::FATAL_ERROR_MESSAGE) . '</p>';
+		if (Config::isDevTest()) {
+			print '<p>' . htmlspecialchars($errorFile) . ' ' . htmlspecialchars($errorLine). '</p>';
+			print $errorMessage;
+		}
+		print '</body></html>';
+		Logger::fatal("$errorNumber $errorMessage $errorFile $errorLine");
+		die();
 	}
 
 	private static function loadBase()

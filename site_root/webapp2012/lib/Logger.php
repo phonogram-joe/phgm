@@ -20,7 +20,7 @@ class Logger
 	private $level;
 
     private function __construct() {
-    	$this->filepath = phgm::$LOG_DIR . DS . 'system.log';
+    	$this->filepath = null;
     	$this->level = self::ERROR;
     }
     private function __clone()
@@ -35,17 +35,28 @@ class Logger
 	
 	private function logMessage($level, $message)
 	{
-		$buf = "" . date("Y/m/d H:i:s") . " [" . $level . "] " . $message . "\n";
+		$buf = "" . date("Y-m-d H:i:s") . " [" . $level . "] " . $message . "\n";
 		$this->write($buf);
 	}
 
-	private function logError($level, $message, $filename, $line, $error = null)
+	private function logError($level, $error)
 	{
-		$buf = "" . date("Y/m/d H:i:s") . " [" . $level . "] " . $message;
+		$message = '不明';
+		$filename = '不明';
+		$line = '不明';
+		$trace = array();
+		if (is_object($error) && method_exists($error, 'getMessage')) {
+			$message = $error->getMessage();
+			$filename = $error->getFile();
+			$line = $error->getLine();
+			$trace = explode("\n", $error->getTraceAsString());
+		} else if (is_string($error)) {
+			$message = $error;
+		}
+		$buf = "" . date("Y-m-d H:i:s") . " [" . $level . "] " . $message;
 		$buf .= " (" . $filename . ":" . $line . ")\n";
 		if (!is_null($error)) {
-			$trace = $error->getTraceAsString();
-			foreach (explode("\n", $trace) as $traceline) {
+			foreach ($trace as $traceline) {
 				$buf .= "\t" . $traceline . "\n";
 			}
 		}
@@ -55,23 +66,16 @@ class Logger
 	private function write($msg)
 	{
 		if (is_null($this->filepath)) {
-			return true;
+			return false;
 		}
 
-		$fp = fopen($this->filepath, 'a');
-		if ($fp === false) {
+		$fp = @fopen($this->filepath, 'a');
+		if (!$fp) {
 			throw new Exception('ログファイルを開けませんでした。');
 		}
 
-		if (fwrite($fp, $msg) === false) {
-			@fclose($fp);
-			throw new Exception('');
-		}
-
-		if (fclose($fp) === false) {
-			throw new Exception('ログファイルを正しく閉じられませんでした。');
-		}
-
+		@fwrite($fp, $msg);
+		@fclose($fp);
 		return true;
 	}
 
@@ -121,13 +125,13 @@ class Logger
 	public static function error($error)
 	{
 		if (self::$INSTANCE->level <= self::ERROR) {
-			self::$INSTANCE->logError('ERROR', $error->getMessage(), $error->getFile(), $error->getLine(), $error);
+			self::$INSTANCE->logError('ERROR', $error);
 		}		
 	}
 	public static function fatal($error)
 	{
 		if (self::$INSTANCE->level <= self::FATAL) {
-			self::$INSTANCE->logError('FATAL', $error->getMessage(), $error->getFile(), $error->getLine(), $error);
+			self::$INSTANCE->logError('ERROR', $error);
 		}		
 	}
 }
