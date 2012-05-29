@@ -23,7 +23,7 @@ function smarty_block_formFor($params, $content, Smarty_Internal_Template $templ
 	if ($repeat) {
 		$name = array_key_exists('name', $params) ? $params['name'] : null;
 		unset($params['name']);
-		$html_id = array_key_exists('html_id', $params) ? $params['html_id'] : null;
+		$html_id = array_key_exists('html_id', $params) ? $params['html_id'] : 'form_' . uniqid();
 		unset($params['html_id']);
 		$html_class = array_key_exists('html_class', $params) ? $params['html_class'] : null;
 		unset($params['html_class']);

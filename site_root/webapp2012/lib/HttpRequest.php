@@ -23,6 +23,8 @@ class HttpRequest
 		$this->setVerb();
 		$this->setSession();
 		$this->originalUri = $_SERVER['REQUEST_URI'];
+
+		Logger::info($this->httpVerb . ' ' . $this->originalUri . ' ' . $_SERVER['REMOTE_ADDR']);
 	}
 
 	public static function isHttpMethod($method)

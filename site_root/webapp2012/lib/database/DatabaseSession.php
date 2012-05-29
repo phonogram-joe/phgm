@@ -47,10 +47,11 @@ class DatabaseSession
 		$statement = $this->dbHandle->prepare($sql);
 		$statement->setFetchMode(PDO::FETCH_CLASS, $className);
 		$result = $statement->execute($data);
-		if (is_null($result) || false === $result) {
-			$result = null;
-		} else {
+		if ($result === true) {
 			$result = $statement->fetch();
+		}
+		if (!$result) {
+			$result = null;
 		}
 		$statement->closeCursor();
 		Profiler::getProfiler()->stopDbQuery($profileId);
@@ -70,10 +71,11 @@ class DatabaseSession
 		$statement = $this->dbHandle->prepare($sql);
 		$statement->setFetchMode(PDO::FETCH_CLASS, $className);
 		$result = $statement->execute($data);
-		if (is_null($result) || false === $result) {
-			$result = null;
-		} else {
+		if ($result === true) {
 			$result = $statement->fetch();
+		}
+		if (!$result) {
+			$result = null;
 		}
 		$statement->closeCursor();
 		Profiler::getProfiler()->stopDbQuery($profileId);
@@ -94,10 +96,11 @@ class DatabaseSession
 		$statement = $this->dbHandle->prepare($sql);
 		$statement->setFetchMode(PDO::FETCH_CLASS, $className);
 		$result = $statement->execute($data);
-		if (is_null($result) || false === $result) {
-			$result = null;
-		} else {
+		if ($result === true) {
 			$result = $statement->fetch();
+		}
+		if (!$result) {
+			$result = null;
 		}
 		$statement->closeCursor();
 		Profiler::getProfiler()->stopDbQuery($profileId);
@@ -116,10 +119,11 @@ class DatabaseSession
 		$profileId = Profiler::getProfiler()->startDbQuery($sql, $data);
 		$statement = $this->dbHandle->prepare($sql);
 		$result = $statement->execute($data);
-		if (is_null($result) || false === $result) {
-			$result = 0;
-		} else {
+		if ($result === true) {
 			$result = intval($statement->fetchColumn());
+		}
+		if (!$result) {
+			$result = 0;
 		}
 		$statement->closeCursor();
 		Profiler::getProfiler()->stopDbQuery($profileId);
@@ -136,10 +140,11 @@ class DatabaseSession
 		$profileId = Profiler::getProfiler()->startDbQuery($sql, $data);
 		$statement = $this->dbHandle->prepare($sql);
 		$result = $statement->execute($data);
-		if (is_null($result) || false === $result) {
-			$result = 0;
-		} else {
+		if ($result === true) {
 			$result = intval($statement->fetchColumn());
+		}
+		if (!$result) {
+			$result = 0;
 		}
 		$statement->closeCursor();
 		Profiler::getProfiler()->stopDbQuery($profileId);
@@ -229,10 +234,13 @@ class DatabaseSession
 			$statement->setFetchMode(PDO::FETCH_CLASS, $className);
 		}
 		$result = $statement->execute($data);
+		if ($result !== true) {
+			return null;
+		}
 		$results = $statement->fetchAll();
 		$statement->closeCursor();
 		Profiler::getProfiler()->stopDbQuery($profileId);
-		return $results !== false && is_array($results) && count($results) > 0 ? $results : null;
+		return is_array($results) && count($results) > 0 ? $results : null;
 	}
 
 	public function findAllAsResultSet($sqlStatement, $className = null)
@@ -281,7 +289,7 @@ class DatabaseSession
 	public function flush()
 	{
 		if (!$this->allowUpdates) {
-			//	DBに書き込むする場合はHTTPのGETリクエストは非常に危険なので、POST・PUT・DELETEHTTPメソッドを使ってください。
+			//	DBに書き込むする場合はHTTPのGETリクエストは非常危険なので、POST・PUT・DELETEHTTPメソッドを使ってください。
 			throw new Exception('DatabaseSession:flush() -- HTTPリクエストの形によりDBの書き込みは禁止されています。');
 		}
 		if (count($this->trackedObjects) === 0 && count($this->deletedObjects) === 0 && count($this->flushStatements) === 0) {
@@ -328,6 +336,7 @@ class DatabaseSession
 			Profiler::getProfiler()->stopDbQuery($profileId);
 			Logger::trace('DatabaseSession:flush() -- rollback');
 			throw $e;
+			return false;
 		}
 	}
 
@@ -387,7 +396,7 @@ class DatabaseSession
 		$result = $statement->execute($data);
 		Profiler::getProfiler()->stopDbQuery($profileId);
 		if (true !== $result) {
-			throw new Exception('DatabaseSession:updateObject() -- UPDATEに失敗しました。');
+			throw new Exception('DatabaseSession:insertObject() -- UPDATEに失敗しました。');
 		}
 		$dbModel->doCallback(DbModel::AFTER_SAVE, $object);
 		$dbModel->doCallback(DbModel::AFTER_UPDATE, $object);
@@ -407,7 +416,7 @@ class DatabaseSession
 		$result = $statement->execute($data);
 		Profiler::getProfiler()->stopDbQuery($profileId);
 		if (true !== $result) {
-			throw new Exception('DatabaseSession:deleteObject() -- DELETEに失敗しました。');
+			throw new Exception('DatabaseSession:insertObject() -- DELETEに失敗しました。');
 		}
 		$dbModel->doCallback(DbModel::AFTER_DELETE, $object);
 		return $statement->rowCount();
@@ -419,7 +428,7 @@ class DatabaseSession
 			$object->storeChanges();
 		}
 		$this->trackedObjects = array();
-		$this->deletedObjects = array();
+		$this->deleteObject = array();
 		$this->flushStatements = array();
 	}
 }

@@ -6,7 +6,7 @@
 
 class IntegerType extends BaseDataType
 {
-	const INT_REGEX = '/^\d+$/';
+	const INT_REGEX = '/^[-]?\d+$/';
 
 	public static function fromWeb($value)
 	{

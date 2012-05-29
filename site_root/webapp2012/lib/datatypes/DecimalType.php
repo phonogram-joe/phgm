@@ -6,7 +6,7 @@
 
 class DecimalType extends BaseDataType
 {
-	const DECIMAL_REGEX = '/^\d+(\.\d+)?$/';
+	const DECIMAL_REGEX = '/^([-]?)\d+(\.\d+)?$/';
 
 	public static function fromWeb($value)
 	{

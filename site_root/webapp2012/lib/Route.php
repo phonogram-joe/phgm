@@ -9,7 +9,7 @@ ClassLoader::loadFrom('RouteMatch', phgm::$LIB_DIR);
 class Route
 {
 	//	デフォルトの「:param」のパラム分
-	public static $DEFAULT_CONDITION = '([-_a-zA-Z0-9]+)';
+	public static $DEFAULT_CONDITION = '([-A-Za-z0-9\+\@%\~_\(\)|!:,\.;]+)';
 	//	数字のみの「#param」のパラム分
 	public static $HASH_CONDITION = '([0-9]+)';
 	//	文字のみの「@param」のパラム分
