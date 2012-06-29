@@ -1,5 +1,6 @@
 <?php
 
+//	一覧の検索条件を代表するフォーム　（DBと連携しない）
 class BaseIndexForm extends BaseModel
 {
 	private static $NON_CONDITION_FIELDS = null;
@@ -27,6 +28,7 @@ class BaseIndexForm extends BaseModel
 		$reflector->setStaticPropertyValue('SEARCH_MODEL_CLASS', $modelClass);
 	}
 
+	//	フォーム項目からSQL文オブジェクトに並び順・最大結果数などを指定する
 	public function updateSqlStatement($sqlStatement)
 	{
 		$sqlStatement->paging($this->getPageItemCount(), $this->getPageIndex());
@@ -68,6 +70,7 @@ class BaseIndexForm extends BaseModel
 		return $this->page_item_total;
 	}
 
+	//	DBクエリを行う後、結果数をこれで設定する
 	public function setResultTotal($total)
 	{
 		$this->val('page_total', ceil($total / $this->getPageItemCount()));
@@ -89,6 +92,7 @@ class BaseIndexForm extends BaseModel
 		return false === array_search($key, self::$NON_CONDITION_FIELDS);
 	}
 
+	//	条件があるかないか
 	public function hasConditions()
 	{
 		foreach ($this->getFieldsList() as $key) {
@@ -99,6 +103,7 @@ class BaseIndexForm extends BaseModel
 		return false;
 	}
 
+	//	現フォームの項目価値が引数のフォーム項目と一緒であるかではないか
 	public function matches($indexForm)
 	{
 		foreach ($this->getFieldsList() as $key) {

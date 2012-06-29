@@ -7,26 +7,32 @@
 
 // Webkit
 @-webkit-keyframes progress-bar-stripes {
-  from  { background-position: 0 0; }
-  to    { background-position: 40px 0; }
+  from  { background-position: 40px 0; }
+  to    { background-position: 0 0; }
 }
 
 // Firefox
 @-moz-keyframes progress-bar-stripes {
-  from  { background-position: 0 0; }
-  to    { background-position: 40px 0; }
+  from  { background-position: 40px 0; }
+  to    { background-position: 0 0; }
 }
 
 // IE9
 @-ms-keyframes progress-bar-stripes {
+  from  { background-position: 40px 0; }
+  to    { background-position: 0 0; }
+}
+
+// Opera
+@-o-keyframes progress-bar-stripes {
   from  { background-position: 0 0; }
   to    { background-position: 40px 0; }
 }
 
 // Spec
 @keyframes progress-bar-stripes {
-  from  { background-position: 0 0; }
-  to    { background-position: 40px 0; }
+  from  { background-position: 40px 0; }
+  to    { background-position: 0 0; }
 }
 
 
@@ -39,9 +45,17 @@
   overflow: hidden;
   height: 18px;
   margin-bottom: 18px;
-  #gradient > .vertical(#f5f5f5, #f9f9f9);
+  background-color: lightblue;
+  //#gradient > .vertical(#f5f5f5, #f9f9f9);
   .box-shadow(inset 0 1px 2px rgba(0,0,0,.1));
   .border-radius(4px);
+}
+
+.progress-alert {
+  background-color: #f2dede;
+}
+.progress-alert-danger {
+  background-color: #f2dede;
 }
 
 // Bar of progress
@@ -58,9 +72,20 @@
   .transition(width .6s ease);
 }
 
+
 // Striped bars
 .progress-striped .bar {
   #gradient > .striped(#149bdf);
+  .background-size(40px 40px);
+}
+
+.progress-alert .bar {
+  #gradient > .striped(#c09853);
+  .background-size(40px 40px);
+}
+
+.progress-alert-danger .bar {
+  #gradient > .striped(#b94a48);
   .background-size(40px 40px);
 }
 
@@ -68,6 +93,8 @@
 .progress.active .bar {
   -webkit-animation: progress-bar-stripes 2s linear infinite;
      -moz-animation: progress-bar-stripes 2s linear infinite;
+      -ms-animation: progress-bar-stripes 2s linear infinite;
+       -o-animation: progress-bar-stripes 2s linear infinite;
           animation: progress-bar-stripes 2s linear infinite;
 }
 

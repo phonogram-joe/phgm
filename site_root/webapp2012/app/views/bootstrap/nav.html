@@ -6,19 +6,20 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </a>
-      <a class="brand" href="#">プレゼンター</a>
+      <a class="brand" href="/">タイムシート</a>
       <div class="nav-collapse">
         <ul class="nav">
-          <li {{if preg_match('/\bpresentations\b/', $pageSection)}}class="active"{{/if}}><a href="{{urlFor name='admin:presentation_index'}}">プレゼン</a></li>
-          <li {{if preg_match('/\bjquery\b/', $pageSection)}}class="active"{{/if}}><a href="{{urlFor name='jquery_index'}}">jQueryプラグイン</a></li>
+          <li {{if preg_match('/\bentry\b/', $pageSection)}}class="active"{{/if}}><a href="{{urlFor name='time:entry_view'}}"><i class="icon-white icon-time"></i>タイム入力</a></li>
+          <li {{if preg_match('/\bhistory\b/', $pageSection)}}class="active"{{/if}}><a href="{{urlFor name='time:day_view'}}"><i class="icon-white icon-calendar"></i> 履歴</a></li>
+          <li {{if preg_match('/\breport\b/', $pageSection)}}class="active"{{/if}}><a href="{{urlFor name='report:index'}}"><i class="icon-white icon-folder-close"></i> 案件レポート</a></li>
+          {{if $login->val('email') === AppConfig::DATA_ADMIN_EMAIL}}
+          <li {{if preg_match('/\badmin\b/', $pageSection)}}class="active"{{/if}}><a href="{{urlFor name='admin:data_index'}}"><i class="icon-white icon-upload"></i> データ管理</a></li>
+          {{/if}}
         </ul>
-        {{*
         <ul class="nav pull-right">
-          <li {{if preg_match('/\bsettings\b/', $pageSection)}}class="active"{{/if}}><a href="{{urlFor name='admin:settings'}}">設定</a></li>
-          <li {{if preg_match('/\bhelp\b/', $pageSection)}}class="active"{{/if}}><a href="{{urlFor name='admin:help_index'}}">ヘルプ</a></li>
-          <li {{if preg_match('/\bauth\b/', $pageSection)}}class="active"{{/if}}><a href="{{urlFor name='logout'}}">ログアウト</a></li>
+          <li><a href="#" id="nav-login-name"><i class="icon-user"></i> {{$login->get('name')}}</a></li>
+          <li><a href="{{urlFor name='auth:logout'}}" title="ログアウト"><i class="icon-share-alt"></i> ログアウト</a></li>
         </ul>
-        *}}
       </div><!--/.nav-collapse -->
     </div>
   </div>

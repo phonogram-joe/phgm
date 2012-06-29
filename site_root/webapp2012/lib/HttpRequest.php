@@ -15,6 +15,7 @@ class HttpRequest
 	const POST = 'POST';
 	const PUT = 'PUT';
 	const DELETE = 'DELETE';
+	const HTTP_JSON_TYPE = 'application/json';
 
 	public function HttpRequest()
 	{
@@ -66,7 +67,14 @@ class HttpRequest
 			$params[$key] = $value;
 		}
 
-		foreach ($_POST as $key => $value) {
+		$contentType = $_SERVER['CONTENT_TYPE'];
+		if ($contentType === self::HTTP_JSON_TYPE) {
+			$json = file_get_contents(stripslashes('php://input'));
+			$postData = json_decode($json);
+		} else {
+			$postData = $_POST;
+		}
+		foreach ($postData as $key => $value) {
 			$params[$key] = $value;
 		}
 

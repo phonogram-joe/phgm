@@ -91,6 +91,7 @@ class FileUpload {
 				break;
 			case UPLOAD_ERR_INI_SIZE:
 				$msg = 'ファイルのサイズはphp.iniによりの最大サイズを超えているため、アップロードはできません。';
+				$msg .= ini_get('upload_max_filesize');
 				break;
 			case UPLOAD_ERR_FORM_SIZE:
 				$msg = 'ファイルのサイズはHTMLフォームのMAX_FILE_SIZEを超えてるため、アップロードできません。';
@@ -117,6 +118,7 @@ class FileUpload {
 	
 	private function setUploadFailed()
 	{
+		Logger::info('FileUpload::setUploadFailed() -- ' . $this->getErrorMessage());
 		$this->finalUploadedPath = null;
 		$this->isUploaded = false;
 	}
@@ -184,6 +186,7 @@ class FileUpload {
 				return false;
 			}
 		} else {
+			$this->setUploadFailed();
 			return false;
 		}
 	}

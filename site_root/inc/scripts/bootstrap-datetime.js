@@ -7,71 +7,103 @@
 
  	<input type="datetime" class="datetime" value="2012-04-01 14:33:59">
  
-	<div class="datetime-input modal hide">
-	  <div class="modal-header">
-	    <a class="close" data-dismiss="modal" title="キャンセル">×</a>
-	    <h3>日時入力</h3>
-	  </div>
-	  <div class="modal-body">
-	    <table class="table table-bordered x-table-condensed datetime-date">
-	      <thead>
-	        <tr>
-	          <th class="prev"><a href="#" class="datetime-prev" title="前の月へ"><i class="icon-arrow-left"></i></a></th>
-	          <th class="year-month" colspan="5"><a href="#" title="年月の選択" class="btn datetime-yyyymm-label">2012年4月</a>
-	            <span class="datetime-yyyymm-input">
-	              <input type="text" size="4" name="year" value="2012">
-	              <input type="text" size="2" name="month" value="4">
-	              <a href="#" class="btn datetime-yyyymm-save">年月へ飛ぶ</a>
-	            </span>
-	          </th>
-	          <th class="next"><a href="#" class="datetime-next" title="次の月へ"><i class="icon-arrow-right"></i></a></th>
-	        </tr>
-	        <tr>
-	          <th class="day">日</th>
-	          <th class="day">月</th>
-	          <th class="day">火</th>
-	          <th class="day">水</th>
-	          <th class="day">木</th>
-	          <th class="day">金</th>
-	          <th class="day">土</th>
-	        </tr>
-	      </thead>
-	      <tbody>
-	      </tbody>
-	    </table>
-	    <table class="table table-bordered x-table-condensed datetime-time">
-	      <thead>
-	        <tr>
-	          <th>時</th>
-	          <th>分</th>
-	        </tr>
-	      </thead>
-	      <tbody>
-	        <tr>
-	          <td><select name="hour">
-	            <option value="10">10時</option>
-	            <option value="11">11時</option>
-	            <option value="12">12時</option>
-	            <option value="13">13時</option>
-	            <option value="14">14時</option>
-	            <option value="15">15時</option>
-	            <option value="16">16時</option>
-	          </select></td>
-	          <td><select name="minute">
-	            <option value="00">0分</option>
-	            <option value="30">30分</option>
-	          </select></td>
-	        </tr>
-	      </tbody>
-	    </table>
-	  </div>
-	  <div class="modal-footer">
-	    <p class="pull-left">
-	      <a href="#" class="btn datetime-now">現在の日時</a>
-	    </p>
-	    <a href="#" class="btn btn-primary datetime-close">保存する</a>
-	  </div>
-	</div><!--/datetime-input-->
+	<div class="datetime-input hoverpanel hide">
+		<div class="hoverpanel-header">
+			<a class="close" data-dismiss="hoverpanel" title="キャンセル">×</a>
+			<h3>日時入力</h3>
+		</div>
+		<div class="hoverpanel-body">
+			<table class="table table-bordered x-table-condensed datetime-date">
+			<thead>
+			<tr>
+				<th class="prevyear">
+					<a href="#" class="datetime-prevyear" title="前の年へ"><i class="icon-fast-backward"></i></a>
+				</th>
+				<th class="prev">
+					<a href="#" class="datetime-prev" title="前の月へ"><i class="icon-step-backward"></i></a>
+				</th>
+				<th class="datetime-yyyymm-label" colspan="3">
+					2012年4月
+				</th>
+				<th class="next">
+					<a href="#" class="datetime-next" title="次の月へ"><i class="icon-step-forward"></i></a>
+				</th>
+				<th class="nextyear">
+					<a href="#" class="datetime-nextyear" title="次の年へ"><i class="icon-fast-forward"></i></a>
+				</th>
+			</tr>
+			<tr>
+				<th class="day">
+					日
+				</th>
+				<th class="day">
+					月
+				</th>
+				<th class="day">
+					火
+				</th>
+				<th class="day">
+					水
+				</th>
+				<th class="day">
+					木
+				</th>
+				<th class="day">
+					金
+				</th>
+				<th class="day">
+					土
+				</th>
+			</tr>
+			</thead>
+			<tbody>
+			</tbody>
+			</table>
+			<table class="table datetime-time">
+			<thead>
+			<tr>
+				<th>
+					時
+				</th>
+				<th>
+					分
+				</th>
+			</tr>
+			</thead>
+			<tbody>
+			<tr>
+				<td>
+					<select name="hour">
+						<option value="08">8時</option>
+						<option value="09">9時</option>
+						<option value="10">10時</option>
+						<option value="11">11時</option>
+						<option value="12">12時</option>
+						<option value="13">13時</option>
+						<option value="14">14時</option>
+						<option value="15">15時</option>
+						<option value="16">16時</option>
+						<option value="17">17時</option>
+						<option value="18">18時</option>
+					</select>
+				</td>
+				<td>
+					<select name="minute">
+						<option value="00">0分</option>
+						<option value="30">30分</option>
+					</select>
+				</td>
+			</tr>
+			</tbody>
+			</table>
+		</div>
+		<div class="hoverpanel-footer">
+			<p class="pull-left">
+				<a href="#" class="btn datetime-now"><i class="icon-time"></i> 現在の日時</a>
+			</p>
+			<a href="#" class="btn btn-primary datetime-close"><i class="icon-ok-sign icon-white"></i> 保存する</a>
+		</div>
+	</div>
  */
 (function($) {
 	var DatetimeInput;
@@ -81,7 +113,7 @@
 		$.fn.hoverpanel.Constructor.prototype.initialize($el, false);
 	}
 
-	DatetimeInput.html = '<div class="datetime-input hoverpanel hide"> <div class="hoverpanel-header"> <a class="close" data-dismiss="hoverpanel" title="キャンセル">×</a> <h3>日時入力</h3> </div> <div class="hoverpanel-body"> <table class="table table-bordered x-table-condensed datetime-date"> <thead> <tr> <th class="prev"><a href="#" class="datetime-prev" title="前の月へ"><i class="icon-arrow-left"></i></a></th> <th class="year-month" colspan="5"><a href="#" title="年月の選択" class="btn datetime-yyyymm-label">2012年4月</a> <span class="datetime-yyyymm-input"> <input type="text" size="4" name="year" value="2012"> <input type="text" size="2" name="month" value="4"> <a href="#" class="btn datetime-yyyymm-save">年月へ飛ぶ</a> </span> </th> <th class="next"><a href="#" class="datetime-next" title="次の月へ"><i class="icon-arrow-right"></i></a></th> </tr> <tr> <th class="day">日</th> <th class="day">月</th> <th class="day">火</th> <th class="day">水</th> <th class="day">木</th> <th class="day">金</th> <th class="day">土</th> </tr> </thead> <tbody> </tbody> </table> <table class="table datetime-time"> <thead> <tr> <th>時</th> <th>分</th> </tr> </thead> <tbody> <tr> <td><select name="hour"> <option value="10">10時</option> <option value="11">11時</option> <option value="12">12時</option> <option value="13">13時</option> <option value="14">14時</option> <option value="15">15時</option> <option value="16">16時</option> </select></td> <td><select name="minute"> <option value="00">0分</option> <option value="30">30分</option> </select></td> </tr> </tbody> </table> </div> <div class="hoverpanel-footer"> <p class="pull-left"> <a href="#" class="btn datetime-now"><i class="icon-time"></i> 現在の日時</a> </p> <a href="#" class="btn btn-primary datetime-close"><i class="icon-ok-sign icon-white"></i> 保存する</a> </div> </div>';
+	DatetimeInput.html = '<div class="datetime-input hoverpanel hide"> <div class="hoverpanel-header"> <a class="close" data-dismiss="hoverpanel" title="キャンセル">×</a> <h3>日時入力</h3> </div> <div class="hoverpanel-body"> <table class="table table-bordered x-table-condensed datetime-date"> <thead> <tr> <th class="prevyear"> <a href="#" class="datetime-prevyear" title="前の年へ"><i class="icon-fast-backward"></i></a> </th> <th class="prev"> <a href="#" class="datetime-prev" title="前の月へ"><i class="icon-step-backward"></i></a> </th> <th class="datetime-yyyymm-label" colspan="3"> 2012年4月 </th> <th class="next"> <a href="#" class="datetime-next" title="次の月へ"><i class="icon-step-forward"></i></a> </th> <th class="nextyear"> <a href="#" class="datetime-nextyear" title="次の年へ"><i class="icon-fast-forward"></i></a> </th> </tr> <tr> <th class="day"> 日 </th> <th class="day"> 月 </th> <th class="day"> 火 </th> <th class="day"> 水 </th> <th class="day"> 木 </th> <th class="day"> 金 </th> <th class="day"> 土 </th> </tr> </thead> <tbody> </tbody> </table> <table class="table datetime-time"> <thead> <tr> <th> 時 </th> <th> 分 </th> </tr> </thead> <tbody> <tr> <td> <select name="hour"> <option value="08">8時</option> <option value="09">9時</option> <option value="10">10時</option> <option value="11">11時</option> <option value="12">12時</option> <option value="13">13時</option> <option value="14">14時</option> <option value="15">15時</option> <option value="16">16時</option> <option value="17">17時</option> <option value="18">18時</option> </select> </td> <td> <select name="minute"> <option value="00">0分</option> <option value="30">30分</option> </select> </td> </tr> </tbody> </table> </div> <div class="hoverpanel-footer"> <p class="pull-left"> <a href="#" class="btn datetime-now"><i class="icon-time"></i> 現在の日時</a> </p> <a href="#" class="btn btn-primary datetime-close"><i class="icon-ok-sign icon-white"></i> 保存する</a> </div> </div>';
 
 	DatetimeInput.instance = null;
 
@@ -104,6 +136,17 @@
 			DatetimeInput.instance = new DatetimeInput($base);
 		}
 		return DatetimeInput.instance;
+	}
+
+	DatetimeInput.getEmbeddable = function($input) {
+		var $base,
+			datetime;
+		$base = $('<div class="datetime-input"></div>');
+		$base.css('width', 'auto');
+		$base.append($(DatetimeInput.html).find('.hoverpanel-body'));
+		datetime = new DatetimeInput($base);
+		datetime.openFor($input);
+		return datetime;		
 	}
 
 	DatetimeInput.formatDateStr = function(date) {
@@ -142,55 +185,38 @@
 		constructor: DatetimeInput
 
 		, initialize: function($el) {
+			var bindAllMethods;
 			this.$el = $el;
-			this.$inputYear = this.$el.find('.datetime-yyyymm-input [name=year]');
-			this.$inputMonth = this.$el.find('.datetime-yyyymm-input [name=month]');
 			this.$inputHour = this.$el.find('.datetime-time [name=hour]');
 			this.$inputMinute = this.$el.find('.datetime-time [name=minute]');
 			this.$yearMonthLabel = this.$el.find('.datetime-yyyymm-label');
 			this.$currentInput = null;
 			this.activeDate = null;
+			this.bound = false;
+
+			bindAllMethods = 'goPreviousMonth goNextMonth goPreviousYear goNextYear goNow close calendarChoice updateTime'.split(' ');
+			bindAllMethods.unshift(this);
+			_.bindAll.apply(_, bindAllMethods);
 		}
 
 		, init: function() {
-			this.$el.on('click.dt', '.datetime-yyyymm-label', $.proxy(this.openYearMonth, this));
-			this.$el.on('click.dt', '.datetime-yyyymm-save', $.proxy(this.saveYearMonth, this));
-			this.$el.on('click.dt', '.datetime-prev', $.proxy(this.goPreviousMonth, this));
-			this.$el.on('click.dt', '.datetime-next', $.proxy(this.goNextMonth, this));
-			this.$el.on('click.dt', '.datetime-now', $.proxy(this.goNow, this));
-			this.$el.on('click.dt', '.datetime-close', $.proxy(this.close, this));
-			this.$el.on('click.dt', '.datetime-date td a', $.proxy(this.calendarChoice, this));
-			this.$inputHour.on('change.dt, blur.dt', $.proxy(this.updateTime, this));
-			this.$inputMinute.on('change.dt, blur.dt', $.proxy(this.updateTime, this));
-		}
-
-		, uninit: function() {
-			this.$el.off('.dt');
-			this.$inputHour.off('.dt');
-			this.$inputMinute.off('.dt');
-		}
-
-		, openYearMonth: function() {
-			this.$el
-				.find('.datetime-date').addClass('datetime-yyyymm-on')
-				.find('.datetime-yyyymm-input input:first').focus();
-		}
-
-		, saveYearMonth: function() {
-			var year = parseInt(this.$inputYear.val(), 10),
-				month = parseInt(this.$inputMonth.val(), 10);
-			if (isNaN(year) || isNaN(month) || year < 2000 || year > 2050 || month < 0 || month >= 12) {
-				this.$inputYear.val(this.activeDate.getFullYear());
-				this.$inputMonth.val(this.activeDate.getMonth()+1);
-			} else {
-				month -= 1;
-				this.goDate(new Date(year, month, 1));
+			if (this.bound) {
+				return;
 			}
-			this.$el.find('.datetime-date').removeClass('datetime-yyyymm-on');
+			this.bound = true;
+			this.$el.on('click.dt', '.datetime-prevyear', this.goPreviousYear);
+			this.$el.on('click.dt', '.datetime-prev', this.goPreviousMonth);
+			this.$el.on('click.dt', '.datetime-nextyear', this.goNextYear);
+			this.$el.on('click.dt', '.datetime-next', this.goNextMonth);
+			this.$el.on('click.dt', '.datetime-now', this.goNow);
+			this.$el.on('click.dt', '.datetime-close', this.close);
+			this.$el.on('click.dt', '.datetime-date td a', this.calendarChoice);
+			this.$inputHour.on('change.dt blur.dt', this.updateTime);
+			this.$inputMinute.on('change.dt blur.dt', this.updateTime);
 		}
 
 		, calendarChoice: function(e) {
-			var date = $(e.target).attr('title');
+			var date = $(e.target).data('date');
 			date = this._parseDate(date);
 			if (date === null) {
 				return;
@@ -237,18 +263,31 @@
 			}
 		}
 
+		, goPreviousYear: function() {
+			this.goDate(new Date(this.activeDate.getFullYear() - 1, this.activeDate.getMonth(), 1));
+			return false;
+		}
+
 		, goPreviousMonth: function() {
 			this.goDate(new Date(this.activeDate.getFullYear(), this.activeDate.getMonth() - 1, 1));
+			return false;
+		}
+
+		, goNextYear: function() {
+			this.goDate(new Date(this.activeDate.getFullYear() + 1, this.activeDate.getMonth(), 1));
+			return false;
 		}
 
 		, goNextMonth: function() {
 			this.goDate(new Date(this.activeDate.getFullYear(), this.activeDate.getMonth() + 1, 1));
+			return false;
 		}
 
 		, goNow: function() {
 			var date = new Date();
 			this.setTime(date);
 			this.goDate(date);
+			return false;
 		}
 
 		, goDate: function(date) {
@@ -274,13 +313,14 @@
 				while (currentDayIndex < 7) {
 					currentDate = new Date(firstSunday.getFullYear(), firstSunday.getMonth(), firstSunday.getDate() + (currentWeekIndex * 7) + currentDayIndex);
 					currentDateClass = (currentDate.getMonth() !== date.getMonth() ? 'inactive' : (currentDate.getDate() !== date.getDate() ? 'active' : 'selected'));
-					bodyHtml += '<td class="' + currentDateClass + '"><a title="' + this._formatDate(currentDate) + '">' + currentDate.getDate() + '</a></td>';
+					bodyHtml += '<td class="' + currentDateClass + '"><a data-date="' + this._formatDate(currentDate) + '">' + currentDate.getDate() + '</a></td>';
 					currentDayIndex += 1;
 				}
 				bodyHtml += '</tr>';
 				currentWeekIndex += 1;
 			}
 			this.$el.find('.datetime-date tbody').html(bodyHtml);
+			return false;
 		}
 
 		, _formatDate: function(date) {
@@ -364,7 +404,6 @@
 		, close: function() {
 			this.$currentInput.val(this._formatDate(this.activeDate));
 			this.$currentInput.trigger('change');
-			this.uninit();
 			this.activeDate = null;
 			this.$currentInput = null;
 			$.fn.hoverpanel.Constructor.prototype.close.call(this);
@@ -387,14 +426,20 @@
 			this._isDatetimeInput() ? this.$el.find('.datetime-time').show() : this.$el.find('.datetime-time').hide();
 			this.setTime(date);
 			this.goDate(date);
+		}
+
+		, showAt: function($input) {
 			$.fn.hoverpanel.Constructor.prototype.open.call(this, $input);
 		}
 	});
+
+ 	$.DatetimeInput = DatetimeInput;
 
 	$(function() {
 		$('body').on('click', 'input.datetime', function() {
 			var datetime = DatetimeInput.getInstance();
 			datetime.openFor($(this));
+			datetime.showAt($(this));
 		});
 	});
 

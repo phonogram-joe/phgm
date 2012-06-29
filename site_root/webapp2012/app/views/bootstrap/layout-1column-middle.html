@@ -3,17 +3,11 @@
 	{{block name='nav'}}{{/block}}
 	<div class="container-fluid">
 	  <div class="row-fluid">
-	    <div class="span12">
+	  	<div class="span3">&nbsp;</div>
+	    <div class="span6">
 	      <div class="page-header">
 	        <h1>{{$pageTitle}}</h1>
 	      </div>
-	    </div>
-	  </div>
-	</div>
-	<div class="container-fluid">
-	  <div class="row-fluid">
-	  	<div class="span3">&nbsp;</div>
-	    <div class="span6">
 			{{include file='bootstrap/parts-alert-error.html'}}
 			{{include file='bootstrap/parts-alert-info.html'}}
 	    	{{block name='main-col'}}{{/block}}

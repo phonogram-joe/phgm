@@ -212,7 +212,7 @@ class ModelDefinition
 			if (is_null($value)) {
 				break;
 			}
-			$value = call_user_func_array(array($converter[0], 'input'), array($value, $converter[1]));
+			$value = call_user_func_array(array($converter[0], 'input'), array_merge(array($value), $converter[1]));
 		}
 		if (!is_null($value)) {
 			$type = $this->fields[$key]['type'];

@@ -1,6 +1,6 @@
 {{assign var="start" value=$search->getPageIndex()-2}}
 {{assign var="end" value=$search->getPageIndex()+2}}
-<div class="pagination pagination-centered">
+<div class="pagination x-pagination-centered">
 	<input type="hidden" name="search[page_item_count]" value="{{$search->getPageItemCount()}}">
 	<ul>
 		{{if $start > 0}}

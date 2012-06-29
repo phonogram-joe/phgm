@@ -13,7 +13,7 @@
 		}
 
 		//	PHP情報を表示するリンクを作成してページに埋め込む
-		$toggle = $('<button class="btn btn-info btn-large hide" id="phgm-profiler-toggle"><i class="icon-wrench"></i> PHP情報を表示</button>');
+		$toggle = $('<button class="btn btn-info btn-large hide" id="phgm-profiler-toggle"><i class="icon-wrench icon-white"></i> PHP情報を表示</button>');
 		$toggle.css({
 			'position': 'fixed',
 			'left': 0,
@@ -32,6 +32,10 @@
 		$display = $display.replace('{PHP}', buildPhpDisplay(profile));
 		$display = $display.replace('{DB}', buildDbDisplay(profile));
 		$display = $($display);
+		$display.css({
+			'width': '70%',
+			'left': '40%'
+		});
 		$('body').append($display);
 	}
 
@@ -118,24 +122,10 @@
 			totalTime = 0,
 			count = 0;
 		$.each(profile.dbQueries, function(id, query) {
-			var elapsed = 0,
-				memory = 0,
-				abbrev = '',
-				fromIndex = '';
-
-			if (!isNaN(query.elapsed)) {
-				elapsed = query.elapsed * 1000;
-			}
-
-			if (!isNaN(query.memory_end) && !isNaN(query.memory_start)) {
-				memory = query.memory_end - query.memory_start;
-			}
-
-			if (typeof query.sql !== 'string') {
-				return;
-			}
-			abbrev = query.sql.substr(0, query.sql.length < 40 ? null : 40),
-			fromIndex = query.sql.indexOf('FROM');
+			var elapsed = query.elapsed * 1000,
+				memory = query.memory_end - query.memory_start,
+				abbrev = query.sql.substr(0, query.sql.length < 40 ? null : 40),
+				fromIndex = query.sql.indexOf('FROM');
 
 			count++;
 			totalTime += elapsed;

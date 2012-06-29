@@ -130,6 +130,22 @@ class DbModel extends BaseModel
 		return new SqlStatement($this->selectSql, array());
 	}
 
+	public function getInsertSql()
+	{
+		return $this->insertSql;
+	}
+
+	public function getInsertData($object)
+	{
+		$data = array();
+		$fieldValue;
+		$modelDefinition = BaseModel::getClassModelDefinition(get_class($object));
+		foreach ($this->columns as $column) {
+			$data[$column] = $modelDefinition->getDb($object, $column);
+		}
+		return $data;
+	}
+
 	public function getInsert($object)
 	{
 		$data = array();

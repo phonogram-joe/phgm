@@ -25,26 +25,26 @@ class DatetimeType extends BaseDataType
 			return $value;
 		}
 		$match = array();
-		if (0 === preg_match(self::DATETIME_REGEX, $value, $match)) {
+		if (0 === preg_match(static::DATETIME_REGEX, $value, $match)) {
 			return BaseDataType::$INVALID;
 		}
-		if (count($match) === self::MATCH_LENGTH_DATETIME) {
+		if (count($match) === static::MATCH_LENGTH_DATETIME) {
 			$datetime = mktime(
-				$match[self::MATCH_INDEX_HOUR], 
-				$match[self::MATCH_INDEX_MINUTE],
-				$match[self::MATCH_INDEX_SECOND], 
-				$match[self::MATCH_INDEX_MONTH],
-				$match[self::MATCH_INDEX_DAY],
-				$match[self::MATCH_INDEX_YEAR]
+				$match[static::MATCH_INDEX_HOUR], 
+				$match[static::MATCH_INDEX_MINUTE],
+				$match[static::MATCH_INDEX_SECOND], 
+				$match[static::MATCH_INDEX_MONTH],
+				$match[static::MATCH_INDEX_DAY],
+				$match[static::MATCH_INDEX_YEAR]
 			);
-		} else if (count($match) === self::MATCH_LENGTH_DATE) {
+		} else if (count($match) === static::MATCH_LENGTH_DATE) {
 			$datetime = mktime(
 				0, //hour
 				0, //minute
 				0, //second
-				$match[self::MATCH_INDEX_MONTH],
-				$match[self::MATCH_INDEX_DAY],
-				$match[self::MATCH_INDEX_YEAR]
+				$match[static::MATCH_INDEX_MONTH],
+				$match[static::MATCH_INDEX_DAY],
+				$match[static::MATCH_INDEX_YEAR]
 			);
 		} else {
 			return BaseDataType::$INVALID;
@@ -55,7 +55,7 @@ class DatetimeType extends BaseDataType
 	public static function toWeb($value)
 	{
 		if (is_long($value)) {
-			return strftime(self::FORMAT_STR_DATETIME, $value);
+			return strftime(static::FORMAT_STR_DATETIME, $value);
 		} else {
 			return $value;
 		}
@@ -63,11 +63,11 @@ class DatetimeType extends BaseDataType
 
 	public static function fromDb($value)
 	{
-		return self::fromWeb($value);
+		return static::fromWeb($value);
 	}
 
 	public static function toDb($value)
 	{
-		return self::toWeb($value);
+		return static::toWeb($value);
 	}
 }

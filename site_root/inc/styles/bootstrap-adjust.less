@@ -1,39 +1,177 @@
 /*	Copyright Phonogram Co. 2012
  *	Twitter Bootstrapに加えるカスタムなスタイル
- *	
- *	スタイルの指定しかた：
- *		既存のルールを変えたい場合は、できるだけ元のファイル（inc/styles/bootstrap/内）を編集
- *		新規ルールや新規のHTML構造・タグ・クラスをスタイルする場合は、ここで書く
  */
 
-@import "/webapp2012/inc/styles/bootstrap/variables.less";
-@import "/webapp2012/inc/styles/bootstrap/mixins.less";
-@import "/webapp2012/inc/styles/bootstrap/wells.less";
+@import "./bootstrap/variables.less";
+@import "./bootstrap/mixins.less";
+@import "./bootstrap/wells.less";
+@import "./bootstrap-datetime.less";
 
-/* 	----------------------------------------------------------------------
-	ウェブ・フォントを使う
-   	----------------------------------------------------------------------*/
+/*
+ *	ウェブ・フォントを使う
+ */
 .navbar, footer, h1, h2, h3, h4, h5, h6, .btn {
 	font-family: @uiFontFamily;
 	font-weight: normal;
 }
 
-/* 	----------------------------------------------------------------------
-	ヘッダーバーはposition:fixed;なので、そのスペースを空けておく
-   	----------------------------------------------------------------------*/
+/*
+ *	ヘッダーバーはposition:fixed;なので、そのスペースを空けておく
+ */
 body {
 	padding-top: 60px;
 	padding-bottom: 40px;
 	/*
-	background-image: url(/inc/images/bg_pattern_light.png);
-	background-size: 127px 127px;
-	background-repeat: repeat;
+	#gradient > .horizontal(@blue, @blueDark);
+	.background-size(40px 40px);
 	*/
+	background-color:white;
+	background-image: -webkit-gradient(linear, 0 0, 0 100%, color-stop(.2, transparent), color-stop(.2, rgba(153, 153, 153, .2)), to(rgba(153, 153, 153, .2))),
+					  -webkit-gradient(linear, 0 0, 100% 0, color-stop(.2, transparent), color-stop(.2, rgba(153, 153, 153, .2)), to(rgba(153, 153, 153, .2)));
+	background-image: -webkit-linear-gradient(transparent 50%, rgba(153, 153, 153, .2) 50%, rgba(153, 153, 153, .2)),
+			    -webkit-linear-gradient(0deg, transparent 50%, rgba(153, 153, 153, .2) 50%, rgba(153, 153, 153, .2));
+	background-image: -moz-linear-gradient(transparent 50%, rgba(153, 153, 153, .2) 50%, rgba(153, 153, 153, .2)),
+			    -moz-linear-gradient(0deg, transparent 50%, rgba(153, 153, 153, .2) 50%, rgba(153, 153, 153, .2));
+	background-image: -ms-linear-gradient(transparent 50%, rgba(153, 153, 153, .2) 50%, rgba(153, 153, 153, .2)),
+			    -ms-linear-gradient(0deg, transparent 50%, rgba(153, 153, 153, .2) 50%, rgba(153, 153, 153, .2));
+	background-image: -o-linear-gradient(transparent 50%, rgba(153, 153, 153, .2) 50%, rgba(153, 153, 153, .2)),
+			    -o-linear-gradient(0deg, transparent 50%, rgba(153, 153, 153, .2) 50%, rgba(153, 153, 153, .2));
+	background-image: linear-gradient(transparent 50%, rgba(153, 153, 153, .2) 50%, rgba(153, 153, 153, .2)),
+			    linear-gradient(0deg, transparent 50%, rgba(153, 153, 153, .2) 50%, rgba(153, 153, 153, .2));
+	.background-size(4px 4px);
+}
+.container,
+.container-fluid {
+	background: white;
+}
+.navbar .container,
+.navbar .container-fluid {
+	background: none;
 }
 
-/* 	----------------------------------------------------------------------
-	上のナビ―バーの右側の部分
-   	----------------------------------------------------------------------*/
+
+/*
+ *	案件レポート用
+ */
+.report-project-detail {
+	dt {
+		text-align: left;
+		width: 90px;
+	}
+	dd {
+		margin-left: 100px;
+	}
+}
+.report-table th:first-child,
+.report-table td:first-child {
+	width: 50%;
+}
+.report-header-date {
+	width: 20%;
+}
+.report-header-hours,
+.report-header-feeling {
+	width: 10%;
+}
+table .report-date-repeat {
+	border-top: 0;
+
+	time {
+		visibility: hidden;
+	}
+}
+table .report-repeat {
+	span {
+		visibility: hidden;
+	}
+}
+.report-project-detail {
+	margin-bottom: 18px;
+
+	dt {
+		color: @gray;
+	}	
+	dd {
+		color: @grayLight;
+	}
+	&:hover {
+		dt {
+			color: @grayDarker;
+		}
+		dd {
+			color: @gray;
+		}
+	}
+}
+.report-header {
+	.report-title-customer {
+		font-family: @baseFontFamily;
+		font-size: 24px;
+		line-height: 36px;
+	}
+
+	.report-title-project {
+		font-family: @baseFontFamily;
+		font-size: 18px;
+		line-height: 36px;
+		padding-bottom: 18px;	
+	}
+}
+.report-header-block {
+	margin-bottom: 36px;
+
+	h5 {
+		font-size: 18px;
+		line-height: 18px;
+		margin-bottom: 9px;
+		border-bottom: 1px solid gray;
+
+		i {
+			margin-top: 5px;
+		}
+	}
+
+	.report-status {
+		font-size: 18px;
+		width: 80%;
+
+		&.report-status-inred {
+			color: @red;
+		}
+
+		span {
+			float: right;
+			width: 50%;
+			text-align: right;
+		}
+	}
+	.report-percent {
+		.clearfix();
+		.progress {
+			width: 80%;
+			float: left;
+			margin-right: 5px;
+		}
+	}
+}
+.report-members {
+	font-size: 14px;
+	line-height: 18px;
+
+	li {
+		width: 80%;
+	}
+
+	span {
+		float: right;
+		width: 40%;
+		text-align: right;
+	}
+}
+
+/*
+ *	上のナビ―バーの右側の部分
+ */
 .navbar .pull-right {
 	background-color: @white;
 	color: @grayLight;
@@ -47,6 +185,7 @@ body {
 }
 .navbar .pull-right > li > a:hover {
 	color: @black;
+	background-color: @white;
 }
 .navbar .pull-right > li.active > a:hover,
 .navbar .pull-right > li.active > a {
@@ -55,522 +194,28 @@ body {
 	font-weight: bold;
 }
 
-/* 	----------------------------------------------------------------------
-	「セクション」ぽいやつ。ヘッダは白文字とグレー背景。ボーダーと薄い背景色を付ける
-   	----------------------------------------------------------------------*/
-/* セクションのヘッダー */
-.titled-section-title {
-	/*
-	background: #8c8c8c;
-	background: -moz-linear-gradient(top, #8c8c8c, #7a7979);
-	background: -webkit-gradient(linear, left top, left bottom, from(#8c8c8c), to(#7a7979));
-	color: #ffffff;
-	.border-radius(4px 4px 0 0);
-	padding: 0 0 0 9px;
-	*/
-	border-bottom: 1px solid #ddd;
-	margin-bottom: 8px;
-	padding: 4px 0 4px 9px;
+#nav-login-name {
+	color: @black;
 }
 
-/*	セクション自体 */
-.titled-section {
-	//.well;
-	margin-bottom: 20px;
-	padding: 0;
-	background-color: @white;
-	background-color: rgba(255,255,255,0.8);
-	background-color: #f5f5f5;
-	.box-shadow(inset 0 1px 1px rgba(0,0,0,.05));
-	border: 1px solid @grayLighter;
-	.border-radius(4px);
-
-	h3 {
-		.titled-section-title;
-	}
-}
-/* セクションの中身よう。セクションはpadding:0;となってるので、中身にパディング付けるにはこのクラスを使う。 */
-.titled-section-child {
-	padding: 9px;
-	margin: 0;
-}
-
-/* 左側のナビ */
-.sidebar-nav {
-	.titled-section;
-}
-.nav-list .nav-header.active {
-	font-weight: bold;
-	color: black;
-}
-.nav-list .alert {
-	margin-bottom: 0;
-}
-.nav-list .disabled {
-	cursor: default;
-	.opacity(50);
-}
-.sidebar-actions {
-	.titled-section;
-	padding: 9px;
-}
-.sidebar-actions .btn {
-	margin-right: 5px;
-	margin-bottom: 5px;
-}
-.sidebar-form {
-	.titled-section;
-}
-.sidebar-form {
-	form {
-		padding: 9px;
-	}
-	input,
-	textarea,
-	select {
-		width: 90%;
-	}
-}
-
-/* 
- *	基本の部分。フォーム・データリスト・テーブルなど
- *
- * 使い方： 
- *	<table class="main">
- *		<thead><th>...
- *
- *	<div class="main">
- *		<h3>会社情報</h3>
- *		<dl class="dl-horizontal">...
- *
- *	<form class="main form-horizontal">
- *		<h3>インプット種類</h3>
- *		<fieldset>...
- */
-.main {
-	.titled-section;
-
-	dl,
-	fieldset {
-		.titled-section-child;
-	}
-
-	& > p {
-		.titled-section-child;
-	}
-
-	thead {
-		.titled-section-title;
-	}
-}
-
-/* 右側の重要の低い「おまけに」情報 */
-.extra-info {
-	.titled-section;
-
-	p, ul, dl, address {
-		.titled-section-child;
-	}
-}
-
-
-/* 	----------------------------------------------------------------------
-	h1,h2タイトル
-   	----------------------------------------------------------------------*/
-/* アイコンが付いてるタイトル　*/
-.iconed-title {
-	background-image: none;
-	background-repeat: no-repeat;
-	background-attachment: initial;
-	background-position-x: 0%;
-	background-position-y: 50%;
-	background-origin: initial;
-	background-clip: initial;
-	background-color: inherit;
-}
 /*
- *	ページのタイトル
- *
- *	使い方：
- *		<div class="page-header">
- *			<h1>...</h1>
- *		</div>
- *		<div class="page-header">
- *			<h2>...</h2>
- *		</div>
+ *	テーブル内のフォーム
+ */
+table tr.error {
+	.formFieldState(@errorText, @errorText, @errorBackground);
+}
+
+/*
+ *	ページ内のヘッダー・テキスト
  */
 .page-header {
 	padding-bottom: 0;
 	border-bottom-color: gray;
 }
 
-
 /*
- *	一覧画面の絞り込む条件フォーム
- *
- *	<form class="form-inline">
- *	<div class="index-form">
- *		<input class="span2" type="text" name="search[keyword]" value="{{$search->get('keyword')|escape}}" placeholder="{{$search->getLabel('keyword')|escape}}" />
- *		<input class="span2 datetime" data-datetime-format="date" type="text" name="search[release_at]" value="{{$search->get('release_at')|escape}}" placeholder="{{$search->getLabel('release_at')|escape}}" />
- *		<select class="span2" name="search[status_flag]">...</select>
- *		<select class="span2" name="search[end_user_id]">...</select>
- *		<input type="submit" name="search[submit]" value="検索" class="btn" data-iconify="icon-search" />
- *
- *		<select name="search[order]" class="pull-right">...</select>
- *	</div>
- *	</form>
+ *	ダイナミックな表示。　データの価値・状況により表示したり隠したりするクラス。
  */
-.index-form {
-	.well();
-}
-
-/* 
- *	<body>のクラスによりページタイトルのアイコンを切り替える。
- *	使い方：
- *
- *		<body class="admin requests">
- *			...
- *				<div class="page-header">
- *					<h1>依頼情報</h1>
- *				</div>
- *
- *	注意：　管理・クライアントのログイン上<body>にadminかclientというクラスが付ける。未ログインの場合はそのクラスが付けないので、下記のスタイルは無効
- */
-.admin h1,
-.client h1 {
-	padding-left: 35px;
-	.iconed-title;
-}
-.requests h1 {
-	background-image: url(http://kahn-asp.phonogram.tv/inc/images/h1_request.gif);
-}
-.clients h1 {
-	background-image: url(http://kahn-asp.phonogram.tv/inc/images/h1_customers.gif);
-}
-.points h1 {
-	background-image: url(http://kahn-asp.phonogram.tv/inc/images/h1_point.gif);
-}
-.contact h1 {
-	background-image: url(http://kahn-asp.phonogram.tv/inc/images//h1_info.gif);
-}
-.help h1 {
-	background-image: url(http://kahn-asp.phonogram.tv/inc/images//h1_info.gif);
-}
-
-.admin h2,
-.client h2 {
-	padding-left: 18px;
-	.iconed-title;
-	background-image: url(http://kahn-asp.phonogram.tv/inc/images/h2_bg.gif);
-}
-
-@media (max-width: 1280px) {
-	.clients h1,h2 {
-		font-size: 18px;
-	}
-}
-
-
-/* 	----------------------------------------------------------------------
-	クライアント用のトップページ専用
-   	----------------------------------------------------------------------*/
-.top h1 {
-	padding-left: 0;
-}
-.top h2 {
-	padding-left: 0;
-	background-image: none;
-}
-.top .top-section {
-	.titled-section();
-	padding: 9px;
-}
-.top .top-section .btn {
-	margin-right: 5px;
-	margin-bottom: 5px;
-}
-.top .top-container {
-	max-width: 940px;
-	margin: 0 auto;
-}
-
-/* 	----------------------------------------------------------------------
-	hero unitのトップページ向けのバーナー
-   	----------------------------------------------------------------------*/
-@media (max-width: 767px) {
-	.top .hero-unit {
-		padding: 10px;
-	}
-	.top .hero-unit h1 {
-		font-size: 32px;
-	}
-}
-
-
-/* 	----------------------------------------------------------------------
-	データ表示。<dl>や<table>の微調整
-   	----------------------------------------------------------------------*/
-/*
- *	状況アイコンよう 
- *	
- *	使い方：
- *		<table>
- *			<thead>...</thead>
- *			<tbody>
- *				<tr>
- *					<td class="info-status"><a alt=""><i class="icon-search"></i></a></td>
- */
-table .info-status {
-	text-align: center;
-}
-table .alert a {
-	color: @warningText;
-}
-@media (max-width: 480px) {
-	table .info-secondary {
-		display: none;
-	}
-}
-
-/* 	----------------------------------------------------------------------
-	ダイナミックな表示。　データの価値・状況により表示したり隠したりするクラス。
-   	----------------------------------------------------------------------*/
 .js-conditional {
 	display: none;
-}
-
-/* 	----------------------------------------------------------------------
-	フォーム
-   	----------------------------------------------------------------------*/
-/*
- *	フォームの右コラムには複数の項目を横に並ぶ場合
- *
- *		<div class="control-group">
- *			<span class="control-label"></span>
- *			<div class="controls">
- *				<div class="input-multiple">
- *					<div class="input-multi-item">
- *						<label for="..."></label>
- *						<input id="...">
- *					</div>
- *					<div class="input-multi-item">
- *						<label for="..."></label>
- *						<input id="...">
- *					</div>
- *				</div>
- *				<div class="input-multiple">
- *					....
- *				</div>
- *			</div><!-- .controls -->
- *		</div><!-- .control-group -->
- *						
- */
-.input-multiple {
-
-}
-.input-multi-item {
-	display: inline-block;
-	vertical-align: top;
-}
-@media (max-width: 1200px) {
-	.input-multi-item {
-		display: block;
-	}
-	.input-multi-item {
-		&:first-child {
-			label {
-				font-weight: bold;
-				border-top: 1px solid gray;
-			}
-		}
-		label {
-			padding-top: 9px;
-		}
-	}
-}
-
-/*
- *	ページ内容の上に浮かぶようなダイアログ
- */
-.hoverpanel {
-	position: absolute;
-	top: 0;
-	left: 0;
-	z-index: @zindexPopover;
-	padding: 5px;
-	background-color: @white;
-	border: 1px solid #999;
-	border: 1px solid rgba(0,0,0,.3);
-	*border: 1px solid #999; /* IE6-7 */
-	.border-radius(6px);
-	.box-shadow(0 3px 7px rgba(0,0,0,0.3));
-	.background-clip(padding-box);
-
-	.hoverpanel-header {
-		padding: 9px 15px;
-		border-bottom: 1px solid #eee;
-		// Close icon
-		.close { margin-top: 2px; }
-	}
-
-	.hoverpanel-body {
-		overflow-y: auto;
-		max-height: 400px;
-		padding: 15px;
-	}
-
-	.hoverpanel-footer {
-		padding: 14px 15px 15px;
-		margin-bottom: 0;
-		text-align: right; // right align buttons
-		background-color: #f5f5f5;
-		border-top: 1px solid #ddd;
-		.border-radius(0 0 6px 6px);
-		.box-shadow(inset 0 1px 0 @white);
-		.clearfix(); // clear it in case folks use .pull-* classes on buttons
-
-		// Properly space out buttons
-		.btn + .btn {
-			margin-left: 5px;
-			margin-bottom: 0; // account for input[type="submit"] which gets the bottom margin like all other inputs
-		}
-
-		// but override that for button groups
-		.btn-group .btn + .btn {
-			margin-left: -1px;
-		}
-	}
-}
-
-/*
- *	日時入力用
- *	inc/scripts/bootstrap-datetime.jsをご参考に。
- */
-.datetime-input {
-	width: 300px;
-
-	table th,
-	table td {
-		text-align: center;
-	}
-
-	.datetime-date {
-
-		.datetime-yyyymm-input {
-			display: none;
-		}
-
-		&.datetime-yyyymm-on {
-			.datetime-yyyymm-label {
-				display: none;
-			}
-
-			.datetime-yyyymm-input {
-				display: inline;
-			}
-			.datetime-yyyymm-input input {
-				width: auto;
-				margin-bottom: 0;
-			}
-		}
-
-		tbody td a {
-			cursor: pointer;
-		}
-
-		.inactive a {
-			color: @grayDarker;
-		}
-		.selected {
-			.buttonBackground(@btnPrimaryBackground, @btnPrimaryBackgroundHighlight);
-		}
-		.selected a {
-			color: @white;
-		}
-	}
-
-	.datetime-time {
-		thead {
-			display: none;
-		}
-		select {
-			width: 100%;
-		}
-	}
-} 
-
-//	.thumbnails
-.thumbnails > li {
-	position: relative;
-}
-.thumbnail {
-	position: relative;
-}
-.thumbnail-handle {
-	position: absolute;
-	z-index: 1;
-	top: 1px;
-	right: 1px;
-	width: 20px;
-	height: 17px;
-	padding-top: 3px;
-	background: @grayLighter;
-	text-align: center;
-	.border-radius(0 4px 0 4px);
-	cursor: move;
-}
-.span2 div.thumbnail {
-	height: 120px;
-}
-.span3 div.thumbnail {
-	height: 180px;
-}
-.span4 div.thumbnail {
-	height: 268px;
-}
-.thumbnail img {
-	max-width: 100%;
-}
-.thumbnail .presentation-title {
-	position: absolute;
-	height: 48px;
-	overflow: hidden;
-	bottom: 0;
-	left: 0;
-	right: 0;
-	padding: 4px;
-	background: @black;
-	.opacity(70);
-	color: @white;
-	.border-radius(0 0 4px 4px);
-}
-
-.slides-edit-form .thumbnail {
-	background: @white;
-	text-align: center;
-	padding: 0;
-}
-.slides-edit-deletebox {
-	.titled-section;
-	height: 200px;
-}
-.slides-edit-deletebox.over {
-	background-color: @errorBackground;
-	border-color: @errorBorder;
-	color: @errorText;
-}	
-.slides-editor {
-	width: 100%;
-	height: 100%;
-	resize: none;
-	padding: 0;
-	margin: 0;
-	border: 0;
-	.box-shadow(0);
-}
-.slides-edit-preview {
-	text-align: center;
-	img {
-		max-width: 100%;
-	}
 }

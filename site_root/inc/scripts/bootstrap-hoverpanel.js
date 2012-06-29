@@ -31,16 +31,29 @@
 			if (!$parent.size()) {
 				return;
 			}
-			this.$el.removeClass('hide');
-			this.$el.position({
-				of: $parent,
-				my: 'center top',
-				at: 'center bottom',
-				collision: 'fit fit'
-			});
-			this.$el.on('click.hp', '.hoverpanel-header .close', $.proxy(this.cancel, this));
-			this.$el.on('click.hp', $.proxy(this.cancelEvent, this));
-			$('body').on('click.hp', $.proxy(this.cancel, this));
+			this.$el
+				.removeClass('hide')
+				.position({
+					of: $parent,
+					my: 'center top',
+					at: 'center bottom',
+					collision: 'fit fit'
+				})
+				.on(
+					'click.hp', 
+					'.hoverpanel-header .close', 
+					$.proxy(this.cancel, this)
+				)
+				.on(
+					'click.hp', 
+					$.proxy(this.cancelEvent, this)
+				);
+				
+			$('body')
+				.on(
+					'click.hp', 
+					$.proxy(this.cancel, this)
+				);
 		}
 
 		, _hide: function() {

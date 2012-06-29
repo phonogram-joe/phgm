@@ -1,0 +1,13 @@
+{{extends file="bootstrap/layout-centered-block.html"}}
+{{block name='main-col'}}
+    {{formFor name='auth:login_save' html_class='main form form-horizontal'}}
+        <fieldset>
+            {{include file='bootstrap/parts-form-field.html' model=$model field='login_id'}}
+        </fieldset>
+        <fieldset>
+            <div class="form-actions">
+                <input type="submit" class="btn btn-primary" name="save" value="ログイン">
+            </div>
+        </fieldset>
+    {{/formFor}}
+{{/block}}

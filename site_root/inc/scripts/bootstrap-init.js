@@ -5,7 +5,7 @@
  *
  *	スクリプトにより動く部分の初期化
  */
-(function($) {
+ (function($) {
 
 	/*
 	 *	複数のレコードを一気に入力できる場合、レコード数を増やすようにボタンを下に置く。クリックすると新規の空白レコードインプットが出てくる
@@ -19,45 +19,45 @@
 	 *		ボタンのdata-show-moreアトリビュートは項目の親タグのクラスと一致するべき
 	 *
 	 */
-	var showMore = function(e) {
-		var $el = $(e.target),
-			$nextRow = $('.' + $el.data('show-more')).filter(':hidden');
-		if ($nextRow.size()) {
-			$nextRow.filter(':first').fadeIn();
-			if ($nextRow.size() === 1) {
-				$el.hide();
-			}
-		}
-	}
+	 var showMore = function(e) {
+	 	var $el = $(e.target),
+	 	$nextRow = $('.' + $el.data('show-more')).filter(':hidden');
+	 	if ($nextRow.size()) {
+	 		$nextRow.filter(':first').fadeIn();
+	 		if ($nextRow.size() === 1) {
+	 			$el.hide();
+	 		}
+	 	}
+	 }
 
-	var showMoreButtonInit = function() {
-		var $targets = $('.show-more-item.' + $(this).data('show-more'));
-		if (!$targets.size()) {
-			return;
-		}
-		$targets.each(function() {
-			if ($(this).find('input[value!=""]').size()) {
-				$(this).show();
-			} else {
-				$(this).hide();
-			}
-		});
-		if (!$targets.filter(':hidden').size()) {
-			$(this).hide();
-		}
-	}
+	 var showMoreButtonInit = function() {
+	 	var $targets = $('.show-more-item.' + $(this).data('show-more'));
+	 	if (!$targets.size()) {
+	 		return;
+	 	}
+	 	$targets.each(function() {
+	 		if ($(this).find('input[value!=""]').size()) {
+	 			$(this).show();
+	 		} else {
+	 			$(this).hide();
+	 		}
+	 	});
+	 	if (!$targets.filter(':hidden').size()) {
+	 		$(this).hide();
+	 	}
+	 }
 
-	var indexFormSubmit = function(e) {
-		var $el = $(e.target),
-			$form;
-		$form = $el.closest('form');
-		if ($form.size()) {
-			$form.submit();
-		}
-	}
+	 var indexFormSubmit = function(e) {
+	 	var $el = $(e.target),
+	 	$form;
+	 	$form = $el.closest('form');
+	 	if ($form.size()) {
+	 		$form.submit();
+	 	}
+	 }
 
-	$(function() {
-		$('.js-conditional').fadeIn();
+	 $(function() {
+	 	$('.js-conditional').fadeIn();
 		//	項目が複数ある場合の「もっと表示」ボタン
 		$('body').on('click', 'button[data-show-more]', showMore);
 		$('button[data-show-more]').each(showMoreButtonInit);
@@ -65,6 +65,24 @@
 
 		//	一覧画面の絞り込む条件が変わる際にフォームを投稿する
 		$('.index-form').on('change', 'select, .datetime', indexFormSubmit);
+
+		//	IE9などの<input placeholder="...">をサポート外ブラウザのため
+		$('input, textarea').placeholder();
+
+		//	吹き出しヘルプ (大きい)
+		$('body').popover({
+			selector: 'a[rel=popover]'
+		});
+		//	吹き出しヘルプ　(小さい)
+		$('body').tooltip({
+			selector: 'a[rel=tooltip],time[rel=tooltip]'
+		});
+
+		window.setTimeout(function() {
+			$('.page-alert').fadeOut(600, function() {
+				$(this).remove();
+			});
+		}, 3000);
 	});
-	
-})(jQuery);
+
+	})(jQuery);

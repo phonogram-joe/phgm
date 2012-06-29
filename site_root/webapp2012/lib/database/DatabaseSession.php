@@ -10,6 +10,7 @@ class DatabaseSession
 	private $allowUpdates;
 	private $trackedObjects;
 	private $deletedObjects;
+	private $preStatements;
 	private $flushStatements;
 
 	public function DatabaseSession($dbHandle)
@@ -18,6 +19,7 @@ class DatabaseSession
 		$this->allowUpdates = false;
 		$this->trackedObjects = array();
 		$this->deletedObjects = array();
+		$this->preStatements = array();
 		$this->flushStatements = array();
 	}
 
@@ -280,10 +282,23 @@ class DatabaseSession
 			throw new Exception('DatabaseSession:delete() -- オブジェクトは変更・登録リストに追加(track)されています。');
 		}
 	}
-	public function trackSql($sql, $data)
+	public function trackSql($sql, $data = null)
 	{
+		if (is_a($sql, 'SqlStatement')) {
+			$this->flushStatements[] = $sql;
+			return;
+		}
 		$sqlStatement = new SqlStatement($sql, $data);
 		$this->flushStatements[] = $sqlStatement;
+	}
+	public function preFlushSql($sql, $data = null)
+	{
+		if (is_a($sql, 'SqlStatement')) {
+			$this->preStatements[] = $sql;
+			return;
+		}
+		$sqlStatement = new SqlStatement($sql, $data);
+		$this->preStatements[] = $sqlStatement;
 	}
 
 	public function flush()
@@ -292,7 +307,11 @@ class DatabaseSession
 			//	DBに書き込むする場合はHTTPのGETリクエストは非常危険なので、POST・PUT・DELETEHTTPメソッドを使ってください。
 			throw new Exception('DatabaseSession:flush() -- HTTPリクエストの形によりDBの書き込みは禁止されています。');
 		}
-		if (count($this->trackedObjects) === 0 && count($this->deletedObjects) === 0 && count($this->flushStatements) === 0) {
+		if (count($this->trackedObjects) === 0 
+			&& count($this->deletedObjects) === 0 
+			&& count($this->flushStatements) === 0
+			&& count($this->preStatements) === 0)
+		{
 			return null;
 		}
 		try {
@@ -300,6 +319,9 @@ class DatabaseSession
 			$profileId = Profiler::getProfiler()->startDbQuery('transaction_' + uniqid(), array());
 			$this->dbHandle->beginTransaction();
 
+			foreach ($this->preStatements as $sqlStatement) {
+				$this->flushSql($sqlStatement);
+			}
 			foreach ($this->trackedObjects as $object) {
 				if (!$object->isValid()) {
 					foreach ($object->getValidationErrors() as $key => $value) {
@@ -334,7 +356,8 @@ class DatabaseSession
 		} catch (Exception $e) {
 			$this->dbHandle->rollback();
 			Profiler::getProfiler()->stopDbQuery($profileId);
-			Logger::trace('DatabaseSession:flush() -- rollback');
+			Logger::error($e);
+			Logger::warn('DatabaseSession:flush() -- rollback');
 			throw $e;
 			return false;
 		}
@@ -430,5 +453,6 @@ class DatabaseSession
 		$this->trackedObjects = array();
 		$this->deleteObject = array();
 		$this->flushStatements = array();
+		$this->preStatements = array();
 	}
 }

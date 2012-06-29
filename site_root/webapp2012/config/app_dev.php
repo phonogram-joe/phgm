@@ -3,6 +3,9 @@
 //	このシステムの動きに関する設定はここで記入してください。
 //	このファイルは＊＊開発環境＊＊のみで有効です
 
+class AppConfig extends AppAllConfig {
+}
+
 function appConfigDev()
 {
 	//	有効のログレベル

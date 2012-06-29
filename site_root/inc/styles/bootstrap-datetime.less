@@ -1,0 +1,95 @@
+@import "./bootstrap/variables.less";
+@import "./bootstrap/mixins.less";
+
+/*
+ *	ページ内容の上に浮かぶようなダイアログ
+ */
+.hoverpanel {
+	position: absolute;
+	top: 0;
+	left: 0;
+	z-index: @zindexPopover;
+	padding: 5px;
+	background-color: @white;
+	border: 1px solid #999;
+	border: 1px solid rgba(0,0,0,.3);
+	*border: 1px solid #999; /* IE6-7 */
+	.border-radius(6px);
+	.box-shadow(0 3px 7px rgba(0,0,0,0.3));
+	.background-clip(padding-box);
+
+	.hoverpanel-header {
+		padding: 9px 15px;
+		border-bottom: 1px solid #eee;
+		// Close icon
+		.close { margin-top: 2px; }
+	}
+
+	.hoverpanel-body {
+		overflow-y: auto;
+		max-height: 400px;
+		padding: 15px;
+	}
+
+	.hoverpanel-footer {
+		padding: 14px 15px 15px;
+		margin-bottom: 0;
+		text-align: right; // right align buttons
+		background-color: #f5f5f5;
+		border-top: 1px solid #ddd;
+		.border-radius(0 0 6px 6px);
+		.box-shadow(inset 0 1px 0 @white);
+		.clearfix(); // clear it in case folks use .pull-* classes on buttons
+
+		// Properly space out buttons
+		.btn + .btn {
+			margin-left: 5px;
+			margin-bottom: 0; // account for input[type="submit"] which gets the bottom margin like all other inputs
+		}
+
+		// but override that for button groups
+		.btn-group .btn + .btn {
+			margin-left: -1px;
+		}
+	}
+}
+
+/*
+ *	日時入力用
+ *	inc/scripts/bootstrap-datetime.jsをご参考に。
+ */
+.datetime-input {
+	width: 300px;
+
+	table th,
+	table td {
+		text-align: center;
+	}
+
+	.datetime-date {
+
+		tbody td a {
+			cursor: pointer;
+		}
+
+		.inactive a {
+			color: @grayDarker;
+		}
+		.selected {
+			.buttonBackground(@btnPrimaryBackground, @btnPrimaryBackgroundHighlight);
+		}
+		.selected a {
+			color: @white;
+		}
+	}
+
+	.datetime-time {
+		thead {
+			display: none;
+		}
+		select {
+			width: 100%;
+		}
+	}
+} 
+

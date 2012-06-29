@@ -153,6 +153,16 @@ class Session
 		return hash_hmac('sha512', implode('::', array($data, $_SERVER['REMOTE_ADDR'], session_id())), Config::get(Config::SESSIONS_NONCE_SECRET));
 	}
 
+	public static function makeSecret($data)
+	{
+		return hash_hmac('sha512', $data, Config::get(Config::SESSIONS_NONCE_SECRET));
+	}
+
+	public static function isValidSecret($data, $secret)
+	{
+		return self::makeSecret($data) === $secret;
+	}
+
 	/*
 	 *	generateNonce()
 	 *		（CSRF対策用） フォームの提出者を確認できるようにランダムなキーを作成してセッションに保存する。フォーム画面を通さないと

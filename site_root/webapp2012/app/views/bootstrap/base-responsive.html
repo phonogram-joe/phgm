@@ -5,26 +5,24 @@
 <!--[if gt IE 8]><!--> <html class="no-js" lang="ja"> <!--<![endif]-->
   <head>
     <meta charset="utf-8">
-    <title>{{$pageTitle}}</title>
+    <title>カーンサポートシステム　｜　{{$pageTitle}}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="{{$pageDescription}}">
     <meta name="author" content="{{$pageAuthor}}">
 
     <!-- Twitter Bootstrapを基本としてスタイル設定 ( http://twitter.github.com/bootstrap/ ) -->
-    <link href="/webapp2012/inc/styles/bootstrap/bootstrap.less" rel="stylesheet/less">
-    <!-- カスタムなCSS -->
-    <link href="/webapp2012/inc/styles/bootstrap-adjust.less" rel="stylesheet/less">
-    <link href="/webapp2012/inc/styles/bootstrap/responsive.less" rel="stylesheet/less">
+    <link href="/inc/styles/bootstrap/bootstrap.less" rel="stylesheet/less">
+    <link href="/inc/styles/bootstrap-adjust.less" rel="stylesheet/less">
+    <!-- Twitter Bootstrapのレスポンシブ用のCSS -->
+    <link href="/inc/styles/bootstrap/responsive.less" rel="stylesheet/less">
+    {{block name='page-styles'}}{{/block}}
 
     <!-- LESS >> CSS変換するスクリプト ( http://lesscss.org/ )-->
-    <script src="/webapp2012/inc/scripts/less/less-1.3.0.min.js"></script>
+    <script src="/inc/scripts/less/less-1.3.0.js"></script>
     <!-- IE6-8のHTML5対応（印刷も含め）　・ ブラウザ機能確認　( http://modernizr.com/ )　-->
-    <script src="/webapp2012/inc/scripts/modernizr-2.5.3.min.js"></script>
+    <script src="/inc/scripts/modernizr-2.5.3.js"></script>
 
-    <link rel="shortcut icon" href="/webapp2012/inc/images/favicons/favicon.ico">
-    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="/webapp2012/inc/images/favicons/apple-touch-icon-114-precomposed.png">
-    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="/webapp2012/inc/images/favicons/apple-touch-icon-72-precomposed.png">
-    <link rel="apple-touch-icon-precomposed" href="/webapp2012/inc/images/favicons/apple-touch-icon-57-precomposed.png">
+    <link rel="shortcut icon" href="/inc/images/favicons/favicon.ico">
   </head>
 
   <body class="{{$pageSection}}">
@@ -40,40 +38,37 @@
 
     </div><!--/.fluid-container-->
 
-    <!-- --------------------------------------------------------------- -->
     <!-- jQuery -->
-    <script src="/webapp2012/inc/scripts/jquery-1.7.2.min.js"></script>
-    <script src="/webapp2012/inc/scripts/jquery.ui.position.js"></script>
+    <script src="/inc/scripts/jquery-1.7.2.js"></script>
+    <script src="/inc/scripts/underscore.js"></script>
+    <script src="/inc/scripts/jquery.ui.position.js"></script>
+    <script src="/inc/scripts/jquery.placeholder.js"></script>
     <!-- Twitter Bootstrapのスクリプト ( http://twitter.github.com/bootstrap/javascript.html ) -->
-    <script src="/webapp2012/inc/scripts/bootstrap/bootstrap-transition.js"></script>
-    <script src="/webapp2012/inc/scripts/bootstrap/bootstrap-alert.js"></script>
-    <script src="/webapp2012/inc/scripts/bootstrap/bootstrap-modal.js"></script>
-    <script src="/webapp2012/inc/scripts/bootstrap/bootstrap-dropdown.js"></script>
-    <script src="/webapp2012/inc/scripts/bootstrap/bootstrap-scrollspy.js"></script>
-    <script src="/webapp2012/inc/scripts/bootstrap/bootstrap-tab.js"></script>
-    <script src="/webapp2012/inc/scripts/bootstrap/bootstrap-tooltip.js"></script>
-    <script src="/webapp2012/inc/scripts/bootstrap/bootstrap-popover.js"></script>
-    <script src="/webapp2012/inc/scripts/bootstrap/bootstrap-button.js"></script>
-    <script src="/webapp2012/inc/scripts/bootstrap/bootstrap-collapse.js"></script>
-    <script src="/webapp2012/inc/scripts/bootstrap/bootstrap-carousel.js"></script>
-    <script src="/webapp2012/inc/scripts/bootstrap/bootstrap-typeahead.js"></script>
+    <script src="/inc/scripts/bootstrap/bootstrap-transition.js"></script>
+    <script src="/inc/scripts/bootstrap/bootstrap-alert.js"></script>
+    <script src="/inc/scripts/bootstrap/bootstrap-tooltip.js"></script>
+    <script src="/inc/scripts/bootstrap/bootstrap-popover.js"></script>
+    <script src="/inc/scripts/bootstrap/bootstrap-button.js"></script>
+    <script src="/inc/scripts/bootstrap/bootstrap-collapse.js"></script>
+    <script src="/inc/scripts/bootstrap-typeahead-mod.js"></script>
     <!-- フォノグラムのカスタムなスクリプト -->
-    <script src="/webapp2012/inc/scripts/bootstrap-iconify.js"></script>
-    <script src="/webapp2012/inc/scripts/bootstrap-hoverpanel.js"></script>
-    <script src="/webapp2012/inc/scripts/bootstrap-datetime.js"></script>
-    <script src="/webapp2012/inc/scripts/bootstrap-filebutton.js"></script>
-    <script src="/webapp2012/inc/scripts/bootstrap-init.js"></script>
+    <script src="/inc/scripts/bootstrap-iconify.js"></script>
+    <script src="/inc/scripts/bootstrap-hoverpanel.js"></script>
+    <script src="/inc/scripts/bootstrap-datetime.js"></script>
+    <script src="/inc/scripts/bootstrap-filebutton.js"></script>
+    <script src="/inc/scripts/bootstrap-init.js"></script>
 
     {{block name='page-scripts'}}{{/block}}
 
     {{if Config::isDevTest()}}
+    <script src="/inc/scripts/bootstrap/bootstrap-modal.js"></script>
     <script type="text/javascript">
     (function() {
         var p, s;
         p = document.createElement('script');
         p.type = 'text/javascript';
         p.async = true;
-        p.src = '/webapp2012/inc/scripts/phgm-profiler.js';
+        p.src = '/inc/scripts/phgm-profiler.js';
         s = document.getElementsByTagName('script')[0];
         s.parentNode.insertBefore(p, s);
     })();

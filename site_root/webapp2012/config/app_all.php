@@ -7,15 +7,21 @@
 //	このシステムの動きに関する設定はここで記入してください。
 //	このファイルは＊＊全環境＊＊で有効です
 
+class AppAllConfig
+{
+}
+
 function appConfigAll()
 {
+
+	Logger::setFile(phgm::$LOG_DIR . DS . 'app.log');
 
 	//	セッション設定
 	ini_set('session.save_path', phgm::$SESSION_DIR);
 	Config::set(Config::SESSIONS_ENABLED, true);
-	Config::set(Config::SESSION_NAME, '878d99fg574qw4g3j4g635KJHYR&KJKHUIY234526214o293847HJa5bxfqvhb7B86346nk456$8b7kj89');
+	Config::set(Config::SESSION_NAME, '------------------------------------');
 	Config::set(Config::SESSIONS_MAX_NONCE_COUNT, 3);
-	Config::set(Config::SESSIONS_NONCE_SECRET, 'QCzmDn-|d&*gI:8%yI/MXOSYX.TvUn|=dLJAK9d$Pu{CO!X%j/boHtuoYS#;KO3a');
+	Config::set(Config::SESSIONS_NONCE_SECRET, '--------------------------------');
 
 	//	ローカル・文字設定
 	setlocale(LC_ALL, 'ja_JP.UTF-8');
@@ -23,13 +29,14 @@ function appConfigAll()
 	ini_set('output_handler', 'mb_output_handler');
 	ini_set('mbstring.language', 'Japanese');
 	ini_set('mbstring.internal_encoding', 'UTF-8');
-	ini_set('mbstring.encoding_translation', 'On');
+	ini_set('mbstring.encoding_translation', 1);
 	ini_set('mbstring.substitute_character', 'none');
+	ini_set('auto_detect_line_endings', true);
 
 	//	添付ファイルの設定。最大サイズなど
 	ini_set('file_uploads', 1);
 	ini_set('upload_tmp_dir', null);
-	ini_set('upload_max_filesize', '1M');
+	ini_set('upload_max_filesize', '10M');
 	ini_set('max_file_uploads', 5);
 
 	//	処理できないエラーの場合に返すメッセージ

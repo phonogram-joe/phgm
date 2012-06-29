@@ -1,0 +1,62 @@
+@import "./bootstrap/variables.less";
+@import "./bootstrap/mixins.less";
+@import "./bootstrap/wells.less";
+
+/*
+ *	タイム入力用
+ */
+.time-entry {
+	input,
+	textarea,
+	button {
+		width: 100%;
+	}
+}
+
+.time-entry-recent {
+	li {
+		margin-bottom: 9px;
+	}
+}
+
+.time-record-deleting {
+	color: @errorText;
+
+	td {
+		background: @errorBackground !important;
+	}
+
+	.time-record-destroy {
+		display: inline-block;
+		visibility: visible;
+	}
+}
+
+.time-record-editing {
+	color: @infoText;
+
+	td {
+		background: @infoBackground !important;
+	}
+
+	.time-record-destroy {
+		display: none;
+		visibility: hidden;
+	}
+}
+
+.category-item.active,
+.project-item.active {
+	font-weight: bold;
+	padding-left: 20px;
+	position: relative;
+}
+
+.category-item.active::before,
+.project-item.active::before {
+	width: 15px;
+	content: ">";
+	position: absolute;
+	left: 0;
+	top: 0;
+}	
